@@ -96,6 +96,7 @@
         .card-Platinum::before { background: var(--platinum); }
         .card-Gold::before { background: var(--gold); }
         .card-Silver::before { background: var(--silver); }
+        .card-Unknown::before { background: var(--gray-500); } /* للنسخ الاحتياطي */
         
         .card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
         .p-info { flex: 1; }
@@ -107,6 +108,7 @@
         .bg-Platinum { background: var(--platinum); }
         .bg-Gold { background: var(--gold); }
         .bg-Silver { background: var(--silver); }
+        .bg-Unknown { background: var(--gray-500); }
 
         .p-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--gray-100); }
         .p-meta span { font-size: 0.7rem; background: var(--gray-100); padding: 4px 8px; border-radius: 5px; color: var(--gray-500); }
@@ -270,7 +272,7 @@ const arabicKeywords = {
     "عضلات": ["MUSCLE", "RELAXANT", "RELAXON"]
 };
 
-const priorityOrder = { 'Diamond': 1, 'Platinum': 2, 'Gold': 3, 'Silver': 4, 'R1': 5, 'R2': 6 };
+const priorityOrder = { 'Diamond': 1, 'Platinum': 2, 'Gold': 3, 'Silver': 4, 'Unknown': 5 };
 
 let allProducts = [];
 let currentPriorityFilter = 'all';
@@ -281,7 +283,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupScrollToTop();
 });
 
-// Fetch Data via CSV - LOAD EVERYTHING MODE
+// Fetch Data via CSV - NO FILTERING (SHOW ALL)
 function fetchDataCSV() {
     const listContainer = document.getElementById('productsList');
     listContainer.innerHTML = '<div class="loading-state">جاري سحب البيانات... ⏳</div>';
@@ -292,18 +294,16 @@ function fetchDataCSV() {
         header: false,
         complete: function(results) {
             const rows = results.data;
+            // Skip ONLY the first 2 header rows
+            const dataRows = rows.slice(2);
             
-            // الفلترة الجديدة: نقبل أي صف يحتوي على اسم دواء في العمود الثاني
-            // ونتأكد أنه ليس صف العناوين (Juleb name)
-            const filteredRows = rows.filter(row => {
-                 const nameCell = (row[1] || '').trim(); // Column B is Name
-                 return nameCell.length > 1 && !nameCell.includes('Juleb name') && !nameCell.includes('الاسم');
-            });
-
-            allProducts = filteredRows.map(row => {
-                // إذا لم توجد أولوية، نضع Silver افتراضياً
-                let prio = (row[5] || 'Silver').trim();
-                if(!['Diamond','Platinum','Gold','Silver'].includes(prio)) prio = 'Silver';
+            // Map EVERYTHING that has a name
+            allProducts = dataRows.map(row => {
+                let prio = (row[5] || '').trim();
+                // If priority is weird or empty, label it Unknown so it shows up
+                if (!['Diamond', 'Platinum', 'Gold', 'Silver'].includes(prio)) {
+                    prio = 'Unknown'; 
+                }
 
                 return {
                     barcode: row[0] || '',
@@ -312,7 +312,7 @@ function fetchDataCSV() {
                     class: row[4] || '', 
                     priority: prio
                 };
-            }).filter(p => p.name);
+            }).filter(p => p.name && p.name.trim().length > 1 && !p.name.includes('Juleb name'));
 
             updateStats();
             renderMainCategories();
@@ -327,6 +327,7 @@ function fetchDataCSV() {
     });
 }
 
+// ================= UI RENDERING =================
 function renderMainCategories() {
     const container = document.getElementById('mainCategories');
     container.innerHTML = mainCategoriesData.map(cat => `
