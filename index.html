@@ -65,11 +65,11 @@
 
         .main-categories { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; }
         @media (min-width: 600px) { .main-categories { grid-template-columns: repeat(4, 1fr); } }
-        .main-cat-btn { background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-light) 100%); color: white; padding: 12px 10px; border-radius: 12px; text-align: center; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: all 0.3s; border: none; display: flex; flex-direction: column; align-items: center; gap: 5px; min-height: 80px; justify-content: center; }
+        .main-cat-btn { background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-light) 100%); color: white; padding: 12px 10px; border-radius: 12px; text-align: center; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: all 0.3s; border: none; display: flex; flex-direction: column; align-items: center; gap: 5px; }
         .main-cat-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(107, 45, 91, 0.3); }
         .main-cat-btn.active { box-shadow: 0 0 0 3px rgba(107, 45, 91, 0.3); transform: scale(0.98); }
         .main-cat-icon { font-size: 1.5rem; }
-        .main-cat-name { font-size: 0.7rem; line-height: 1.3; direction: ltr; }
+        .main-cat-name { font-size: 0.7rem; line-height: 1.3; }
 
         .sub-categories-wrapper { position: relative; margin-top: 10px; display: none; }
         .sub-categories-wrapper.show { display: block; }
@@ -100,13 +100,13 @@
         .card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
         .p-info { flex: 1; }
         .p-name { font-weight: 800; font-size: 0.95rem; color: var(--gray-700); line-height: 1.4; margin-bottom: 4px; }
+        .p-name-ar { font-size: 0.85rem; color: var(--maroon); font-weight: 600; margin-bottom: 4px; }
         .p-active-ingredient { font-size: 0.8rem; color: #E65100; font-weight: 600; }
         .p-badge { font-size: 0.65rem; font-weight: 800; padding: 4px 10px; border-radius: 6px; color: white; white-space: nowrap; flex-shrink: 0; }
         .bg-Diamond { background: var(--diamond); }
         .bg-Platinum { background: var(--platinum); }
         .bg-Gold { background: var(--gold); }
         .bg-Silver { background: var(--silver); }
-        .bg-R1 { background: var(--gray-500); }
 
         .p-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--gray-100); }
         .p-meta span { font-size: 0.7rem; background: var(--gray-100); padding: 4px 8px; border-radius: 5px; color: var(--gray-500); }
@@ -161,8 +161,7 @@
             <span class="cats-title">📂 تصفح حسب القسم</span>
             <span class="cats-count" id="totalCount">...</span>
         </div>
-        <div class="main-categories" id="mainCategories">
-            </div>
+        <div class="main-categories" id="mainCategories"></div>
         <div class="sub-categories-wrapper" id="subCategoriesWrapper">
             <div class="sub-categories" id="subCategories"></div>
         </div>
@@ -186,197 +185,195 @@
 <button class="scroll-top" id="scrollTop" onclick="scrollToTop()">↑</button>
 
 <script>
-// ================= إعدادات الرابط (CSV Force) =================
-// هذا الرابط يجلب البيانات "خام" ويتجاوز مشاكل العناوين
+// ================= DATA SOURCE =================
 const sheetID = '1CZHMQnkhoXCpHlehZAHuYLWdpgAx-fXgn2PXT9H72-Y';
 const csvURL = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:csv&sheet=Sheet1`;
 
-// ================= قاموس البحث العربي =================
+// ================= ORIGINAL CATEGORIES STRUCTURE =================
+// هذه هي الأقسام الثابتة التي طلبتها
+const mainCategoriesData = [
+    { id: 'vitamins', icon: '💊', name: 'الفيتامينات', subs: ['A TO Z VITAMINS', 'HAIR VITAMINS', 'BONE AND JOINTS', 'COGNITIVE HEALTH', 'IMMUNITY SUPPORT'] },
+    { id: 'pain', icon: '🩹', name: 'المسكنات', subs: ['ORAL PAIN KILLERS', 'TOPICAL PAIN KILLERS', 'ADULT SIMPLE ANALGESICS', 'PEDIATRIC SIMPLE ANALGESICS', 'MUSCLE RELAXANTS'] },
+    { id: 'stomach', icon: '🫃', name: 'المعدة والهضم', subs: ['ACIDITY & HEARTBURN', 'DIGESTIVE CARE', 'ANTIULCERANTS', 'ANTISPASMODICS', 'ANTIEMETIC', 'Laxatives'] },
+    { id: 'allergy', icon: '🤧', name: 'الحساسية والبرد', subs: ['ADULT SYSTEMIC ANTI HISTAMINES', 'NON SEDATING COLD MEDICATIONS', 'NASAL HYGIENE', 'Nasal Corticosteroids', 'SORE THROATS', 'EXPECTORANTS AND MUCOLYTICS', 'HERBAL ANTITUSSIVES'] },
+    { id: 'skin', icon: '🧴', name: 'الجلد والعناية', subs: ['BURN CARE', 'BLEACHING MEDICATIONS', 'SKIN CARE', 'ANTIFRICTIONS AND HEALING AIDS', 'TOPICAL CORTICOSTEROIDS', 'TOPICAL ANTI Itching'] },
+    { id: 'mental', icon: '🧠', name: 'الصحة النفسية', subs: ['ANTIDEPRESSANTS', 'ANTIPSYCHOTICS', 'ANTIEPILEPTICS', 'SLEEP AIDS', 'STRESS RELIEF', 'ANTI ALZhiemer '] },
+    { id: 'men', icon: '👨', name: 'صحة الرجل', subs: ['SHORT TERM ED SOLUTIONS', 'LONG TERM ED SOLUTIONS', 'PREMATURE EJACULATION'] },
+    { id: 'women', icon: '👩', name: 'صحة المرأة', subs: ['PREGNANCY CARE', 'lady Care'] },
+    { id: 'antibiotics', icon: '💉', name: 'المضادات الحيوية', subs: ['PENICILLIN COMBINATIONS', 'PENICILLIN PLAIN', 'MACROLIDES ADULT', 'MACROLIDES PAEDIATRIC', 'ANAEROBICIDES'] },
+    { id: 'others', icon: '📦', name: 'أخرى', subs: ['Oral Care', 'ARTIFICIAL TEARS ', 'CORTICOSTEROIDS EYE', 'CORTICOSTEROIDS Inhalation', 'ORAL CORTICOSTEROID ', 'DIABETES CARE', 'ENERGY BOOSTERS', 'HEART HEALTH', 'BRAIN/HEART HEALTH', 'CIRCULATORY SUPPORT', 'ANTIHAEMORRHOIDS ', 'URINARY HEALTH', 'WEIGHT CONTROL', 'HAIR TOPICALS', 'HAIR LOSS TREATMENT (Minoxidil)', 'Loca Anaethesia', 'MANUKA HONEY'] }
+];
+
+// ================= ARABIC KEYWORDS DICTIONARY =================
+// قاموس البحث العربي القديم والممتاز
 const arabicKeywords = {
     "فيتامين": ["VITAMIN", "MULTIVITAMIN", "VITA"],
-    "فيتامين د": ["VITAMIN D", "D3", "D 50", "D 10"],
-    "مسكن": ["PAIN", "PARACETAMOL", "IBUPROFEN", "DICLOFENAC"],
+    "فيتامين د": ["VITAMIN D", "D3", "D 50", "D 10", "D 5", "D 2", "D 1"],
+    "فيتامين سي": ["VITAMIN C", "VIT C", "ACEROLA"],
+    "فيتامينات": ["MULTIVITAMIN", "A TO Z", "GUMMIES"],
+    "مكملات": ["SUPPLEMENT", "VITAMIN", "OMEGA"],
+    "مسكن": ["PAIN", "PARACETAMOL", "IBUPROFEN", "DICLOFENAC", "ANALGESIC"],
     "الم": ["PAIN", "ANALGESIC"],
     "صداع": ["PARACETAMOL", "ADOL", "FEVADOL", "PANADOL"],
     "حرارة": ["PARACETAMOL", "FEVADOL", "ADOL"],
-    "معدة": ["STOMACH", "ANTACID", "OMEPRAZOLE", "NEXIUM"],
-    "قولون": ["COLON", "DUSPATALIN", "MEBEVERINE"],
-    "حساسية": ["ALLERGY", "ANTIHISTAMINE", "CETIRIZINE", "LORATADINE"],
+    "روماتيزم": ["DICLOFENAC", "VOLTAREN", "RUMAFEN"],
+    "مفاصل": ["JOINT", "GLUCOSAMINE", "COLLAGEN", "FLEXALL"],
+    "عظام": ["BONE", "CALCIUM", "VITAMIN D", "COLLAGEN"],
+    "معدة": ["STOMACH", "ANTACID", "OMEPRAZOLE", "NEXIUM", "PROTON"],
+    "حموضة": ["ACIDITY", "OMEPRAZOLE", "ESOMEPRAZOLE", "NEXIUM", "RISEK"],
+    "قرحة": ["ULCER", "OMEPRAZOLE", "PANTOPRAZOLE"],
+    "هضم": ["DIGESTIVE", "PROBIOTIC", "CHARCOAL"],
+    "امساك": ["LAXATIVE", "DUPHALAC", "MOVICOL", "GLYCERIN"],
+    "اسهال": ["CHARCOAL", "PROBIOTIC"],
+    "غثيان": ["NAUSEA", "ANTIEMETIC", "ONDANSETRON", "VOMINORE"],
+    "قولون": ["COLON", "DUSPATALIN", "MEBEVERINE", "BUSCOPAN"],
+    "حساسية": ["ALLERGY", "ANTIHISTAMINE", "CETIRIZINE", "LORATADINE", "FEXOFENADINE"],
+    "رشح": ["COLD", "RHINITIS", "CLARINASE"],
+    "زكام": ["COLD", "FLU", "CLARINASE"],
+    "انفلونزا": ["FLU", "COLD"],
     "جلد": ["SKIN", "DERMA", "CREAM", "OINTMENT"],
-    "شعر": ["HAIR", "BIOTIN", "CYSTINE", "MINOXIDIL"],
-    "اكتئاب": ["DEPRESSION", "ANTIDEPRESSANT", "ESCITALOPRAM"],
+    "حروق": ["BURN", "MEBO", "AVOMEB"],
+    "تفتيح": ["BLEACHING", "HYDROQUINONE", "AVOQUIN"],
+    "كريم": ["CREAM", "OINTMENT", "GEL"],
+    "شعر": ["HAIR", "BIOTIN", "CYSTINE", "MINOXIDIL", "FORCAPIL"],
+    "تساقط": ["HAIR LOSS", "MINOXIDIL", "REGAINE"],
+    "بيوتين": ["BIOTIN"],
+    "اكتئاب": ["DEPRESSION", "ANTIDEPRESSANT", "ESCITALOPRAM", "CIPRALEX", "PROZAC", "SEROXAT"],
+    "قلق": ["ANXIETY", "ESCITALOPRAM", "PAROXETINE"],
+    "نوم": ["SLEEP", "MELATONIN", "VALERIAN"],
+    "ارق": ["INSOMNIA", "MELATONIN", "SLEEP"],
+    "توتر": ["STRESS", "ASHWAGANDHA", "ANXIETY"],
     "انتصاب": ["ERECTILE", "TADALAFIL", "SILDENAFIL", "ED"],
+    "ضعف جنسي": ["ED", "ERECTILE", "TADALAFIL", "SILDENAFIL"],
+    "سرعة قذف": ["PREMATURE", "DAPOXETINE", "LEJAM"],
     "حمل": ["PREGNANCY", "PRENATAL", "FOLIC"],
-    "مضاد حيوي": ["ANTIBIOTIC", "AMOXICILLIN", "AZITHROMYCIN"],
+    "خصوبة": ["FERTILITY", "FERTIL"],
+    "نسائي": ["VAGINAL", "LADY", "GYNO"],
+    "فطريات": ["FUNGAL", "CANESTEN", "MICONAZOLE"],
+    "مضاد حيوي": ["ANTIBIOTIC", "AMOXICILLIN", "AZITHROMYCIN", "AUGMENTIN"],
     "التهاب": ["INFECTION", "INFLAMMATION", "ANTIBIOTIC"],
-    "سكر": ["DIABETES", "METFORMIN"],
-    "ضغط": ["BLOOD PRESSURE", "HYPERTENSION"]
+    "مناعة": ["IMMUNITY", "VITAMIN C", "ZINC", "PROPOLIS"],
+    "زنك": ["ZINC"],
+    "اوميغا": ["OMEGA"],
+    "كولاجين": ["COLLAGEN"],
+    "بروبيوتيك": ["PROBIOTIC"],
+    "طاقة": ["ENERGY", "GINSENG", "ROYAL JELLY"],
+    "عين": ["EYE", "TEARS", "OPHTHALMIC"],
+    "انف": ["NASAL", "NOSE", "SALINE"],
+    "فم": ["ORAL", "MOUTH", "DENTAL"],
+    "حلق": ["THROAT", "SORE"],
+    "كحة": ["COUGH", "EXPECTORANT", "PROSPAN"],
+    "بلغم": ["MUCUS", "MUCOLYTIC", "BROMHEXINE"],
+    "سكر": ["DIABETES", "METFORMIN", "GLUCOPHAGE"],
+    "ضغط": ["BLOOD PRESSURE", "HYPERTENSION"],
+    "كوليسترول": ["CHOLESTEROL"],
+    "قلب": ["HEART", "CARDIAC", "OMEGA"],
+    "بواسير": ["HEMORRHOID", "HEALAR", "PROCTO"],
+    "عضلات": ["MUSCLE", "RELAXANT", "RELAXON"]
 };
 
 const priorityOrder = { 'Diamond': 1, 'Platinum': 2, 'Gold': 3, 'Silver': 4, 'R1': 5, 'R2': 6 };
 
 let allProducts = [];
-let dynamicCategories = {};
 let currentPriorityFilter = 'all';
+let activeMainCategory = null;
 
 document.addEventListener('DOMContentLoaded', () => {
-    fetchDataCSV();
+    fetchDataCSV(); // This now populates allProducts from the sheet
     setupScrollToTop();
 });
 
-// دالة جلب البيانات باستخدام CSV (الحل الجذري)
+// Fetch Data via CSV
 function fetchDataCSV() {
     const listContainer = document.getElementById('productsList');
-    listContainer.innerHTML = '<div class="loading-state">جاري سحب البيانات (CSV)... ⏳</div>';
+    listContainer.innerHTML = '<div class="loading-state">جاري سحب البيانات... ⏳</div>';
     document.getElementById('resultsArea').classList.add('show');
 
     Papa.parse(csvURL, {
         download: true,
-        header: false, // لا نعتمد على العناوين لأنها قد تكون عربية وتخرب الكود
+        header: false,
         complete: function(results) {
             const rows = results.data;
-            
-            // نتخطى أول صفين (العناوين العربية والإنجليزية) ونبدأ من البيانات
-            // الصف 0 = العناوين العربية، الصف 1 = العناوين الإنجليزية، البيانات تبدأ من الصف 2
-            const dataRows = rows.slice(2); 
+            const dataRows = rows.slice(2); // Skip first 2 header rows
 
             allProducts = dataRows.map(row => {
-                // تعيين الأعمدة بالأرقام (Index) بدلاً من الأسماء
-                // العمود A=0, B=1, C=2, D=3, E=4, F=5
                 return {
-                    barcode: row[0] || '',      // Internal Reference
-                    name: row[1] || '',         // Juleb name
-                    mainCat: (row[2] || 'عام').trim(), // Category
-                    subCat: (row[3] || row[2] || 'أخرى').trim(), // SubCategory
-                    class: row[4] || '',        // Class
-                    priority: row[5] || 'Silver' // 2026_List
+                    barcode: row[0] || '',
+                    name: row[1] || '',
+                    // هنا يتم ربط العمود الثالث أو الرابع بالقسم الموجود في الكود
+                    // (SubCategory from sheet = category in code)
+                    category: (row[3] || row[2] || '').trim(), 
+                    class: row[4] || '',
+                    priority: row[5] || 'Silver'
                 };
-            }).filter(p => p.name && p.name.length > 2); // استبعاد الصفوف الفارغة
+            }).filter(p => p.name && p.name.length > 2);
 
-            // تحديث الواجهة
+            // بعد تحميل البيانات، نعرض الأقسام الثابتة والإحصائيات
             updateStats();
-            buildDynamicCategories();
-            listContainer.innerHTML = ''; 
+            renderMainCategories();
+            listContainer.innerHTML = '';
             document.getElementById('resultsArea').classList.remove('show');
-            console.log(`تم تحميل ${allProducts.length} منتج بنجاح`);
+            console.log(`تم تحميل ${allProducts.length} منتج`);
         },
         error: function(err) {
             console.error('Error:', err);
-            listContainer.innerHTML = '<div class="empty-state" style="color:red">فشل التحميل. تأكد أن الملف منشور (File > Share > Publish to web)</div>';
+            listContainer.innerHTML = '<div class="empty-state" style="color:red">فشل التحميل. تأكد من إعدادات الشيت</div>';
         }
     });
 }
 
-function buildDynamicCategories() {
-    dynamicCategories = {};
-    allProducts.forEach(p => {
-        if (!p.mainCat) return;
-        if (!dynamicCategories[p.mainCat]) dynamicCategories[p.mainCat] = new Set();
-        if(p.subCat) dynamicCategories[p.mainCat].add(p.subCat);
-    });
-
+// ================= ORIGINAL RENDER LOGIC =================
+function renderMainCategories() {
     const container = document.getElementById('mainCategories');
-    const iconsMap = {
-        'Pharma': '💊', 'Cosmetics': '🧴', 'Medication': '💉', 
-        'Vitamins': '🍊', 'Supplements': '💪', 'Mom & Baby': '👶', 'Personal Care': '🛁'
-    };
-
-    container.innerHTML = Object.keys(dynamicCategories).map(catName => {
-        let icon = '📦';
-        for (const [key, val] of Object.entries(iconsMap)) {
-            if (catName.includes(key)) icon = val;
-        }
-        return `
-            <div class="main-cat-btn" onclick="selectDynamicMainCategory('${catName}', this)">
-                <span class="main-cat-icon">${icon}</span>
-                <span class="main-cat-name">${catName}</span>
-            </div>
-        `;
-    }).join('');
-}
-
-function selectDynamicMainCategory(mainCatName, btn) {
-    document.querySelectorAll('.main-cat-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const subCats = Array.from(dynamicCategories[mainCatName]);
-    renderDynamicSubCategories(subCats);
-}
-
-function renderDynamicSubCategories(subs) {
-    const container = document.getElementById('subCategories');
-    const wrapper = document.getElementById('subCategoriesWrapper');
-    container.innerHTML = subs.map(sub => `
-        <div class="sub-cat-chip" onclick="filterByDynamicSubCat('${sub}', this)">${sub}</div>
+    container.innerHTML = mainCategoriesData.map(cat => `
+        <div class="main-cat-btn" onclick="selectMainCategory('${cat.id}', this)">
+            <span class="main-cat-icon">${cat.icon}</span>
+            <span class="main-cat-name">${cat.name}</span>
+        </div>
     `).join('');
-    wrapper.classList.add('show');
 }
 
-function filterByDynamicSubCat(subCatName, btn) {
-    document.querySelectorAll('.sub-cat-chip').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    let filtered = allProducts.filter(p => p.subCat === subCatName);
-    if (currentPriorityFilter !== 'all') {
-        filtered = filtered.filter(p => p.priority === currentPriorityFilter);
-    }
-    renderResults(filtered);
-}
-
-function performSearchLogic(val) {
-    const lowerVal = val.toLowerCase();
-    let searchTerms = [lowerVal];
-    Object.entries(arabicKeywords).forEach(([ar, en]) => {
-        if (val.includes(ar)) searchTerms = searchTerms.concat(en.map(e => e.toLowerCase()));
-    });
+function selectMainCategory(catId, btn) {
+    document.querySelectorAll('.main-cat-btn').forEach(b => b.classList.remove('active'));
     
-    let filtered = allProducts.filter(p => {
-        const searchable = `${p.name} ${p.subCat} ${p.mainCat} ${p.class} ${p.barcode}`.toLowerCase();
-        return searchTerms.some(term => searchable.includes(term));
-    });
-    
-    if (currentPriorityFilter !== 'all') filtered = filtered.filter(p => p.priority === currentPriorityFilter);
-    return filtered;
-}
-
-function renderResults(list, isSpecificSearch = false) {
-    if (!isSpecificSearch) {
-        list.sort((a, b) => (priorityOrder[a.priority] || 99) - (priorityOrder[b.priority] || 99));
-    }
-    const productsList = document.getElementById('productsList');
-    const resCount = document.getElementById('resCount');
-    document.getElementById('resultsArea').classList.add('show');
-    resCount.innerText = list.length + ' نتائج';
-    
-    if (list.length === 0) {
-        productsList.innerHTML = `<div class="empty-state">🚫 لا توجد منتجات</div>`;
+    if (activeMainCategory === catId) {
+        activeMainCategory = null;
+        document.getElementById('subCategoriesWrapper').classList.remove('show');
         return;
     }
     
-    productsList.innerHTML = list.map((p, i) => {
-        let badgeHTML = '';
-        let highlightClass = '';
-        if (isSpecificSearch && i === 0) {
-            badgeHTML = '<div class="your-search">🔍 طلبك</div>';
-            highlightClass = 'highlight-product';
-        } else if (p.priority === 'Diamond' || (i === 0 && !isSpecificSearch)) {
-            badgeHTML = '<div class="best-choice">⭐ الخيار الأفضل</div>';
-        }
-        return `
-            <div class="product-card card-${p.priority} ${highlightClass}">
-                ${badgeHTML ? `<div class="badge-container">${badgeHTML}</div>` : ''}
-                <div class="card-header">
-                    <div class="p-info">
-                        <div class="p-name">${p.name}</div>
-                        <div class="p-active-ingredient">💊 ${p.class}</div>
-                    </div>
-                    <span class="p-badge bg-${p.priority}">${p.priority}</span>
-                </div>
-                <div class="p-meta">
-                    <span>📂 ${p.subCat}</span>
-                    <span>🔢 ${p.barcode}</span>
-                </div>
-            </div>
-        `;
-    }).join('');
+    btn.classList.add('active');
+    activeMainCategory = catId;
+    
+    const category = mainCategoriesData.find(c => c.id === catId);
+    renderSubCategories(category.subs);
+}
+
+function renderSubCategories(subs) {
+    const container = document.getElementById('subCategories');
+    const wrapper = document.getElementById('subCategoriesWrapper');
+    
+    container.innerHTML = subs.map(sub => `
+        <div class="sub-cat-chip" onclick="searchByCategory('${sub}', this)">${sub}</div>
+    `).join('');
+    
+    wrapper.classList.add('show');
+}
+
+function searchByCategory(catName, btn) {
+    document.querySelectorAll('.sub-cat-chip').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    
+    document.getElementById('searchInput').value = catName;
+    
+    // الفلترة بناءً على الاسم الموجود في ملف الإكسل والمطابق للكود
+    let filtered = allProducts.filter(p => p.category === catName);
+    
+    if (currentPriorityFilter !== 'all') {
+        filtered = filtered.filter(p => p.priority === currentPriorityFilter);
+    }
+    
+    renderResults(filtered);
 }
 
 function filterByPriority(priority, btn) {
@@ -384,13 +381,35 @@ function filterByPriority(priority, btn) {
     btn.classList.add('active');
     currentPriorityFilter = priority;
     
-    const activeSubBtn = document.querySelector('.sub-cat-chip.active');
-    if (activeSubBtn) {
-        filterByDynamicSubCat(activeSubBtn.innerText, activeSubBtn);
-    } else if (document.getElementById('searchInput').value) {
-        const filtered = performSearchLogic(document.getElementById('searchInput').value);
-        renderResults(filtered);
+    const searchVal = document.getElementById('searchInput').value.trim();
+    if (searchVal) {
+        performSearch(searchVal);
     }
+}
+
+// ================= ORIGINAL SEARCH LOGIC =================
+function performSearch(val) {
+    const lowerVal = val.toLowerCase();
+    let searchTerms = [lowerVal];
+    
+    // Add Arabic keyword mappings
+    Object.entries(arabicKeywords).forEach(([ar, en]) => {
+        if (val.includes(ar)) {
+            searchTerms = searchTerms.concat(en.map(e => e.toLowerCase()));
+        }
+    });
+    
+    let filtered = allProducts.filter(p => {
+        const searchable = `${p.name} ${p.category} ${p.class} ${p.barcode}`.toLowerCase();
+        return searchTerms.some(term => searchable.includes(term));
+    });
+    
+    if (currentPriorityFilter !== 'all') {
+        filtered = filtered.filter(p => p.priority === currentPriorityFilter);
+    }
+    
+    renderResults(filtered);
+    return filtered; // Return for suggestions
 }
 
 const searchInput = document.getElementById('searchInput');
@@ -399,13 +418,14 @@ const suggestionsBox = document.getElementById('suggestions');
 searchInput.addEventListener('input', (e) => {
     const val = e.target.value.trim();
     if (val.length < 2) { suggestionsBox.classList.remove('show'); return; }
-    const matched = performSearchLogic(val).slice(0, 6);
+    
+    const matched = performSearch(val).slice(0, 6);
     if (matched.length > 0) {
         suggestionsBox.innerHTML = matched.map(p => `
             <div class="suggestion-item" onclick="showProduct('${p.barcode}')">
                 <div class="sugg-info">
                     <div class="sugg-name">${p.name}</div>
-                    <div class="sugg-cat">📂 ${p.subCat}</div>
+                    <div class="sugg-cat">💊 ${p.class} | 📂 ${p.category}</div>
                 </div>
                 <span class="sugg-priority bg-${p.priority}">${p.priority}</span>
             </div>
@@ -417,10 +437,79 @@ searchInput.addEventListener('input', (e) => {
     }
 });
 
+searchInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        const filtered = performSearch(searchInput.value);
+        renderResults(filtered);
+        suggestionsBox.classList.remove('show');
+    }
+});
+
 function showProduct(barcode) {
     const target = allProducts.find(p => p.barcode === barcode);
-    if (target) { renderResults([target], true); }
+    if (target) {
+        let siblings = allProducts.filter(p => p.category === target.category && p.barcode !== barcode);
+        siblings.sort((a, b) => (priorityOrder[a.priority] || 99) - (priorityOrder[b.priority] || 99));
+        
+        if (currentPriorityFilter !== 'all') {
+            siblings = siblings.filter(p => p.priority === currentPriorityFilter);
+        }
+        
+        renderResults([target, ...siblings], true);
+    }
     suggestionsBox.classList.remove('show');
+}
+
+function renderResults(list, isSpecificSearch = false) {
+    if (!isSpecificSearch) {
+        list.sort((a, b) => (priorityOrder[a.priority] || 99) - (priorityOrder[b.priority] || 99));
+    }
+    
+    const resultsArea = document.getElementById('resultsArea');
+    const productsList = document.getElementById('productsList');
+    const resCount = document.getElementById('resCount');
+    
+    resultsArea.classList.add('show');
+    resCount.innerText = list.length + ' نتائج';
+    
+    if (list.length === 0) {
+        productsList.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-state-icon">🔍</div>
+                <div>لا توجد نتائج مطابقة</div>
+            </div>
+        `;
+        return;
+    }
+    
+    productsList.innerHTML = list.map((p, i) => {
+        let badgeHTML = '';
+        let highlightClass = '';
+        
+        if (isSpecificSearch && i === 0) {
+            badgeHTML = '<div class="your-search">🔍 طلبك</div>';
+            highlightClass = 'highlight-product';
+        } else if (p.priority === 'Diamond' || (i === 0 && !isSpecificSearch)) {
+            badgeHTML = '<div class="best-choice">⭐ الخيار الأفضل</div>';
+        }
+        
+        return `
+            <div class="product-card card-${p.priority} ${highlightClass}">
+                ${badgeHTML ? `<div class="badge-container">${badgeHTML}</div>` : ''}
+                <div class="card-header">
+                    <div class="p-info">
+                        <div class="p-name">${p.name}</div>
+                        <div class="p-active-ingredient">💊 ${p.class}</div>
+                    </div>
+                    <span class="p-badge bg-${p.priority}">${p.priority}</span>
+                </div>
+                <div class="p-meta">
+                    <span>📂 ${p.category}</span>
+                    <span>🔢 ${p.barcode}</span>
+                </div>
+            </div>
+        `;
+    }).join('');
 }
 
 function clearSearch() {
@@ -440,10 +529,14 @@ function updateStats() {
 
 function setupScrollToTop() {
     const btn = document.getElementById('scrollTop');
-    window.addEventListener('scroll', () => { btn.classList.toggle('show', window.scrollY > 300); });
+    window.addEventListener('scroll', () => {
+        btn.classList.toggle('show', window.scrollY > 300);
+    });
 }
 
-function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 </script>
 </body>
 </html>
