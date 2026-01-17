@@ -48,8 +48,14 @@
         .sugg-name { font-weight: 700; font-size: 0.9rem; }
         .sugg-cat { font-size: 0.75rem; color: var(--gray-500); }
 
+        /* Categories Section */
+        .cats-title { font-size: 0.9rem; font-weight: 700; margin: 10px 0 5px 0; color: var(--gray-500); }
+        .cats-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 0.5rem; max-height: 300px; overflow-y: auto; }
+        .cat-chip { background: white; border: 1px solid var(--gray-200); padding: 8px 12px; border-radius: 20px; text-align: center; font-size: 0.8rem; cursor: pointer; transition: 0.2s; white-space: nowrap; flex-grow: 1; }
+        .cat-chip:hover, .cat-chip.active { border-color: var(--maroon); background: var(--maroon); color: white; font-weight: 700; }
+
         /* Results */
-        .results-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .results-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; margin-top: 1rem; }
         .results-count { font-weight: 700; color: var(--maroon); }
         .clear-btn { background: var(--gray-100); border: none; padding: 5px 12px; border-radius: 8px; cursor: pointer; font-family: 'Tajawal'; }
 
@@ -72,20 +78,8 @@
         .bg-Gold { background: var(--gold); }
         .bg-Silver { background: var(--silver); }
 
-        .p-meta { font-size: 0.8rem; color: var(--gray-500); display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 0.8rem; }
+        .p-meta { font-size: 0.8rem; color: var(--gray-500); display: flex; gap: 10px; flex-wrap: wrap; margin-top: 0.5rem; }
         .p-meta span { background: var(--gray-100); padding: 2px 8px; border-radius: 4px; }
-
-        /* Cross Sell Section inside Card */
-        .cross-sell-box { background: #FFF8E1; border: 1px dashed #F57F17; border-radius: 8px; padding: 0.75rem; margin-top: 0.5rem; display: flex; align-items: center; gap: 8px; }
-        .cs-icon { font-size: 1.2rem; }
-        .cs-text { font-size: 0.85rem; font-weight: 700; color: #E65100; }
-        .cs-list { font-weight: 400; color: #5D4037; margin-right: 5px; }
-
-        /* Quick Categories */
-        .cats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; margin-top: 1rem; }
-        .cat-chip { background: white; border: 1px solid var(--gray-100); padding: 10px; border-radius: 10px; text-align: center; font-size: 0.8rem; cursor: pointer; transition: 0.2s; }
-        .cat-chip:hover { border-color: var(--maroon); background: var(--cream); font-weight: 700; }
-        .cat-icon { display: block; font-size: 1.2rem; margin-bottom: 4px; }
 
     </style>
 </head>
@@ -103,17 +97,12 @@
 
 <main class="main-container">
     <div class="search-box">
-        <input type="text" id="searchInput" class="search-input" placeholder="ابحث باسم المنتج، الباركود، أو العرض (مثل: زكام)...">
+        <input type="text" id="searchInput" class="search-input" placeholder="ابحث باسم المنتج، الباركود، أو القسم...">
         <div class="suggestions" id="suggestions"></div>
         
-        <div class="cats-grid">
-            <div class="cat-chip" onclick="searchBySymptom('headache')"><span class="cat-icon">🤕</span>صداع</div>
-            <div class="cat-chip" onclick="searchBySymptom('cold')"><span class="cat-icon">🤧</span>زكام/برد</div>
-            <div class="cat-chip" onclick="searchBySymptom('stomach')"><span class="cat-icon">🤢</span>معدة</div>
-            <div class="cat-chip" onclick="searchBySymptom('hair')"><span class="cat-icon">💇</span>شعر</div>
-            <div class="cat-chip" onclick="searchBySymptom('pain')"><span class="cat-icon">⚡</span>ألم</div>
-            <div class="cat-chip" onclick="searchBySymptom('kids')"><span class="cat-icon">👶</span>أطفال</div>
-        </div>
+        <div class="cats-title">تصفح حسب القسم:</div>
+        <div class="cats-grid" id="categoriesContainer">
+            </div>
     </div>
 
     <div id="resultsArea" style="display: none;">
@@ -127,187 +116,163 @@
 
 <script>
     // ================= DATA =================
-    // تم توليد هذه القائمة بناءً على ملف الإكسل المرفق مع إضافة منطق Cross-Sell
+    // البيانات بدون Cross-sell
     const products = [
-        {"barcode": "5060748880192", "name": "GUMAZING ESSENTIAL PACK 2 COMBO PACK", "category": "A TO Z VITAMINS", "class": "Multivitamins Gummies", "priority": "Diamond", "crossSell": []},
-        {"barcode": "6286573000041", "name": "BENTOGESIC EMULGEL 100GM", "category": "TOPICAL PAIN KILLERS", "class": "Topical Pain Killer", "priority": "Diamond", "crossSell": ["مسكن فموي (Pills)"]},
-        {"barcode": "6286434000265", "name": "FEXOFIN 180 MG 30 TABLET", "category": "ADULT SYSTEMIC ANTI HISTAMINES", "class": "FEXOFENADINE 180 TAB", "priority": "Diamond", "crossSell": ["بخاخ تنظيف أنف (Nasal Hygiene)", "قطرات ترطيب عين"]},
-        {"barcode": "6223007353731", "name": "ACTI-COLLA 30/SACHET", "category": "BONE AND JOINTS", "class": "COLLAGEN TYPE 2", "priority": "Diamond", "crossSell": ["مسكن آلام موضعي", "فيتامين سي"]},
-        {"barcode": "8016887000158", "name": "OTOSAN NASAL WASH KIT + 30 Sachets", "category": "NASAL HYGIENE", "class": "Nasal Wash Kit", "priority": "Diamond", "crossSell": ["رافع مناعة (Immunity)", "مسكن ألم"]},
-        {"barcode": "6286573000102", "name": "BENTOMIST NASAL SPRAY 30ML", "category": "NASAL HYGIENE", "class": "Saline Spray", "priority": "Diamond", "crossSell": ["رافع مناعة (Immunity)", "مسكن ألم"]},
-        {"barcode": "8437015860695", "name": "FERTY BIOTIC 30/SACHET", "category": "COLON & DIGESTION", "class": "PROBIOTICS ADULT", "priority": "Diamond", "crossSell": ["فيتامينات شاملة"]},
-        {"barcode": "6286127000503", "name": "NHS FLORANAL 10SACHET", "category": "COLON & DIGESTION", "class": "PROBIOTICS ADULT", "priority": "Diamond", "crossSell": ["فيتامينات شاملة"]},
-        {"barcode": "3401545532105", "name": "LACTIBIANE REFERENCE 30/SACHET", "category": "COLON & DIGESTION", "class": "PROBIOTICS ADULT", "priority": "Diamond", "crossSell": ["فيتامينات شاملة"]},
-        {"barcode": "9553653984414", "name": "RICH FIBER SATCHES FRUITS & VEGETABLES 12 SACHES", "category": "WEIGHT CONTROL", "class": "FIBERS", "priority": "Diamond", "crossSell": ["فيتامينات متعددة (Multivitamins)", "بروبيوتيك"]},
-        {"barcode": "6286059000343", "name": "PALOT 60MG 6TAB", "category": "PREMATURE EJACULATION", "class": "DAPOXETINE-60", "priority": "Diamond", "crossSell": []},
-        {"barcode": "6286573000065", "name": "BENTOHEX MOUTH WASH 300ML", "category": "Oral Care", "class": "Mouth Wash", "priority": "Diamond", "crossSell": []},
-        {"barcode": "6286573000027", "name": "BENTODENT ORAL SPRAY 60ML", "category": "Oral Care", "class": "Medicated Oral Spray", "priority": "Diamond", "crossSell": []},
-        {"barcode": "6286573000010", "name": "BENTODENT ORAL GEL 20G", "category": "Oral Care", "class": "Oral Gel", "priority": "Diamond", "crossSell": []},
-        {"barcode": "925272730700", "name": "BIOVIT HERO MULTIVITAMINS 60 GUMMIES", "category": "A TO Z VITAMINS", "class": "Multivitamins Gummies", "priority": "Diamond", "crossSell": []},
-        {"barcode": "6285756004593", "name": "VITA TAB 60/CHEW.TAB", "category": "A TO Z VITAMINS", "class": "Multivitamins Chewable", "priority": "Diamond", "crossSell": []},
-        {"barcode": "835776001049", "name": "TRQ ADULT GUMMI MULTI VITAMIN 60 GUMMIES", "category": "A TO Z VITAMINS", "class": "Multivitamins Gummies", "priority": "Diamond", "crossSell": []},
-        {"barcode": "852968007405", "name": "HEBS NANO-D3 DROPS 30ML", "category": "A TO Z VITAMINS", "class": "Vitamin D Drops", "priority": "Diamond", "crossSell": []},
-        {"barcode": "8596024026703", "name": "MARTIANS CALCIUM MULTI-VITAMINS&MINERALS SYRUP 125ML", "category": "A TO Z VITAMINS", "class": "MULTIVITAMINS liquid", "priority": "Diamond", "crossSell": []},
-        {"barcode": "6286001000407", "name": "SOICARBY 40MG/1100MG 28/CAP", "category": "ACIDITY & HEARTBURN", "class": "OMEPRAZOLE/SODIUM BICARBONATE", "priority": "Diamond", "crossSell": ["بروبيوتيك (Probiotics)"]},
-        {"barcode": "6286434000128", "name": "TADIL 20MG 10TAB", "category": "SHORT TERM ED SOLUTIONS", "class": "TADALAFIL 20mg Tablet", "priority": "Diamond", "crossSell": []},
-        {"barcode": "6286085000812", "name": "SAYEN 20 MG 12 TABLETS", "category": "SHORT TERM ED SOLUTIONS", "class": "TADALAFIL 20mg Tablet", "priority": "Diamond", "crossSell": []},
-        {"barcode": "6281080015083", "name": "TEDO 20 MG 8 TAB", "category": "SHORT TERM ED SOLUTIONS", "class": "TADALAFIL 20mg Tablet", "priority": "Diamond", "crossSell": []},
-        {"barcode": "6286434000135", "name": "TADIL 5MG 30TAB", "category": "LONG TERM ED SOLUTIONS", "class": "TADALAFIL 5mg Tablet", "priority": "Diamond", "crossSell": []},
-        {"barcode": "6285128012980", "name": "DAPOX 30 MG 4 TAB", "category": "PREMATURE EJACULATION", "class": "DAPOXETINE-30", "priority": "Diamond", "crossSell": []},
-        {"barcode": "6286573000096", "name": "BENTOMIST NASAL DROP 20ML", "category": "NASAL HYGIENE", "class": "Saline Drops", "priority": "Diamond", "crossSell": ["رافع مناعة (Immunity)", "مسكن ألم"]},
-        {"barcode": "714654879771", "name": "APLE FIT PLUS 60CAP", "category": "WEIGHT CONTROL", "class": "CHITOSAN PILLS", "priority": "Diamond", "crossSell": ["فيتامينات متعددة (Multivitamins)", "بروبيوتيك"]},
-        {"barcode": "6286127000053", "name": "NHS GARCIMIUM Chewable 60 Tablet", "category": "WEIGHT CONTROL", "class": "GARCINIA", "priority": "Diamond", "crossSell": ["فيتامينات متعددة (Multivitamins)", "بروبيوتيك"]},
-        {"barcode": "4260103332941", "name": "FORMOLINE L112 60 TABLETS", "category": "WEIGHT CONTROL", "class": "ORLISTAT", "priority": "Diamond", "crossSell": ["فيتامينات متعددة (Multivitamins)", "بروبيوتيك"]},
-        {"barcode": "748515537337", "name": "BERRY CAN ZINC 120ML", "category": "IMMUNITY SUPPORT", "class": "Immunity_child", "priority": "Diamond", "crossSell": []},
-        {"barcode": "3585555024338", "name": "UPSA VITALITE ACEROLA 1000 30/CHEW.TAB", "category": "IMMUNITY SUPPORT", "class": "VITAMIN C", "priority": "Diamond", "crossSell": []},
-        {"barcode": "8058265961002", "name": "VISCOFLU 20/SACHET", "category": "HAIR VITAMINS", "class": "CYSTINE", "priority": "Diamond", "crossSell": ["فيتامينات الشعر (Biotin/Zinc)", "شامبو طبي"]},
-        {"barcode": "6286127000626", "name": "NHS CYSTINE 250MG 60/CAP", "category": "HAIR VITAMINS", "class": "CYSTINE", "priority": "Diamond", "crossSell": ["فيتامينات الشعر (Biotin/Zinc)", "شامبو طبي"]},
-        {"barcode": "9327155006888", "name": "MOTHERNEST MULTI VITAMIN BIOTIN & ZINC 60 PCS", "category": "HAIR VITAMINS", "class": "BIOTIN", "priority": "Diamond", "crossSell": ["فيتامينات الشعر (Biotin/Zinc)", "شامبو طبي"]},
-        {"barcode": "6286127000145", "name": "NHS DAILY SACH POWDER 30 PACKETS", "category": "A TO Z VITAMINS", "class": "MULTIVITAMINS", "priority": "Platinum", "crossSell": []},
-        {"barcode": "6286127000305", "name": "DAILY TAB 60 CHEWABLE TABLETS", "category": "A TO Z VITAMINS", "class": "Multivitamins Chewable", "priority": "Platinum", "crossSell": []},
-        {"barcode": "8596024009782", "name": "SPEKTRUM WELLBEING WOMEN 60CHEW TAB", "category": "A TO Z VITAMINS", "class": "MULTIVITAMINS CHEWABLE", "priority": "Platinum", "crossSell": []},
-        {"barcode": "6286001000124", "name": "BLUM-D 50000 I.U 20TAB", "category": "A TO Z VITAMINS", "class": "VITAMIN D 50k", "priority": "Platinum", "crossSell": []},
-        {"barcode": "6285128003773", "name": "PRIMA D3 50.000 IU VITAMIN 30 SOFT GEL CAPS", "category": "A TO Z VITAMINS", "class": "VITAMIN D 50k", "priority": "Platinum", "crossSell": []},
-        {"barcode": "6251107426802", "name": "DIVAD 10000 i.u VITAMIN D3 100 CAPSULES", "category": "A TO Z VITAMINS", "class": "VITAMIN D 10k", "priority": "Platinum", "crossSell": []},
-        {"barcode": "6285128022194", "name": "JP VITAMIN D3 1000 IU 90CAP", "category": "A TO Z VITAMINS", "class": "VITAMIN D 1k", "priority": "Platinum", "crossSell": []},
-        {"barcode": "5023652136267", "name": "MARTIANS MULTI VITAMINS DROPS 50ML", "category": "A TO Z VITAMINS", "class": "MULTIVITAMINS DROPS", "priority": "Platinum", "crossSell": []},
-        {"barcode": "6430030150057", "name": "RADIAN ICE COOLING GEL TUBE 150 ML", "category": "TOPICAL PAIN KILLERS", "class": "Topical Pain Killer", "priority": "Platinum", "crossSell": ["مسكن فموي (Pills)"]},
-        {"barcode": "6285095009761", "name": "AVALON ACTIVE ORIGINAL CREAM 150ML", "category": "TOPICAL PAIN KILLERS", "class": "Topical Pain Killer", "priority": "Platinum", "crossSell": ["مسكن فموي (Pills)"]},
-        {"barcode": "6287002331682", "name": "MYOLEX MASSAGE EMULGEL 100 ML", "category": "TOPICAL PAIN KILLERS", "class": "Topical Pain Killer", "priority": "Platinum", "crossSell": ["مسكن فموي (Pills)"]},
-        {"barcode": "7612797197622", "name": "VOLTAREN RETARD 100 MG 30 TABLET", "category": "ORAL PAIN KILLERS", "class": "DICLOFENAC Oral tab", "priority": "Platinum", "crossSell": ["مسكن موضعي (Cream/Gel)"]},
-        {"barcode": "6281080012181", "name": "RUMAFEN 50 MG 20 TAB", "category": "ORAL PAIN KILLERS", "class": "DICLOFENAC Oral tab", "priority": "Platinum", "crossSell": ["مسكن موضعي (Cream/Gel)"]},
-        {"barcode": "6291103730459", "name": "EMIFENAC 50 DT 20TAB", "category": "ORAL PAIN KILLERS", "class": "DICLOFENAC Oral tab", "priority": "Platinum", "crossSell": ["مسكن موضعي (Cream/Gel)"]},
-        {"barcode": "6281086010457", "name": "ROFENAC D 50MG 20TAB", "category": "ORAL PAIN KILLERS", "class": "DICLOFENAC Oral tab", "priority": "Platinum", "crossSell": ["مسكن موضعي (Cream/Gel)"]},
-        {"barcode": "6285101000041", "name": "DICLOMAX 50 20 TABLETS", "category": "ORAL PAIN KILLERS", "class": "DICLOFENAC Oral tab", "priority": "Platinum", "crossSell": ["مسكن موضعي (Cream/Gel)"]},
-        {"barcode": "6281080014222", "name": "RUMAFEN GEL 100 G", "category": "TOPICAL PAIN KILLERS", "class": "Topical Pain Killer", "priority": "Platinum", "crossSell": ["مسكن فموي (Pills)"]},
-        {"barcode": "6291103731555", "name": "GLOZAL 5 MG 30 TAB", "category": "ADULT SYSTEMIC ANTI HISTAMINES", "class": "LEVOCETIRIZINE 5mg Tab", "priority": "Platinum", "crossSell": ["بخاخ تنظيف أنف (Nasal Hygiene)", "قطرات ترطيب عين"]},
-        {"barcode": "6286434000456", "name": "LEVOZYRT 5 MG 30 TABLET", "category": "ADULT SYSTEMIC ANTI HISTAMINES", "class": "LEVOCETIRIZINE 5mg Tab", "priority": "Platinum", "crossSell": ["بخاخ تنظيف أنف (Nasal Hygiene)", "قطرات ترطيب عين"]},
-        {"barcode": "6285128000987", "name": "DESLOR 5 mg 20 TAB", "category": "ADULT SYSTEMIC ANTI HISTAMINES", "class": "DESLORATADINE 5mg Tab", "priority": "Platinum", "crossSell": ["بخاخ تنظيف أنف (Nasal Hygiene)", "قطرات ترطيب عين"]},
-        {"barcode": "6285128000260", "name": "CLARA 10 TABLETS", "category": "ADULT SYSTEMIC ANTI HISTAMINES", "class": "LORATADINE 10mg Tab", "priority": "Platinum", "crossSell": ["بخاخ تنظيف أنف (Nasal Hygiene)", "قطرات ترطيب عين"]},
-        {"barcode": "816169005080", "name": "MARINE COLLAGEN EXTRA 250 GM", "category": "BONE AND JOINTS", "class": "COLLAGEN TYPE 2", "priority": "Platinum", "crossSell": ["مسكن آلام موضعي", "فيتامين سي"]},
-        {"barcode": "618528968452", "name": "CELFLEX 60CAP", "category": "BONE AND JOINTS", "class": "GLUCOSAMINE-MSM-CHONDROITIN", "priority": "Platinum", "crossSell": ["مسكن آلام موضعي", "فيتامين سي"]},
-        {"barcode": "6285095010439", "name": "AVOMEB EXTRA OINTMENT 50G", "category": "BURN CARE", "class": "B-SITOSTEROL ointment", "priority": "Platinum", "crossSell": ["مسكن ألم", "ضمادات حروق"]},
-        {"barcode": "6285756004616", "name": "EKAFLOR 30SACHET", "category": "COLON & DIGESTION", "class": "PROBIOTICS ADULT", "priority": "Platinum", "crossSell": ["فيتامينات شاملة"]},
-        {"barcode": "3401545503877", "name": "LACTIBIANE ENFANT 30/SACHET", "category": "COLON & DIGESTION", "class": "PROBIOTICS kids", "priority": "Platinum", "crossSell": ["فيتامينات شاملة"]},
-        {"barcode": "745114769329", "name": "BIOCHARC 20/CAP", "category": "COLON & DIGESTION", "class": "CHARCOAL", "priority": "Platinum", "crossSell": ["فيتامينات شاملة"]},
-        {"barcode": "6285094000363", "name": "OMEPREX 20MG 28CAP", "category": "ACIDITY & HEARTBURN", "class": "OMEPRAZOLE 20mg", "priority": "Platinum", "crossSell": ["بروبيوتيك (Probiotics)"]},
-        {"barcode": "6281086011249", "name": "PEPTAZOL 30MG 28 CAP", "category": "ACIDITY & HEARTBURN", "class": "LANSOPRAZOLE 30 MG", "priority": "Platinum", "crossSell": ["بروبيوتيك (Probiotics)"]},
-        {"barcode": "6286434000692", "name": "ESOPOLE 40MG 28CAP", "category": "ACIDITY & HEARTBURN", "class": "ESOMEPRAZOLE 40 MG", "priority": "Platinum", "crossSell": ["بروبيوتيك (Probiotics)"]},
-        {"barcode": "6281086001356", "name": "PROTON 40MG 28TAB", "category": "ACIDITY & HEARTBURN", "class": "PANTOPRAZOLE 40 MG", "priority": "Platinum", "crossSell": ["بروبيوتيك (Probiotics)"]},
-        {"barcode": "6291100080175", "name": "RISEK 20 MG 14 CAPSULES", "category": "ACIDITY & HEARTBURN", "class": "OMEPRAZOLE 20mg", "priority": "Platinum", "crossSell": ["بروبيوتيك (Probiotics)"]},
-        {"barcode": "6285101001673", "name": "FALLAH 100 MG 4 TAB", "category": "SHORT TERM ED SOLUTIONS", "class": "SILDENAFIL 100mg Tablet", "priority": "Platinum", "crossSell": []},
-        {"barcode": "6285094000752", "name": "DEPOJOY 60MG 6TAB", "category": "PREMATURE EJACULATION", "class": "DAPOXETINE-60", "priority": "Platinum", "crossSell": []},
-        {"barcode": "6285101000683", "name": "MEGAMOX 625 MG 20 TABLETS", "category": "PENICILLIN COMBINATIONS", "class": "AMOXICILLIN-CLAV-625", "priority": "Platinum", "crossSell": ["بروبيوتيك (Probiotics) - لاستعادة المناعة"]},
-        {"barcode": "6285101000140", "name": "REMOX 500 MG 20 CAPSULES", "category": "PENICILLIN PLAIN", "class": "AMOXICILLIN-500 MG CAP", "priority": "Platinum", "crossSell": ["بروبيوتيك (Probiotics) - لاستعادة المناعة"]},
-        {"barcode": "9327155007427", "name": "MOTHERNEST MELATONIN GUMMY 60 PCS", "category": "SLEEP AIDS", "class": "MELATONIN", "priority": "Platinum", "crossSell": ["مكملات الاسترخاء (Magnesium)"]},
-        {"barcode": "64642077493", "name": "JAMIESON MELATONIN FAST DISSOLVING 3 MG 100 TAB", "category": "SLEEP AIDS", "class": "MELATONIN", "priority": "Platinum", "crossSell": ["مكملات الاسترخاء (Magnesium)"]},
-        {"barcode": "6286127000398", "name": "NHS MELATONIN STAR GUMMIES 60/PCS", "category": "SLEEP AIDS", "class": "MELATONIN", "priority": "Platinum", "crossSell": ["مكملات الاسترخاء (Magnesium)"]},
-        {"barcode": "6285128014779", "name": "JP MELATONIN 5MG 100TAB", "category": "SLEEP AIDS", "class": "MELATONIN", "priority": "Platinum", "crossSell": ["مكملات الاسترخاء (Magnesium)"]},
-        {"barcode": "8001841469829", "name": "VICKS VAPO DROPS HONEY LEMON MENTHOL 36PCS", "category": "SORE THROATS", "class": "Sore Lozenges", "priority": "Platinum", "crossSell": ["فيتامين سي (Vitamin C)", "زنك (Zinc)", "خوافض حرارة (Panadol)"]},
-        {"barcode": "8596024008433", "name": "SEPTOFORT 2MG LEMON 24TAB", "category": "SORE THROATS", "class": "Sore Lozenges", "priority": "Platinum", "crossSell": ["فيتامين سي (Vitamin C)", "زنك (Zinc)", "خوافض حرارة (Panadol)"]},
-        {"barcode": "8595165273496", "name": "SEPTOFORT 2MG 24TAB", "category": "SORE THROATS", "class": "Sore Lozenges", "priority": "Platinum", "crossSell": ["فيتامين سي (Vitamin C)", "زنك (Zinc)", "خوافض حرارة (Panadol)"]},
-        {"barcode": "9327155007410", "name": "MOTHERNEST VITAMIN C 400 MG CANDY 36 PCS", "category": "IMMUNITY SUPPORT", "class": "VITAMIN C", "priority": "Platinum", "crossSell": []},
-        {"barcode": "4029444423325", "name": "DELEBOO VIT C + ZINC RASP BERRY 90 BEANS", "category": "IMMUNITY SUPPORT", "class": "Vitamin C + Zinc Pills", "priority": "Platinum", "crossSell": []},
-        {"barcode": "766961100943", "name": "ZINC GLUCONAATE 76MG 60TAB", "category": "IMMUNITY SUPPORT", "class": "ZINC", "priority": "Platinum", "crossSell": []},
-        {"barcode": "3578830148058", "name": "FORCAPIL LOTION HAIR 150ML", "category": "HAIR TOPICALS", "class": "BIOTIN LOTION", "priority": "Platinum", "crossSell": ["فيتامينات الشعر (Biotin/Zinc)", "شامبو طبي"]},
-        {"barcode": "3578830148102", "name": "FORCAPIL HAIR SPRAY 125ML", "category": "HAIR TOPICALS", "class": "BIOTIN SPRAY", "priority": "Platinum", "crossSell": ["فيتامينات الشعر (Biotin/Zinc)", "شامبو طبي"]},
-        {"barcode": "8596024022958", "name": "VITAMIN D3 DROPS 15 ML (STADA)", "category": "A TO Z VITAMINS", "class": "VITAMIN D DROPS", "priority": "Gold", "crossSell": []},
-        {"barcode": "6286069000005", "name": "VEGGIE VITAMIN D3 5000 IU 60/CAP", "category": "A TO Z VITAMINS", "class": "VITAMIN D 5k", "priority": "Gold", "crossSell": []},
-        {"barcode": "6285128006583", "name": "PRIMA D3 2000IU VITAMIN 60 SOFTGEL CAPSULES", "category": "A TO Z VITAMINS", "class": "VITAMIN D 2k", "priority": "Gold", "crossSell": []},
-        {"barcode": "6285095009600", "name": "AVALON ACTIVE COLD SPRAY 118ML", "category": "TOPICAL PAIN KILLERS", "class": "Topical Pain Killer Spray", "priority": "Gold", "crossSell": ["مسكن فموي (Pills)"]},
-        {"barcode": "6285147003730", "name": "RAPIDUS 50 mg 20 tab", "category": "ORAL PAIN KILLERS", "class": "DICLOFENAC Oral tab", "priority": "Gold", "crossSell": ["مسكن موضعي (Cream/Gel)"]},
-        {"barcode": "6285128000376", "name": "FAST-FLAM DICLOFINAC 20 TAB", "category": "ORAL PAIN KILLERS", "class": "DICLOFENAC Oral tab", "priority": "Gold", "crossSell": ["مسكن موضعي (Cream/Gel)"]},
-        {"barcode": "6281080011023", "name": "COXICAM 7.5/30 TAB", "category": "ORAL PAIN KILLERS", "class": "MELOXICAM - 7.5 MG TAB", "priority": "Gold", "crossSell": ["مسكن موضعي (Cream/Gel)"]},
-        {"barcode": "6285147000920", "name": "DIVIDO 75 MG 20 caps", "category": "ORAL PAIN KILLERS", "class": "DICLOFENAC Oral tab", "priority": "Gold", "crossSell": ["مسكن موضعي (Cream/Gel)"]},
-        {"barcode": "6281086002513", "name": "NEORIN 5 MG 20 TABLETS", "category": "ADULT SYSTEMIC ANTI HISTAMINES", "class": "DESLORATADINE 5mg Tab", "priority": "Gold", "crossSell": ["بخاخ تنظيف أنف (Nasal Hygiene)", "قطرات ترطيب عين"]},
-        {"barcode": "6285147000234", "name": "ARTIZ 10MG 30TAB", "category": "ADULT SYSTEMIC ANTI HISTAMINES", "class": "CETIRIZINE 10 mg T", "priority": "Gold", "crossSell": ["بخاخ تنظيف أنف (Nasal Hygiene)", "قطرات ترطيب عين"]},
-        {"barcode": "6285756003626", "name": "OSTEOFLEX 60 CHEWABLE TABLETS", "category": "BONE AND JOINTS", "class": "GLUCOSAMINE-MSM-CHONDROITIN", "priority": "Gold", "crossSell": ["مسكن آلام موضعي", "فيتامين سي"]},
-        {"barcode": "6224011817219", "name": "GENUPHIL ADVANCE 30/SACHET", "category": "BONE AND JOINTS", "class": "GLUCOSAMINE-MSM-CHONDROITIN", "priority": "Gold", "crossSell": ["مسكن آلام موضعي", "فيتامين سي"]},
-        {"barcode": "6285128005326", "name": "FLEXALL ULTRA 120TAB", "category": "BONE AND JOINTS", "class": "GLUCOSAMINE-MSM-CHONDROITIN", "priority": "Gold", "crossSell": ["مسكن آلام موضعي", "فيتامين سي"]},
-        {"barcode": "9327155007786", "name": "MOTHERNEST TURMERIC 60 GUMMY", "category": "BONE AND JOINTS", "class": "CURCUMIN", "priority": "Gold", "crossSell": ["مسكن آلام موضعي", "فيتامين سي"]},
-        {"barcode": "6285128017282", "name": "PRIMA K2 100 MCG 60 CAPSULE", "category": "BONE AND JOINTS", "class": "VITAMIN K2", "priority": "Gold", "crossSell": ["مسكن آلام موضعي", "فيتامين سي"]},
-        {"barcode": "6291100082223", "name": "MEBO OINTMENT 75G", "category": "BURN CARE", "class": "B-SITOSTEROL ointment", "priority": "Gold", "crossSell": ["مسكن ألم", "ضمادات حروق"]},
-        {"barcode": "6285343001714", "name": "PROBA STICK 30 STICKS", "category": "COLON & DIGESTION", "class": "PROBIOTICS ADULT", "priority": "Gold", "crossSell": ["فيتامينات شاملة"]},
-        {"barcode": "6285104001212", "name": "PANTOLOC 40MG 30TAB", "category": "ACIDITY & HEARTBURN", "class": "PANTOPRAZOLE 40 MG", "priority": "Gold", "crossSell": ["بروبيوتيك (Probiotics)"]},
-        {"barcode": "6281086011966", "name": "PEPTAZOL 15MG 28/CAP", "category": "ACIDITY & HEARTBURN", "class": "LANSOPRAZOLE 15 MG", "priority": "Gold", "crossSell": ["بروبيوتيك (Probiotics)"]},
-        {"barcode": "6281086003480", "name": "SNAFI 20 MG 6 TAB", "category": "SHORT TERM ED SOLUTIONS", "class": "TADALAFIL 20mg Tablet", "priority": "Gold", "crossSell": []},
-        {"barcode": "6281086012970", "name": "WAFI 100/4", "category": "SHORT TERM ED SOLUTIONS", "class": "SILDENAFIL 100mg Tablet", "priority": "Gold", "crossSell": []},
-        {"barcode": "6288030000045", "name": "VEGA 100 MG", "category": "SHORT TERM ED SOLUTIONS", "class": "SILDENAFIL 100mg Tablet", "priority": "Gold", "crossSell": []},
-        {"barcode": "6285128001021", "name": "ERECTA 100 MG 4 TAB", "category": "SHORT TERM ED SOLUTIONS", "class": "SILDENAFIL 100mg Tablet", "priority": "Gold", "crossSell": []},
-        {"barcode": "6285095008719", "name": "AVIALIS 5MG 28TAB", "category": "LONG TERM ED SOLUTIONS", "class": "TADALAFIL 5mg Tablet", "priority": "Gold", "crossSell": []},
-        {"barcode": "26285157000884", "name": "HELT 5MG 30/TAB", "category": "LONG TERM ED SOLUTIONS", "class": "TADALAFIL 5mg Tablet", "priority": "Gold", "crossSell": []},
-        {"barcode": "6285128016223", "name": "REXOFIL 5 MG 30 TAB", "category": "LONG TERM ED SOLUTIONS", "class": "TADALAFIL 5mg Tablet", "priority": "Gold", "crossSell": []},
-        {"barcode": "6251107425881", "name": "TYRA 5 MG 28 TAB", "category": "LONG TERM ED SOLUTIONS", "class": "TADALAFIL 5mg Tablet", "priority": "Gold", "crossSell": []},
-        {"barcode": "6285128012973", "name": "DAPOX 60 MG 4 TAB", "category": "PREMATURE EJACULATION", "class": "DAPOXETINE-60", "priority": "Gold", "crossSell": []},
-        {"barcode": "6281086002902", "name": "LEJAM 60 MG 4 TAB", "category": "PREMATURE EJACULATION", "class": "DAPOXETINE-60", "priority": "Gold", "crossSell": []},
-        {"barcode": "6285095009839", "name": "EVOKA 30MG 4TAB", "category": "PREMATURE EJACULATION", "class": "DAPOXETINE-30", "priority": "Gold", "crossSell": []},
-        {"barcode": "6281080010545", "name": "AZIMAC 250MG 6TAB", "category": "MACROLIDES ADULT", "class": "AZITHROMYCIN TAB", "priority": "Gold", "crossSell": ["بروبيوتيك (Probiotics) - لاستعادة المناعة"]},
-        {"barcode": "6291100082605", "name": "AZOMYCIN 200MG/5ML SUSPENSION 30ML", "category": "MACROLIDES PAEDIATRIC", "class": "AZITHROMYCIN Susp", "priority": "Gold", "crossSell": ["بروبيوتيك (Probiotics) - لاستعادة المناعة"]},
-        {"barcode": "6285101000393", "name": "MEGAMOX 1G 14TAB", "category": "PENICILLIN COMBINATIONS", "class": "AMOXICILLIN-CLAV-1 GM", "priority": "Gold", "crossSell": ["بروبيوتيك (Probiotics) - لاستعادة المناعة"]},
-        {"barcode": "6291103730053", "name": "GLOCLAV 625 MG 20 F.C TABLETS", "category": "PENICILLIN COMBINATIONS", "class": "AMOXICILLIN-CLAV-625", "priority": "Gold", "crossSell": ["بروبيوتيك (Probiotics) - لاستعادة المناعة"]},
-        {"barcode": "6285101000232", "name": "MEGAMOX 312MG 100ML SUSPENSION", "category": "PENICILLIN COMBINATIONS", "class": "AMOXICILLIN-CLAV 312", "priority": "Gold", "crossSell": ["بروبيوتيك (Probiotics) - لاستعادة المناعة"]},
-        {"barcode": "6285101000485", "name": "MEGAMOX 457 MG 70ML SUSPENSION", "category": "PENICILLIN COMBINATIONS", "class": "AMOXICILLIN-CLAV-457", "priority": "Gold", "crossSell": ["بروبيوتيك (Probiotics) - لاستعادة المناعة"]},
-        {"barcode": "6281086010792", "name": "HYMOX 500 MG 20 CAPSULES", "category": "PENICILLIN PLAIN", "class": "AMOXICILLIN-500 MG CAP", "priority": "Gold", "crossSell": ["بروبيوتيك (Probiotics) - لاستعادة المناعة"]},
-        {"barcode": "6285095000089", "name": "SALINOSE BABY NASAL DROPES 20 ML AVALON", "category": "NASAL HYGIENE", "class": "Saline Drops", "priority": "Gold", "crossSell": ["رافع مناعة (Immunity)", "مسكن ألم"]},
-        {"barcode": "6285128006729", "name": "JP VALERIAN 250MG 30CAP", "category": "SLEEP AIDS", "class": "VALERIAN", "priority": "Gold", "crossSell": ["مكملات الاسترخاء (Magnesium)"]},
-        {"barcode": "6285128021487", "name": "JP SAFFRON 28MG 30CAP", "category": "SLEEP AIDS", "class": "SAFFRON", "priority": "Gold", "crossSell": ["مكملات الاسترخاء (Magnesium)"]},
-        {"barcode": "9327155007632", "name": "MOTHRNEST APPLE CIDER VINEGAR GUMMY 180G 60 CAPS", "category": "WEIGHT CONTROL", "class": "APPLE CIDER", "priority": "Gold", "crossSell": ["فيتامينات متعددة (Multivitamins)", "بروبيوتيك"]},
-        {"barcode": "6281080000874", "name": "ORAXINE MOUTHWASH 300ML", "category": "Oral Care", "class": "Mouth Wash", "priority": "Gold", "crossSell": []},
-        {"barcode": "8016887000196", "name": "OTOSAN THROAT GEL FORTE 14 *10 ml STICKS", "category": "SORE THROATS", "class": "Sore Gel", "priority": "Gold", "crossSell": ["فيتامين سي (Vitamin C)", "زنك (Zinc)", "خوافض حرارة (Panadol)"]},
-        {"barcode": "8410885077394", "name": "MARNYS PROPOLIS 1000MG 30CAP", "category": "IMMUNITY SUPPORT", "class": "propolis", "priority": "Gold", "crossSell": []},
-        {"barcode": "748515537436", "name": "VITANOOR-C 1000 20 EFF TABLETS", "category": "IMMUNITY SUPPORT", "class": "VITAMIN C", "priority": "Gold", "crossSell": []},
-        {"barcode": "6285128005364", "name": "VITA-C ZINC 60CAP", "category": "IMMUNITY SUPPORT", "class": "Vitamin C + Zinc Pills", "priority": "Gold", "crossSell": []},
-        {"barcode": "3578830123628", "name": "FORCAPIL HAIR & NAIL TONIC 180 CAPS", "category": "HAIR VITAMINS", "class": "CYSTINE", "priority": "Gold", "crossSell": ["فيتامينات الشعر (Biotin/Zinc)", "شامبو طبي"]},
-        {"barcode": "6286127000374", "name": "NHS GLOWY MAX GUMMIES 60/PCS", "category": "HAIR VITAMINS", "class": "BIOTIN", "priority": "Gold", "crossSell": ["فيتامينات الشعر (Biotin/Zinc)", "شامبو طبي"]},
-        {"barcode": "3800003304979", "name": "DONNACAP 90 CAPSULES", "category": "HAIR VITAMINS", "class": "MULTIVITAMINS", "priority": "Gold", "crossSell": ["فيتامينات الشعر (Biotin/Zinc)", "شامبو طبي"]},
-        {"barcode": "3574661047485", "name": "REGAINE 5% SPRAY 60ML", "category": "HAIR LOSS TREATMENT (Minoxidil)", "class": "MINOXIDIL 5% MEN", "priority": "Gold", "crossSell": ["فيتامينات الشعر (Biotin/Zinc)", "شامبو طبي"]},
-        {"barcode": "6286069000029", "name": "VEGGIE VITAMIN D3 50 000 IU 20 CAPS", "category": "A TO Z VITAMINS", "class": "VITAMIN D 50k", "priority": "Silver", "crossSell": []},
-        {"barcode": "6285128006552", "name": "PRIMA D3 5000 IU 60 CAP", "category": "A TO Z VITAMINS", "class": "VITAMIN D 5k", "priority": "Silver", "crossSell": []},
-        {"barcode": "6285147003396", "name": "PROF 600 MG 30 TAB", "category": "ORAL PAIN KILLERS", "class": "IBUPROFEN 600mg Tablet", "priority": "Silver", "crossSell": ["مسكن موضعي (Cream/Gel)"]},
-        {"barcode": "6281086011065", "name": "SAPOFEN 600MG 30 TAB", "category": "ORAL PAIN KILLERS", "class": "IBUPROFEN 600mg Tablet", "priority": "Silver", "crossSell": ["مسكن موضعي (Cream/Gel)"]},
-        {"barcode": "6285147003365", "name": "PROF 400 MG 30 TAB", "category": "ORAL PAIN KILLERS", "class": "IBUPROFEN 400mg Tablet", "priority": "Silver", "crossSell": ["مسكن موضعي (Cream/Gel)"]},
-        {"barcode": "6281086107638", "name": "SAPOFEN 400MG 30TAB", "category": "ORAL PAIN KILLERS", "class": "IBUPROFEN 400mg Tablet", "priority": "Silver", "crossSell": ["مسكن موضعي (Cream/Gel)"]},
-        {"barcode": "6281086010662", "name": "ROFENAC GEL 50G", "category": "TOPICAL PAIN KILLERS", "class": "Topical Pain Killer", "priority": "Silver", "crossSell": ["مسكن فموي (Pills)"]},
-        {"barcode": "6281086010532", "name": "FEVADOL PLUS 20TAB", "category": "ADULT SIMPLE ANALGESICS", "class": "PARACETAMOL/CAFFEINE", "priority": "Silver", "crossSell": []},
-        {"barcode": "6291100084555", "name": "ADOL 500MG 48/CAPLET", "category": "ADULT SIMPLE ANALGESICS", "class": "PARACETAMOL 500mg", "priority": "Silver", "crossSell": []},
-        {"barcode": "6291100085439", "name": "CHLOROHISTOL 20 TABLETS", "category": "ADULT SYSTEMIC ANTI HISTAMINES", "class": "CHLORPHENIRAMINE Tab", "priority": "Silver", "crossSell": ["بخاخ تنظيف أنف (Nasal Hygiene)", "قطرات ترطيب عين"]},
-        {"barcode": "8594177490358", "name": "HEMA GEL 30G", "category": "BURN CARE", "class": "Burn Relievers", "priority": "Silver", "crossSell": ["مسكن ألم", "ضمادات حروق"]},
-        {"barcode": "5000456007399", "name": "NEXIUM 40MG 28TAB", "category": "ACIDITY & HEARTBURN", "class": "ESOMEPRAZOLE 40 MG", "priority": "Silver", "crossSell": ["بروبيوتيك (Probiotics)"]},
-        {"barcode": "5000456007412", "name": "NEXIUM 20MG 28TAB", "category": "ACIDITY & HEARTBURN", "class": "ESOMEPRAZOLE 20mg", "priority": "Silver", "crossSell": ["بروبيوتيك (Probiotics)"]},
-        {"barcode": "6281086012895", "name": "LEJAM 30 MG 4 TAB", "category": "PREMATURE EJACULATION", "class": "DAPOXETINE-30", "priority": "Silver", "crossSell": []},
-        {"barcode": "6285128000192", "name": "AZI-ONCE 200MG/5ML SUSPENSION 22.5ML", "category": "MACROLIDES PAEDIATRIC", "class": "AZITHROMYCIN Susp", "priority": "Silver", "crossSell": ["بروبيوتيك (Probiotics) - لاستعادة المناعة"]},
-        {"barcode": "6281086011508", "name": "KLAVOX 1 G 14 TABLETS", "category": "PENICILLIN COMBINATIONS", "class": "AMOXICILLIN-CLAV-1 GM", "priority": "Silver", "crossSell": ["بروبيوتيك (Probiotics) - لاستعادة المناعة"]},
-        {"barcode": "6285095007866", "name": "CORTRIEF NASAL SPRAY 120 DOSES", "category": "Nasal Corticosteroids", "class": "Nasal Corticosteroids", "priority": "Silver", "crossSell": ["رافع مناعة (Immunity)", "مسكن ألم"]},
-        {"barcode": "6285095005374", "name": "AVOCOM AQUEOUS NASAL SPRAY 120DOSE", "category": "Nasal Corticosteroids", "class": "Nasal Corticosteroids", "priority": "Silver", "crossSell": ["رافع مناعة (Immunity)", "مسكن ألم"]},
-        {"barcode": "6281000112823", "name": "LIMITLESS SLEEP AID ORIGINAL 30/FILMS", "category": "SLEEP AIDS", "class": "MELATONIN", "priority": "Silver", "crossSell": ["مكملات الاسترخاء (Magnesium)"]},
-        {"barcode": "6285147001187", "name": "FATLOS 120 MG 80 CAPSULES", "category": "WEIGHT CONTROL", "class": "ORLISTAT", "priority": "Silver", "crossSell": ["فيتامينات متعددة (Multivitamins)", "بروبيوتيك"]},
-        {"barcode": "6285147000685", "name": "CLARITT 500MG 14TAB", "category": "MACROLIDES ADULT", "class": "Clarithromycin Tab", "priority": "R2", "crossSell": ["بروبيوتيك (Probiotics) - لاستعادة المناعة"]},
-        {"barcode": "6281086001639", "name": "ZIMAX 250MG 6CAP", "category": "MACROLIDES ADULT", "class": "AZITHROMYCIN TAB", "priority": "R2", "crossSell": ["بروبيوتيك (Probiotics) - لاستعادة المناعة"]}
+        {"barcode": "5060748880192", "name": "GUMAZING ESSENTIAL PACK 2 COMBO PACK", "category": "A TO Z VITAMINS", "class": "Multivitamins Gummies", "priority": "Diamond"},
+        {"barcode": "6286573000041", "name": "BENTOGESIC EMULGEL 100GM", "category": "TOPICAL PAIN KILLERS", "class": "Topical Pain Killer", "priority": "Diamond"},
+        {"barcode": "6286434000265", "name": "FEXOFIN 180 MG 30 TABLET", "category": "ADULT SYSTEMIC ANTI HISTAMINES", "class": "FEXOFENADINE 180 TAB", "priority": "Diamond"},
+        {"barcode": "6223007353731", "name": "ACTI-COLLA 30/SACHET", "category": "BONE AND JOINTS", "class": "COLLAGEN TYPE 2", "priority": "Diamond"},
+        {"barcode": "8016887000158", "name": "OTOSAN NASAL WASH KIT + 30 Sachets", "category": "NASAL HYGIENE", "class": "Nasal Wash Kit", "priority": "Diamond"},
+        {"barcode": "6286573000102", "name": "BENTOMIST NASAL SPRAY 30ML", "category": "NASAL HYGIENE", "class": "Saline Spray", "priority": "Diamond"},
+        {"barcode": "8437015860695", "name": "FERTY BIOTIC 30/SACHET", "category": "COLON & DIGESTION", "class": "PROBIOTICS ADULT", "priority": "Diamond"},
+        {"barcode": "6286127000503", "name": "NHS FLORANAL 10SACHET", "category": "COLON & DIGESTION", "class": "PROBIOTICS ADULT", "priority": "Diamond"},
+        {"barcode": "3401545532105", "name": "LACTIBIANE REFERENCE 30/SACHET", "category": "COLON & DIGESTION", "class": "PROBIOTICS ADULT", "priority": "Diamond"},
+        {"barcode": "9553653984414", "name": "RICH FIBER SATCHES FRUITS & VEGETABLES 12 SACHES", "category": "WEIGHT CONTROL", "class": "FIBERS", "priority": "Diamond"},
+        {"barcode": "6286059000343", "name": "PALOT 60MG 6TAB", "category": "PREMATURE EJACULATION", "class": "DAPOXETINE-60", "priority": "Diamond"},
+        {"barcode": "6286573000065", "name": "BENTOHEX MOUTH WASH 300ML", "category": "Oral Care", "class": "Mouth Wash", "priority": "Diamond"},
+        {"barcode": "6286573000027", "name": "BENTODENT ORAL SPRAY 60ML", "category": "Oral Care", "class": "Medicated Oral Spray", "priority": "Diamond"},
+        {"barcode": "6286573000010", "name": "BENTODENT ORAL GEL 20G", "category": "Oral Care", "class": "Oral Gel", "priority": "Diamond"},
+        {"barcode": "925272730700", "name": "BIOVIT HERO MULTIVITAMINS 60 GUMMIES", "category": "A TO Z VITAMINS", "class": "Multivitamins Gummies", "priority": "Diamond"},
+        {"barcode": "6285756004593", "name": "VITA TAB 60/CHEW.TAB", "category": "A TO Z VITAMINS", "class": "Multivitamins Chewable", "priority": "Diamond"},
+        {"barcode": "835776001049", "name": "TRQ ADULT GUMMI MULTI VITAMIN 60 GUMMIES", "category": "A TO Z VITAMINS", "class": "Multivitamins Gummies", "priority": "Diamond"},
+        {"barcode": "852968007405", "name": "HEBS NANO-D3 DROPS 30ML", "category": "A TO Z VITAMINS", "class": "Vitamin D Drops", "priority": "Diamond"},
+        {"barcode": "8596024026703", "name": "MARTIANS CALCIUM MULTI-VITAMINS&MINERALS SYRUP 125ML", "category": "A TO Z VITAMINS", "class": "MULTIVITAMINS liquid", "priority": "Diamond"},
+        {"barcode": "6286001000407", "name": "SOICARBY 40MG/1100MG 28/CAP", "category": "ACIDITY & HEARTBURN", "class": "OMEPRAZOLE/SODIUM BICARBONATE", "priority": "Diamond"},
+        {"barcode": "6286434000128", "name": "TADIL 20MG 10TAB", "category": "SHORT TERM ED SOLUTIONS", "class": "TADALAFIL 20mg Tablet", "priority": "Diamond"},
+        {"barcode": "6286085000812", "name": "SAYEN 20 MG 12 TABLETS", "category": "SHORT TERM ED SOLUTIONS", "class": "TADALAFIL 20mg Tablet", "priority": "Diamond"},
+        {"barcode": "6281080015083", "name": "TEDO 20 MG 8 TAB", "category": "SHORT TERM ED SOLUTIONS", "class": "TADALAFIL 20mg Tablet", "priority": "Diamond"},
+        {"barcode": "6286434000135", "name": "TADIL 5MG 30TAB", "category": "LONG TERM ED SOLUTIONS", "class": "TADALAFIL 5mg Tablet", "priority": "Diamond"},
+        {"barcode": "6285128012980", "name": "DAPOX 30 MG 4 TAB", "category": "PREMATURE EJACULATION", "class": "DAPOXETINE-30", "priority": "Diamond"},
+        {"barcode": "6286573000096", "name": "BENTOMIST NASAL DROP 20ML", "category": "NASAL HYGIENE", "class": "Saline Drops", "priority": "Diamond"},
+        {"barcode": "714654879771", "name": "APLE FIT PLUS 60CAP", "category": "WEIGHT CONTROL", "class": "CHITOSAN PILLS", "priority": "Diamond"},
+        {"barcode": "6286127000053", "name": "NHS GARCIMIUM Chewable 60 Tablet", "category": "WEIGHT CONTROL", "class": "GARCINIA", "priority": "Diamond"},
+        {"barcode": "4260103332941", "name": "FORMOLINE L112 60 TABLETS", "category": "WEIGHT CONTROL", "class": "ORLISTAT", "priority": "Diamond"},
+        {"barcode": "748515537337", "name": "BERRY CAN ZINC 120ML", "category": "IMMUNITY SUPPORT", "class": "Immunity_child", "priority": "Diamond"},
+        {"barcode": "3585555024338", "name": "UPSA VITALITE ACEROLA 1000 30/CHEW.TAB", "category": "IMMUNITY SUPPORT", "class": "VITAMIN C", "priority": "Diamond"},
+        {"barcode": "8058265961002", "name": "VISCOFLU 20/SACHET", "category": "HAIR VITAMINS", "class": "CYSTINE", "priority": "Diamond"},
+        {"barcode": "6286127000626", "name": "NHS CYSTINE 250MG 60/CAP", "category": "HAIR VITAMINS", "class": "CYSTINE", "priority": "Diamond"},
+        {"barcode": "9327155006888", "name": "MOTHERNEST MULTI VITAMIN BIOTIN & ZINC 60 PCS", "category": "HAIR VITAMINS", "class": "BIOTIN", "priority": "Diamond"},
+        {"barcode": "6286127000145", "name": "NHS DAILY SACH POWDER 30 PACKETS", "category": "A TO Z VITAMINS", "class": "MULTIVITAMINS", "priority": "Platinum"},
+        {"barcode": "6286127000305", "name": "DAILY TAB 60 CHEWABLE TABLETS", "category": "A TO Z VITAMINS", "class": "Multivitamins Chewable", "priority": "Platinum"},
+        {"barcode": "8596024009782", "name": "SPEKTRUM WELLBEING WOMEN 60CHEW TAB", "category": "A TO Z VITAMINS", "class": "MULTIVITAMINS CHEWABLE", "priority": "Platinum"},
+        {"barcode": "6286001000124", "name": "BLUM-D 50000 I.U 20TAB", "category": "A TO Z VITAMINS", "class": "VITAMIN D 50k", "priority": "Platinum"},
+        {"barcode": "6285128003773", "name": "PRIMA D3 50.000 IU VITAMIN 30 SOFT GEL CAPS", "category": "A TO Z VITAMINS", "class": "VITAMIN D 50k", "priority": "Platinum"},
+        {"barcode": "6251107426802", "name": "DIVAD 10000 i.u VITAMIN D3 100 CAPSULES", "category": "A TO Z VITAMINS", "class": "VITAMIN D 10k", "priority": "Platinum"},
+        {"barcode": "6285128022194", "name": "JP VITAMIN D3 1000 IU 90CAP", "category": "A TO Z VITAMINS", "class": "VITAMIN D 1k", "priority": "Platinum"},
+        {"barcode": "5023652136267", "name": "MARTIANS MULTI VITAMINS DROPS 50ML", "category": "A TO Z VITAMINS", "class": "MULTIVITAMINS DROPS", "priority": "Platinum"},
+        {"barcode": "6430030150057", "name": "RADIAN ICE COOLING GEL TUBE 150 ML", "category": "TOPICAL PAIN KILLERS", "class": "Topical Pain Killer", "priority": "Platinum"},
+        {"barcode": "6285095009761", "name": "AVALON ACTIVE ORIGINAL CREAM 150ML", "category": "TOPICAL PAIN KILLERS", "class": "Topical Pain Killer", "priority": "Platinum"},
+        {"barcode": "6287002331682", "name": "MYOLEX MASSAGE EMULGEL 100 ML", "category": "TOPICAL PAIN KILLERS", "class": "Topical Pain Killer", "priority": "Platinum"},
+        {"barcode": "7612797197622", "name": "VOLTAREN RETARD 100 MG 30 TABLET", "category": "ORAL PAIN KILLERS", "class": "DICLOFENAC Oral tab", "priority": "Platinum"},
+        {"barcode": "6281080012181", "name": "RUMAFEN 50 MG 20 TAB", "category": "ORAL PAIN KILLERS", "class": "DICLOFENAC Oral tab", "priority": "Platinum"},
+        {"barcode": "6291103730459", "name": "EMIFENAC 50 DT 20TAB", "category": "ORAL PAIN KILLERS", "class": "DICLOFENAC Oral tab", "priority": "Platinum"},
+        {"barcode": "6281086010457", "name": "ROFENAC D 50MG 20TAB", "category": "ORAL PAIN KILLERS", "class": "DICLOFENAC Oral tab", "priority": "Platinum"},
+        {"barcode": "6285101000041", "name": "DICLOMAX 50 20 TABLETS", "category": "ORAL PAIN KILLERS", "class": "DICLOFENAC Oral tab", "priority": "Platinum"},
+        {"barcode": "6281080014222", "name": "RUMAFEN GEL 100 G", "category": "TOPICAL PAIN KILLERS", "class": "Topical Pain Killer", "priority": "Platinum"},
+        {"barcode": "6291103731555", "name": "GLOZAL 5 MG 30 TAB", "category": "ADULT SYSTEMIC ANTI HISTAMINES", "class": "LEVOCETIRIZINE 5mg Tab", "priority": "Platinum"},
+        {"barcode": "6286434000456", "name": "LEVOZYRT 5 MG 30 TABLET", "category": "ADULT SYSTEMIC ANTI HISTAMINES", "class": "LEVOCETIRIZINE 5mg Tab", "priority": "Platinum"},
+        {"barcode": "6285128000987", "name": "DESLOR 5 mg 20 TAB", "category": "ADULT SYSTEMIC ANTI HISTAMINES", "class": "DESLORATADINE 5mg Tab", "priority": "Platinum"},
+        {"barcode": "6285128000260", "name": "CLARA 10 TABLETS", "category": "ADULT SYSTEMIC ANTI HISTAMINES", "class": "LORATADINE 10mg Tab", "priority": "Platinum"},
+        {"barcode": "816169005080", "name": "MARINE COLLAGEN EXTRA 250 GM", "category": "BONE AND JOINTS", "class": "COLLAGEN TYPE 2", "priority": "Platinum"},
+        {"barcode": "618528968452", "name": "CELFLEX 60CAP", "category": "BONE AND JOINTS", "class": "GLUCOSAMINE-MSM-CHONDROITIN", "priority": "Platinum"},
+        {"barcode": "6285095010439", "name": "AVOMEB EXTRA OINTMENT 50G", "category": "BURN CARE", "class": "B-SITOSTEROL ointment", "priority": "Platinum"},
+        {"barcode": "6285756004616", "name": "EKAFLOR 30SACHET", "category": "COLON & DIGESTION", "class": "PROBIOTICS ADULT", "priority": "Platinum"},
+        {"barcode": "3401545503877", "name": "LACTIBIANE ENFANT 30/SACHET", "category": "COLON & DIGESTION", "class": "PROBIOTICS kids", "priority": "Platinum"},
+        {"barcode": "745114769329", "name": "BIOCHARC 20/CAP", "category": "COLON & DIGESTION", "class": "CHARCOAL", "priority": "Platinum"},
+        {"barcode": "6285094000363", "name": "OMEPREX 20MG 28CAP", "category": "ACIDITY & HEARTBURN", "class": "OMEPRAZOLE 20mg", "priority": "Platinum"},
+        {"barcode": "6281086011249", "name": "PEPTAZOL 30MG 28 CAP", "category": "ACIDITY & HEARTBURN", "class": "LANSOPRAZOLE 30 MG", "priority": "Platinum"},
+        {"barcode": "6286434000692", "name": "ESOPOLE 40MG 28CAP", "category": "ACIDITY & HEARTBURN", "class": "ESOMEPRAZOLE 40 MG", "priority": "Platinum"},
+        {"barcode": "6281086001356", "name": "PROTON 40MG 28TAB", "category": "ACIDITY & HEARTBURN", "class": "PANTOPRAZOLE 40 MG", "priority": "Platinum"},
+        {"barcode": "6291100080175", "name": "RISEK 20 MG 14 CAPSULES", "category": "ACIDITY & HEARTBURN", "class": "OMEPRAZOLE 20mg", "priority": "Platinum"},
+        {"barcode": "6285101001673", "name": "FALLAH 100 MG 4 TAB", "category": "SHORT TERM ED SOLUTIONS", "class": "SILDENAFIL 100mg Tablet", "priority": "Platinum"},
+        {"barcode": "6285094000752", "name": "DEPOJOY 60MG 6TAB", "category": "PREMATURE EJACULATION", "class": "DAPOXETINE-60", "priority": "Platinum"},
+        {"barcode": "6285101000683", "name": "MEGAMOX 625 MG 20 TABLETS", "category": "PENICILLIN COMBINATIONS", "class": "AMOXICILLIN-CLAV-625", "priority": "Platinum"},
+        {"barcode": "6285101000140", "name": "REMOX 500 MG 20 CAPSULES", "category": "PENICILLIN PLAIN", "class": "AMOXICILLIN-500 MG CAP", "priority": "Platinum"},
+        {"barcode": "9327155007427", "name": "MOTHERNEST MELATONIN GUMMY 60 PCS", "category": "SLEEP AIDS", "class": "MELATONIN", "priority": "Platinum"},
+        {"barcode": "64642077493", "name": "JAMIESON MELATONIN FAST DISSOLVING 3 MG 100 TAB", "category": "SLEEP AIDS", "class": "MELATONIN", "priority": "Platinum"},
+        {"barcode": "6286127000398", "name": "NHS MELATONIN STAR GUMMIES 60/PCS", "category": "SLEEP AIDS", "class": "MELATONIN", "priority": "Platinum"},
+        {"barcode": "6285128014779", "name": "JP MELATONIN 5MG 100TAB", "category": "SLEEP AIDS", "class": "MELATONIN", "priority": "Platinum"},
+        {"barcode": "8001841469829", "name": "VICKS VAPO DROPS HONEY LEMON MENTHOL 36PCS", "category": "SORE THROATS", "class": "Sore Lozenges", "priority": "Platinum"},
+        {"barcode": "8596024008433", "name": "SEPTOFORT 2MG LEMON 24TAB", "category": "SORE THROATS", "class": "Sore Lozenges", "priority": "Platinum"},
+        {"barcode": "8595165273496", "name": "SEPTOFORT 2MG 24TAB", "category": "SORE THROATS", "class": "Sore Lozenges", "priority": "Platinum"},
+        {"barcode": "9327155007410", "name": "MOTHERNEST VITAMIN C 400 MG CANDY 36 PCS", "category": "IMMUNITY SUPPORT", "class": "VITAMIN C", "priority": "Platinum"},
+        {"barcode": "4029444423325", "name": "DELEBOO VIT C + ZINC RASP BERRY 90 BEANS", "category": "IMMUNITY SUPPORT", "class": "Vitamin C + Zinc Pills", "priority": "Platinum"},
+        {"barcode": "766961100943", "name": "ZINC GLUCONAATE 76MG 60TAB", "category": "IMMUNITY SUPPORT", "class": "ZINC", "priority": "Platinum"},
+        {"barcode": "3578830148058", "name": "FORCAPIL LOTION HAIR 150ML", "category": "HAIR TOPICALS", "class": "BIOTIN LOTION", "priority": "Platinum"},
+        {"barcode": "3578830148102", "name": "FORCAPIL HAIR SPRAY 125ML", "category": "HAIR TOPICALS", "class": "BIOTIN SPRAY", "priority": "Platinum"},
+        {"barcode": "8596024022958", "name": "VITAMIN D3 DROPS 15 ML (STADA)", "category": "A TO Z VITAMINS", "class": "VITAMIN D DROPS", "priority": "Gold"},
+        {"barcode": "6286069000005", "name": "VEGGIE VITAMIN D3 5000 IU 60/CAP", "category": "A TO Z VITAMINS", "class": "VITAMIN D 5k", "priority": "Gold"},
+        {"barcode": "6285128006583", "name": "PRIMA D3 2000IU VITAMIN 60 SOFTGEL CAPSULES", "category": "A TO Z VITAMINS", "class": "VITAMIN D 2k", "priority": "Gold"},
+        {"barcode": "6285095009600", "name": "AVALON ACTIVE COLD SPRAY 118ML", "category": "TOPICAL PAIN KILLERS", "class": "Topical Pain Killer Spray", "priority": "Gold"},
+        {"barcode": "6285147003730", "name": "RAPIDUS 50 mg 20 tab", "category": "ORAL PAIN KILLERS", "class": "DICLOFENAC Oral tab", "priority": "Gold"},
+        {"barcode": "6285128000376", "name": "FAST-FLAM DICLOFINAC 20 TAB", "category": "ORAL PAIN KILLERS", "class": "DICLOFENAC Oral tab", "priority": "Gold"},
+        {"barcode": "6281080011023", "name": "COXICAM 7.5/30 TAB", "category": "ORAL PAIN KILLERS", "class": "MELOXICAM - 7.5 MG TAB", "priority": "Gold"},
+        {"barcode": "6285147000920", "name": "DIVIDO 75 MG 20 caps", "category": "ORAL PAIN KILLERS", "class": "DICLOFENAC Oral tab", "priority": "Gold"},
+        {"barcode": "6281086002513", "name": "NEORIN 5 MG 20 TABLETS", "category": "ADULT SYSTEMIC ANTI HISTAMINES", "class": "DESLORATADINE 5mg Tab", "priority": "Gold"},
+        {"barcode": "6285147000234", "name": "ARTIZ 10MG 30TAB", "category": "ADULT SYSTEMIC ANTI HISTAMINES", "class": "CETIRIZINE 10 mg T", "priority": "Gold"},
+        {"barcode": "6285756003626", "name": "OSTEOFLEX 60 CHEWABLE TABLETS", "category": "BONE AND JOINTS", "class": "GLUCOSAMINE-MSM-CHONDROITIN", "priority": "Gold"},
+        {"barcode": "6224011817219", "name": "GENUPHIL ADVANCE 30/SACHET", "category": "BONE AND JOINTS", "class": "GLUCOSAMINE-MSM-CHONDROITIN", "priority": "Gold"},
+        {"barcode": "6285128005326", "name": "FLEXALL ULTRA 120TAB", "category": "BONE AND JOINTS", "class": "GLUCOSAMINE-MSM-CHONDROITIN", "priority": "Gold"},
+        {"barcode": "9327155007786", "name": "MOTHERNEST TURMERIC 60 GUMMY", "category": "BONE AND JOINTS", "class": "CURCUMIN", "priority": "Gold"},
+        {"barcode": "6285128017282", "name": "PRIMA K2 100 MCG 60 CAPSULE", "category": "BONE AND JOINTS", "class": "VITAMIN K2", "priority": "Gold"},
+        {"barcode": "6291100082223", "name": "MEBO OINTMENT 75G", "category": "BURN CARE", "class": "B-SITOSTEROL ointment", "priority": "Gold"},
+        {"barcode": "6285343001714", "name": "PROBA STICK 30 STICKS", "category": "COLON & DIGESTION", "class": "PROBIOTICS ADULT", "priority": "Gold"},
+        {"barcode": "6285104001212", "name": "PANTOLOC 40MG 30TAB", "category": "ACIDITY & HEARTBURN", "class": "PANTOPRAZOLE 40 MG", "priority": "Gold"},
+        {"barcode": "6281086011966", "name": "PEPTAZOL 15MG 28/CAP", "category": "ACIDITY & HEARTBURN", "class": "LANSOPRAZOLE 15 MG", "priority": "Gold"},
+        {"barcode": "6281086003480", "name": "SNAFI 20 MG 6 TAB", "category": "SHORT TERM ED SOLUTIONS", "class": "TADALAFIL 20mg Tablet", "priority": "Gold"},
+        {"barcode": "6281086012970", "name": "WAFI 100/4", "category": "SHORT TERM ED SOLUTIONS", "class": "SILDENAFIL 100mg Tablet", "priority": "Gold"},
+        {"barcode": "6288030000045", "name": "VEGA 100 MG", "category": "SHORT TERM ED SOLUTIONS", "class": "SILDENAFIL 100mg Tablet", "priority": "Gold"},
+        {"barcode": "6285128001021", "name": "ERECTA 100 MG 4 TAB", "category": "SHORT TERM ED SOLUTIONS", "class": "SILDENAFIL 100mg Tablet", "priority": "Gold"},
+        {"barcode": "6285095008719", "name": "AVIALIS 5MG 28TAB", "category": "LONG TERM ED SOLUTIONS", "class": "TADALAFIL 5mg Tablet", "priority": "Gold"},
+        {"barcode": "26285157000884", "name": "HELT 5MG 30/TAB", "category": "LONG TERM ED SOLUTIONS", "class": "TADALAFIL 5mg Tablet", "priority": "Gold"},
+        {"barcode": "6285128016223", "name": "REXOFIL 5 MG 30 TAB", "category": "LONG TERM ED SOLUTIONS", "class": "TADALAFIL 5mg Tablet", "priority": "Gold"},
+        {"barcode": "6251107425881", "name": "TYRA 5 MG 28 TAB", "category": "LONG TERM ED SOLUTIONS", "class": "TADALAFIL 5mg Tablet", "priority": "Gold"},
+        {"barcode": "6285128012973", "name": "DAPOX 60 MG 4 TAB", "category": "PREMATURE EJACULATION", "class": "DAPOXETINE-60", "priority": "Gold"},
+        {"barcode": "6281086002902", "name": "LEJAM 60 MG 4 TAB", "category": "PREMATURE EJACULATION", "class": "DAPOXETINE-60", "priority": "Gold"},
+        {"barcode": "6285095009839", "name": "EVOKA 30MG 4TAB", "category": "PREMATURE EJACULATION", "class": "DAPOXETINE-30", "priority": "Gold"},
+        {"barcode": "6281080010545", "name": "AZIMAC 250MG 6TAB", "category": "MACROLIDES ADULT", "class": "AZITHROMYCIN TAB", "priority": "Gold"},
+        {"barcode": "6291100082605", "name": "AZOMYCIN 200MG/5ML SUSPENSION 30ML", "category": "MACROLIDES PAEDIATRIC", "class": "AZITHROMYCIN Susp", "priority": "Gold"},
+        {"barcode": "6285101000393", "name": "MEGAMOX 1G 14TAB", "category": "PENICILLIN COMBINATIONS", "class": "AMOXICILLIN-CLAV-1 GM", "priority": "Gold"},
+        {"barcode": "6291103730053", "name": "GLOCLAV 625 MG 20 F.C TABLETS", "category": "PENICILLIN COMBINATIONS", "class": "AMOXICILLIN-CLAV-625", "priority": "Gold"},
+        {"barcode": "6285101000232", "name": "MEGAMOX 312MG 100ML SUSPENSION", "category": "PENICILLIN COMBINATIONS", "class": "AMOXICILLIN-CLAV 312", "priority": "Gold"},
+        {"barcode": "6285101000485", "name": "MEGAMOX 457 MG 70ML SUSPENSION", "category": "PENICILLIN COMBINATIONS", "class": "AMOXICILLIN-CLAV-457", "priority": "Gold"},
+        {"barcode": "6281086010792", "name": "HYMOX 500 MG 20 CAPSULES", "category": "PENICILLIN PLAIN", "class": "AMOXICILLIN-500 MG CAP", "priority": "Gold"},
+        {"barcode": "6285095000089", "name": "SALINOSE BABY NASAL DROPES 20 ML AVALON", "category": "NASAL HYGIENE", "class": "Saline Drops", "priority": "Gold"},
+        {"barcode": "6285128006729", "name": "JP VALERIAN 250MG 30CAP", "category": "SLEEP AIDS", "class": "VALERIAN", "priority": "Gold"},
+        {"barcode": "6285128021487", "name": "JP SAFFRON 28MG 30CAP", "category": "SLEEP AIDS", "class": "SAFFRON", "priority": "Gold"},
+        {"barcode": "9327155007632", "name": "MOTHRNEST APPLE CIDER VINEGAR GUMMY 180G 60 CAPS", "category": "WEIGHT CONTROL", "class": "APPLE CIDER", "priority": "Gold"},
+        {"barcode": "6281080000874", "name": "ORAXINE MOUTHWASH 300ML", "category": "Oral Care", "class": "Mouth Wash", "priority": "Gold"},
+        {"barcode": "8016887000196", "name": "OTOSAN THROAT GEL FORTE 14 *10 ml STICKS", "category": "SORE THROATS", "class": "Sore Gel", "priority": "Gold"},
+        {"barcode": "8410885077394", "name": "MARNYS PROPOLIS 1000MG 30CAP", "category": "IMMUNITY SUPPORT", "class": "propolis", "priority": "Gold"},
+        {"barcode": "748515537436", "name": "VITANOOR-C 1000 20 EFF TABLETS", "category": "IMMUNITY SUPPORT", "class": "VITAMIN C", "priority": "Gold"},
+        {"barcode": "6285128005364", "name": "VITA-C ZINC 60CAP", "category": "IMMUNITY SUPPORT", "class": "Vitamin C + Zinc Pills", "priority": "Gold"},
+        {"barcode": "3578830123628", "name": "FORCAPIL HAIR & NAIL TONIC 180 CAPS", "category": "HAIR VITAMINS", "class": "CYSTINE", "priority": "Gold"},
+        {"barcode": "6286127000374", "name": "NHS GLOWY MAX GUMMIES 60/PCS", "category": "HAIR VITAMINS", "class": "BIOTIN", "priority": "Gold"},
+        {"barcode": "3800003304979", "name": "DONNACAP 90 CAPSULES", "category": "HAIR VITAMINS", "class": "MULTIVITAMINS", "priority": "Gold"},
+        {"barcode": "3574661047485", "name": "REGAINE 5% SPRAY 60ML", "category": "HAIR LOSS TREATMENT (Minoxidil)", "class": "MINOXIDIL 5% MEN", "priority": "Gold"},
+        {"barcode": "6286069000029", "name": "VEGGIE VITAMIN D3 50 000 IU 20 CAPS", "category": "A TO Z VITAMINS", "class": "VITAMIN D 50k", "priority": "Silver"},
+        {"barcode": "6285128006552", "name": "PRIMA D3 5000 IU 60 CAP", "category": "A TO Z VITAMINS", "class": "VITAMIN D 5k", "priority": "Silver"},
+        {"barcode": "6285147003396", "name": "PROF 600 MG 30 TAB", "category": "ORAL PAIN KILLERS", "class": "IBUPROFEN 600mg Tablet", "priority": "Silver"},
+        {"barcode": "6281086011065", "name": "SAPOFEN 600MG 30 TAB", "category": "ORAL PAIN KILLERS", "class": "IBUPROFEN 600mg Tablet", "priority": "Silver"},
+        {"barcode": "6285147003365", "name": "PROF 400 MG 30 TAB", "category": "ORAL PAIN KILLERS", "class": "IBUPROFEN 400mg Tablet", "priority": "Silver"},
+        {"barcode": "6281086107638", "name": "SAPOFEN 400MG 30TAB", "category": "ORAL PAIN KILLERS", "class": "IBUPROFEN 400mg Tablet", "priority": "Silver"},
+        {"barcode": "6281086010662", "name": "ROFENAC GEL 50G", "category": "TOPICAL PAIN KILLERS", "class": "Topical Pain Killer", "priority": "Silver"},
+        {"barcode": "6281086010532", "name": "FEVADOL PLUS 20TAB", "category": "ADULT SIMPLE ANALGESICS", "class": "PARACETAMOL/CAFFEINE", "priority": "Silver"},
+        {"barcode": "6291100084555", "name": "ADOL 500MG 48/CAPLET", "category": "ADULT SIMPLE ANALGESICS", "class": "PARACETAMOL 500mg", "priority": "Silver"},
+        {"barcode": "6291100085439", "name": "CHLOROHISTOL 20 TABLETS", "category": "ADULT SYSTEMIC ANTI HISTAMINES", "class": "CHLORPHENIRAMINE Tab", "priority": "Silver"},
+        {"barcode": "8594177490358", "name": "HEMA GEL 30G", "category": "BURN CARE", "class": "Burn Relievers", "priority": "Silver"},
+        {"barcode": "5000456007399", "name": "NEXIUM 40MG 28TAB", "category": "ACIDITY & HEARTBURN", "class": "ESOMEPRAZOLE 40 MG", "priority": "Silver"},
+        {"barcode": "5000456007412", "name": "NEXIUM 20MG 28TAB", "category": "ACIDITY & HEARTBURN", "class": "ESOMEPRAZOLE 20mg", "priority": "Silver"},
+        {"barcode": "6281086012895", "name": "LEJAM 30 MG 4 TAB", "category": "PREMATURE EJACULATION", "class": "DAPOXETINE-30", "priority": "Silver"},
+        {"barcode": "6285128000192", "name": "AZI-ONCE 200MG/5ML SUSPENSION 22.5ML", "category": "MACROLIDES PAEDIATRIC", "class": "AZITHROMYCIN Susp", "priority": "Silver"},
+        {"barcode": "6281086011508", "name": "KLAVOX 1 G 14 TABLETS", "category": "PENICILLIN COMBINATIONS", "class": "AMOXICILLIN-CLAV-1 GM", "priority": "Silver"},
+        {"barcode": "6285095007866", "name": "CORTRIEF NASAL SPRAY 120 DOSES", "category": "Nasal Corticosteroids", "class": "Nasal Corticosteroids", "priority": "Silver"},
+        {"barcode": "6285095005374", "name": "AVOCOM AQUEOUS NASAL SPRAY 120DOSE", "category": "Nasal Corticosteroids", "class": "Nasal Corticosteroids", "priority": "Silver"},
+        {"barcode": "6281000112823", "name": "LIMITLESS SLEEP AID ORIGINAL 30/FILMS", "category": "SLEEP AIDS", "class": "MELATONIN", "priority": "Silver"},
+        {"barcode": "6285147001187", "name": "FATLOS 120 MG 80 CAPSULES", "category": "WEIGHT CONTROL", "class": "ORLISTAT", "priority": "Silver"},
+        {"barcode": "6285147000685", "name": "CLARITT 500MG 14TAB", "category": "MACROLIDES ADULT", "class": "Clarithromycin Tab", "priority": "R2"},
+        {"barcode": "6281086001639", "name": "ZIMAX 250MG 6CAP", "category": "MACROLIDES ADULT", "class": "AZITHROMYCIN TAB", "priority": "R2"}
     ];
-
-    // خريطة الأعراض الذكية
-    const symptomsMap = {
-        'headache': ['SIMPLE ANALGESICS', 'ORAL PAIN KILLERS'],
-        'صداع': ['SIMPLE ANALGESICS', 'ORAL PAIN KILLERS'],
-        'pain': ['TOPICAL PAIN KILLERS', 'ORAL PAIN KILLERS', 'BONE AND JOINTS'],
-        'ألم': ['TOPICAL PAIN KILLERS', 'ORAL PAIN KILLERS', 'BONE AND JOINTS'],
-        
-        'cold': ['IMMUNITY SUPPORT', 'SORE THROATS', 'NASAL HYGIENE', 'SIMPLE ANALGESICS'],
-        'flu': ['IMMUNITY SUPPORT', 'SIMPLE ANALGESICS'],
-        'زكام': ['NASAL HYGIENE', 'IMMUNITY SUPPORT', 'NON SEDATING COLD MEDICATIONS'],
-        'برد': ['IMMUNITY SUPPORT', 'SORE THROATS', 'NASAL HYGIENE', 'SIMPLE ANALGESICS'],
-
-        'stomach': ['ACIDITY & HEARTBURN', 'COLON & DIGESTION'],
-        'معدة': ['ACIDITY & HEARTBURN', 'COLON & DIGESTION'],
-        'colon': ['COLON & DIGESTION'],
-        'قولون': ['COLON & DIGESTION'],
-        
-        'hair': ['HAIR VITAMINS', 'HAIR LOSS TREATMENT (Minoxidil)'],
-        'شعر': ['HAIR VITAMINS', 'HAIR LOSS TREATMENT (Minoxidil)'],
-        
-        'kids': ['PEDIATRIC SIMPLE ANALGESICS', 'MACROLIDES PAEDIATRIC', 'Immunity_child'],
-        'أطفال': ['PEDIATRIC SIMPLE ANALGESICS', 'MACROLIDES PAEDIATRIC', 'Immunity_child']
-    };
 
     const priorityOrder = { 'Diamond': 1, 'Platinum': 2, 'Gold': 3, 'Silver': 4, 'R1': 5, 'R2': 6, 'Standard': 99 };
 
@@ -317,32 +282,52 @@
     const resultsArea = document.getElementById('resultsArea');
     const productsList = document.getElementById('productsList');
     const resCount = document.getElementById('resCount');
+    const categoriesContainer = document.getElementById('categoriesContainer');
 
-    // Search Handler
+    // 1. توليد أزرار الأقسام تلقائياً
+    const uniqueCategories = [...new Set(products.map(p => p.category))].sort();
+    
+    uniqueCategories.forEach(cat => {
+        const btn = document.createElement('div');
+        btn.className = 'cat-chip';
+        btn.innerText = cat;
+        btn.onclick = () => searchByCategory(cat, btn);
+        categoriesContainer.appendChild(btn);
+    });
+
+    // 2. البحث عن طريق النقر على القسم
+    function searchByCategory(catName, btnElement) {
+        // تحديث الستايل
+        document.querySelectorAll('.cat-chip').forEach(b => b.classList.remove('active'));
+        if(btnElement) btnElement.classList.add('active');
+
+        // تعبئة خانة البحث وتنفيذ الفلترة
+        searchInput.value = catName;
+        const filtered = products.filter(p => p.category === catName);
+        renderResults(filtered);
+    }
+
+    // 3. البحث النصي العادي
     searchInput.addEventListener('input', (e) => {
         const val = e.target.value.trim().toLowerCase();
+        
+        // إزالة التظليل عن الأقسام عند الكتابة
+        if(val.length > 0) document.querySelectorAll('.cat-chip').forEach(b => b.classList.remove('active'));
+
         if(val.length < 2) { suggestionsBox.classList.remove('show'); return; }
         
-        // Find matching products
-        const matchedProducts = products.filter(p => p.name.toLowerCase().includes(val) || p.barcode.includes(val)).slice(0, 5);
-        
-        // Find matching symptoms
-        const matchedSymptoms = Object.keys(symptomsMap).filter(s => s.includes(val)).slice(0, 3);
+        const matched = products.filter(p => 
+            p.name.toLowerCase().includes(val) || 
+            p.barcode.includes(val) ||
+            p.category.toLowerCase().includes(val)
+        ).slice(0, 5);
 
         let html = '';
-        matchedProducts.forEach(p => {
+        matched.forEach(p => {
             html += `<div class="suggestion-item" onclick="showProduct('${p.barcode}')">
                         <div>
                             <div class="sugg-name">${p.name}</div>
-                            <div class="sugg-cat">💊 منتج - ${p.category}</div>
-                        </div>
-                     </div>`;
-        });
-        matchedSymptoms.forEach(s => {
-            html += `<div class="suggestion-item" onclick="searchBySymptom('${s}')">
-                        <div>
-                            <div class="sugg-name">${s}</div>
-                            <div class="sugg-cat">🏥 عرض مرضي</div>
+                            <div class="sugg-cat">📂 ${p.category}</div>
                         </div>
                      </div>`;
         });
@@ -355,22 +340,6 @@
         }
     });
 
-    function searchBySymptom(symptom) {
-        searchInput.value = symptom;
-        suggestionsBox.classList.remove('show');
-        
-        const validCats = symptomsMap[symptom.toLowerCase()] || [];
-        // Filter products based on Categories OR partial match of the category name
-        const filtered = products.filter(p => {
-            // Check direct mapping
-            if(validCats.includes(p.category)) return true;
-            // Check if category name contains part of the symptom map keywords
-            return validCats.some(c => p.category.includes(c));
-        });
-
-        renderResults(filtered);
-    }
-
     function showProduct(barcode) {
         const product = products.find(p => p.barcode === barcode);
         if(product) renderResults([product]); 
@@ -378,7 +347,7 @@
     }
 
     function renderResults(list) {
-        // Sort by Priority
+        // ترتيب حسب الأولوية
         list.sort((a,b) => {
             const pA = priorityOrder[a.priority] || 99;
             const pB = priorityOrder[b.priority] || 99;
@@ -395,14 +364,6 @@
 
         let html = '';
         list.forEach(p => {
-            const crossSellHTML = p.crossSell && p.crossSell.length > 0 
-                ? `<div class="cross-sell-box">
-                     <span class="cs-icon">💡</span>
-                     <span class="cs-text">يفضل معه:</span>
-                     <span class="cs-list">${p.crossSell.join('، ')}</span>
-                   </div>` 
-                : '';
-
             html += `
             <div class="product-card card-${p.priority}">
                 <div class="card-header">
@@ -414,7 +375,6 @@
                     <span>💊 ${p.class}</span>
                     <span>🔢 ${p.barcode}</span>
                 </div>
-                ${crossSellHTML}
             </div>`;
         });
         productsList.innerHTML = html;
@@ -424,20 +384,19 @@
         searchInput.value = '';
         resultsArea.style.display = 'none';
         suggestionsBox.classList.remove('show');
+        document.querySelectorAll('.cat-chip').forEach(b => b.classList.remove('active'));
     }
 
-    // Enter key
+    // زر Enter
     searchInput.addEventListener('keypress', (e) => {
         if(e.key === 'Enter') {
-            const val = searchInput.value;
-            // Try to find if it is a barcode
-            const product = products.find(p => p.barcode === val);
-            if(product) renderResults([product]);
-            else {
-                // General search
-                const filtered = products.filter(p => p.name.toLowerCase().includes(val.toLowerCase()));
-                renderResults(filtered);
-            }
+            const val = searchInput.value.toLowerCase();
+            const filtered = products.filter(p => 
+                p.name.toLowerCase().includes(val) || 
+                p.barcode.includes(val) ||
+                p.category.toLowerCase().includes(val)
+            );
+            renderResults(filtered);
             suggestionsBox.classList.remove('show');
         }
     });
