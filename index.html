@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>الرازي - الدليل الحي (Google Sheets)</title>
+    <title>الرازي - الدليل الحي</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <style>
@@ -31,6 +31,7 @@
         .status-bar { font-size: 0.8rem; color: var(--gray-500); margin-top: 10px; display: flex; align-items: center; gap: 5px; }
         .status-dot { width: 8px; height: 8px; background: #ccc; border-radius: 50%; display: inline-block; }
         .status-dot.active { background: #4CAF50; box-shadow: 0 0 5px #4CAF50; }
+        .status-dot.error { background: #F44336; box-shadow: 0 0 5px #F44336; }
 
         .suggestions { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 0 0 12px 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 50; max-height: 300px; overflow-y: auto; display: none; margin-top: 5px; }
         .suggestions.show { display: block; }
@@ -39,7 +40,7 @@
         .sugg-name { font-weight: 700; font-size: 0.9rem; }
         .sugg-cat { font-size: 0.75rem; color: var(--gray-500); }
 
-        .cats-title { font-size: 0.9rem; font-weight: 700; margin: 15px 0 8px 0; color: var(--gray-500); }
+        .cats-title { font-size: 0.9rem; font-weight: 700; margin: 15px 0 8px 0; color: var(--gray-500); display: flex; justify-content: space-between; }
         .cats-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 0.5rem; max-height: 250px; overflow-y: auto; padding-bottom: 5px; }
         .cat-chip { background: white; border: 1px solid var(--gray-200); padding: 8px 12px; border-radius: 20px; text-align: center; font-size: 0.8rem; cursor: pointer; transition: 0.2s; white-space: nowrap; flex-grow: 1; }
         .cat-chip:hover, .cat-chip.active { border-color: var(--maroon); background: var(--maroon); color: white; font-weight: 700; }
@@ -114,9 +115,8 @@
 
 <script>
     // ================= CONFIGURATION =================
-    // ⚠️ استبدل هذا الرابط برابط الـ CSV الخاص بملف Google Sheet
-    // مثال: https://docs.google.com/spreadsheets/d/e/...../pub?output=csv
-    const SHEET_URL = "ضع_رابط_جوجل_شيت_هنا"; 
+    // تم إضافة رابط الشيت الخاص بك هنا
+    const SHEET_URL = "https://docs.google.com/spreadsheets/d/1CZHMQnkhoXCpHlehZAHuYLWdpgAx-fXgn2PXT9H72-Y/export?format=csv";
 
     // ================= LOGIC =================
     let products = [];
@@ -134,19 +134,14 @@
 
     // 1. تحميل البيانات عند فتح الصفحة
     window.addEventListener('DOMContentLoaded', () => {
-        if(SHEET_URL.includes("ضع_رابط")) {
-            statusText.innerText = "تنبيه: يجب وضع رابط Google Sheet في الكود!";
-            statusText.style.color = "red";
-            return;
-        }
-
         Papa.parse(SHEET_URL, {
             download: true,
             header: true,
+            skipEmptyLines: true,
             complete: function(results) {
                 // معالجة البيانات وتحويلها للصيغة المطلوبة
                 products = results.data
-                    .filter(row => row['Juleb name'] && row['Juleb name'].trim() !== '') // استبعاد الصفوف الفارغة
+                    .filter(row => row['Juleb name'] && row['Juleb name'].trim() !== '') 
                     .map(row => ({
                         barcode: row['Internal Reference'] || '',
                         name: row['Juleb name'] || '',
@@ -158,6 +153,7 @@
                 // تفعيل البحث
                 statusText.innerText = "تم التحديث (متصل)";
                 statusText.style.color = "green";
+                statusDot.classList.remove('error');
                 statusDot.classList.add('active');
                 searchInput.placeholder = "ابحث باسم المنتج، المادة الفعالة، أو القسم...";
                 searchInput.disabled = false;
@@ -167,8 +163,9 @@
                 generateCategories();
             },
             error: function(err) {
-                statusText.innerText = "خطأ في الاتصال بالبيانات!";
+                statusText.innerText = "خطأ! تأكد أن الشيت متاح للمشاركة (Anyone with link)";
                 statusText.style.color = "red";
+                statusDot.classList.add('error');
                 console.error("Error:", err);
             }
         });
@@ -257,7 +254,6 @@
                 badgeHTML = `<div class="your-search">🔍 طلبك (Your Search)</div>`;
                 highlightClass = 'highlight-product';
             } 
-            // المنطق المعدل: إظهار "الأفضل" مرة واحدة فقط في أعلى القائمة (إذا لم يكن هو طلب العميل نفسه)
             else if (index === (isSpecificSearch ? 1 : 0) && p.priority === 'Diamond') {
                 badgeHTML = `<div class="best-choice">⭐ الخيار الأفضل (Recommendation)</div>`;
             }
