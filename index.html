@@ -1,1789 +1,1678 @@
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
+a<!DOCTYPE html>
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rass 5 Refill Cash Patients System</title>
-    <link rel="icon" href="logo.png" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>الرازي - دليل المنتجات الذكي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <style>
         :root {
-            --primary: #561C2C;
-            --primary-light: #7a2840;
-            --primary-dark: #3d1420;
-            --accent: #8DC63F;
-            --accent-dark: #6fa329;
-            --text-dark: #333;
-            --text-light: #666;
-            --gray: #666;
-            --gray-light: #f5f5f5;
-            --white: #fff;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --info: #3b82f6;
-            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
-            --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
-            --shadow-lg: 0 8px 25px rgba(0,0,0,0.1);
-            --radius-sm: 8px;
-            --radius-md: 12px;
-            --radius-lg: 16px;
-            --radius-full: 9999px;
-            --transition: 0.3s ease;
+            --maroon: #6B2D5B;
+            --maroon-dark: #5a2550;
+            --maroon-light: #8B4D7B;
+            --olive: #5B6B2D;
+            --olive-light: #7B8B4D;
+            --green: #8DC63F;
+            --green-light: #A8D465;
+            --cream: #F9F7F4;
+            --white: #FFFFFF;
+            --gray-100: #F5F3F0;
+            --gray-200: #E8E4DF;
+            --gray-300: #D1CBC3;
+            --gray-500: #8B8580;
+            --gray-700: #4A4744;
+            
+            --diamond: #1E3A5F;
+            --diamond-bg: #E8F4FD;
+            --platinum: #2D5B4D;
+            --platinum-bg: #E8F5F0;
+            --gold: #8B6914;
+            --gold-bg: #FDF8E8;
+            --silver: #5A5A5A;
+            --silver-bg: #F0F0F0;
+            --r1: #8B2D2D;
+            --r1-bg: #FDE8E8;
         }
 
-        * { 
-            margin: 0; 
-            padding: 0; 
-            box-sizing: border-box; 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: linear-gradient(180deg, #f9f6f2 0%, #e8dccf 100%);
-            color: var(--text-dark); 
-            min-height: 100vh; 
-            padding: 20px;
-            line-height: 1.6;
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: var(--cream);
+            min-height: 100vh;
+            color: var(--gray-700);
         }
 
-        /* Toast Notifications */
-        .toast-container {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 10000;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-dark) 100%);
+            padding: 1rem 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(107, 45, 91, 0.3);
         }
 
-        .toast {
-            padding: 16px 24px;
-            border-radius: var(--radius-md);
-            color: white;
-            font-weight: 500;
-            box-shadow: var(--shadow-lg);
-            animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
+        .header-content {
+            max-width: 800px;
+            margin: 0 auto;
             display: flex;
             align-items: center;
-            gap: 10px;
-            min-width: 280px;
+            justify-content: space-between;
         }
 
-        .toast-success { background: var(--success); }
-        .toast-error { background: var(--danger); }
-        .toast-warning { background: var(--warning); }
-        .toast-info { background: var(--info); }
-
-        @keyframes slideIn {
-            from { transform: translateX(-100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
         }
 
-        @keyframes fadeOut {
-            from { opacity: 1; }
-            to { opacity: 0; }
+        .logo-img {
+            height: 50px;
+            object-fit: contain;
+            border-radius: 8px;
         }
 
-        /* Loading Overlay */
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(255,255,255,0.9);
+        .logo-placeholder {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: white;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            position: relative;
+        }
+
+        .logo-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo-text-ar {
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: white;
+            line-height: 1.2;
+        }
+
+        .logo-text-en {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.8);
+            letter-spacing: 2px;
+            text-transform: lowercase;
+        }
+
+        .header-badge {
+            background: var(--green);
+            color: var(--maroon-dark);
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        /* Main Container */
+        .main-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 1.5rem 1rem;
+        }
+
+        /* Search Section */
+        .search-section {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 25px rgba(107, 45, 91, 0.08);
+            margin-bottom: 1.5rem;
+        }
+
+        .search-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.25rem;
+            background: var(--gray-100);
+            padding: 0.35rem;
+            border-radius: 12px;
+        }
+
+        .search-tab {
+            flex: 1;
+            padding: 0.75rem 0.5rem;
+            border: none;
+            background: transparent;
+            border-radius: 10px;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--gray-500);
+            cursor: pointer;
+            transition: all 0.3s;
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 9999;
-            opacity: 0;
-            visibility: hidden;
-            transition: var(--transition);
+            gap: 0.4rem;
         }
 
-        .loading-overlay.active {
-            opacity: 1;
-            visibility: visible;
+        .search-tab.active {
+            background: var(--white);
+            color: var(--maroon);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
 
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid var(--gray-light);
-            border-top-color: var(--primary);
+        .search-tab svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Search Input */
+        .search-input-container {
+            position: relative;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            padding-right: 3rem;
+            font-size: 1rem;
+            border: 2px solid var(--gray-200);
+            border-radius: 14px;
+            font-family: 'Tajawal', sans-serif;
+            transition: all 0.3s;
+            background: var(--gray-100);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--maroon);
+            background: var(--white);
+            box-shadow: 0 0 0 4px rgba(107, 45, 91, 0.1);
+        }
+
+        .search-input::placeholder {
+            color: var(--gray-500);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 1rem;
+            color: var(--gray-500);
+            pointer-events: none;
+        }
+
+        .search-icon svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        /* Autocomplete Dropdown */
+        .autocomplete-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            right: 0;
+            background: var(--white);
+            border-radius: 14px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            z-index: 100;
+            max-height: 350px;
+            overflow-y: auto;
+            display: none;
+            border: 1px solid var(--gray-200);
+        }
+
+        .autocomplete-dropdown.show {
+            display: block;
+            animation: slideDown 0.2s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .autocomplete-section {
+            padding: 0.5rem 0;
+        }
+
+        .autocomplete-section:not(:last-child) {
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .autocomplete-section-title {
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .autocomplete-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: background 0.2s;
+        }
+
+        .autocomplete-item:hover, .autocomplete-item.selected {
+            background: var(--gray-100);
+        }
+
+        .autocomplete-item-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .autocomplete-item-icon.product {
+            background: var(--maroon);
+            background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-light) 100%);
+            color: white;
+        }
+
+        .autocomplete-item-icon.symptom {
+            background: var(--green);
+            color: var(--maroon-dark);
+        }
+
+        .autocomplete-item-icon.category {
+            background: var(--olive);
+            color: white;
+        }
+
+        .autocomplete-item-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .autocomplete-item-name {
+            font-weight: 600;
+            color: var(--gray-700);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .autocomplete-item-name mark {
+            background: var(--gold-bg);
+            color: var(--gold);
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+
+        .autocomplete-item-sub {
+            font-size: 0.8rem;
+            color: var(--gray-500);
+        }
+
+        .autocomplete-item-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        /* Scanner Section */
+        .scanner-section {
+            display: none;
+        }
+
+        .scanner-section.active {
+            display: block;
+        }
+
+        .scanner-container {
+            background: var(--gray-700);
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            aspect-ratio: 4/3;
+            max-height: 300px;
+        }
+
+        #scanner-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .scanner-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+        }
+
+        .scanner-frame {
+            width: 70%;
+            max-width: 250px;
+            aspect-ratio: 3/1;
+            border: 3px solid var(--green);
+            border-radius: 12px;
+            box-shadow: 0 0 0 9999px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+        .scanner-frame::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--green);
+            animation: scanLine 2s infinite;
+        }
+
+        @keyframes scanLine {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .scanner-hint {
+            text-align: center;
+            padding: 1rem;
+            color: var(--gray-500);
+            font-size: 0.9rem;
+        }
+
+        .scanner-hint svg {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 0.5rem;
+            color: var(--maroon);
+        }
+
+        /* Manual Barcode Input */
+        .barcode-manual {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .barcode-manual-label {
+            font-size: 0.85rem;
+            color: var(--gray-500);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .barcode-input-wrapper {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .barcode-input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            border: 2px solid var(--gray-200);
+            border-radius: 10px;
+            font-family: 'Tajawal', monospace;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+
+        .barcode-input:focus {
+            outline: none;
+            border-color: var(--maroon);
+        }
+
+        .barcode-submit {
+            padding: 0.75rem 1.5rem;
+            background: var(--maroon);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Tajawal', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .barcode-submit:hover {
+            background: var(--maroon-dark);
+        }
+
+        /* Symptoms Quick Access */
+        .symptoms-section {
+            margin-top: 1.25rem;
+            padding-top: 1.25rem;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .symptoms-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--gray-500);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .symptoms-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .symptom-chip {
+            padding: 0.5rem 1rem;
+            background: var(--gray-100);
+            border: 1px solid var(--gray-200);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--gray-700);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .symptom-chip:hover {
+            background: var(--green);
+            border-color: var(--green);
+            color: var(--maroon-dark);
+            transform: translateY(-2px);
+        }
+
+        .symptom-chip svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Results Section */
+        .results-section {
+            display: none;
+        }
+
+        .results-section.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .results-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .results-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--maroon);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .results-count {
+            background: var(--maroon);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .results-clear {
+            padding: 0.5rem 1rem;
+            background: var(--gray-100);
+            border: none;
+            border-radius: 8px;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 0.85rem;
+            color: var(--gray-500);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .results-clear:hover {
+            background: var(--gray-200);
+            color: var(--gray-700);
+        }
+
+        /* Current Product Card */
+        .current-product {
+            background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-light) 100%);
+            border-radius: 16px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .current-product-label {
+            font-size: 0.75rem;
+            opacity: 0.8;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .current-product-name {
+            font-size: 1.2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .current-product-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .current-product-details span {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .current-product-priority {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.35rem 0.75rem;
+            background: rgba(255,255,255,0.2);
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            margin-top: 0.75rem;
+        }
+
+        /* Alternatives Section */
+        .alternatives-section {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 1.25rem;
+            box-shadow: 0 4px 25px rgba(107, 45, 91, 0.08);
+        }
+
+        .alternatives-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .alternatives-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--olive);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .alternatives-title svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Product Cards */
+        .product-card {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: 12px;
+            background: var(--gray-100);
+            margin-bottom: 0.75rem;
+            transition: all 0.2s;
+            cursor: pointer;
+            border-right: 4px solid transparent;
+        }
+
+        .product-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .product-card:hover {
+            background: var(--gray-200);
+            transform: translateX(-4px);
+        }
+
+        .product-card.diamond {
+            border-right-color: var(--diamond);
+            background: var(--diamond-bg);
+        }
+
+        .product-card.platinum {
+            border-right-color: var(--platinum);
+            background: var(--platinum-bg);
+        }
+
+        .product-card.gold {
+            border-right-color: var(--gold);
+            background: var(--gold-bg);
+        }
+
+        .product-card.silver {
+            border-right-color: var(--silver);
+            background: var(--silver-bg);
+        }
+
+        .product-card.r1, .product-card.r2 {
+            border-right-color: var(--r1);
+            background: var(--r1-bg);
+        }
+
+        .product-rank {
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
-            animation: spin 1s linear infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .product-card.diamond .product-rank {
+            background: var(--diamond);
+            color: white;
+        }
+
+        .product-card.platinum .product-rank {
+            background: var(--platinum);
+            color: white;
+        }
+
+        .product-card.gold .product-rank {
+            background: var(--gold);
+            color: white;
+        }
+
+        .product-card.silver .product-rank {
+            background: var(--silver);
+            color: white;
+        }
+
+        .product-card.r1 .product-rank,
+        .product-card.r2 .product-rank {
+            background: var(--r1);
+            color: white;
+        }
+
+        .product-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .product-name {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--gray-700);
+            margin-bottom: 0.25rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .product-meta {
+            font-size: 0.8rem;
+            color: var(--gray-500);
+        }
+
+        .product-priority-badge {
+            padding: 0.35rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .product-priority-badge.diamond {
+            background: var(--diamond);
+            color: white;
+        }
+
+        .product-priority-badge.platinum {
+            background: var(--platinum);
+            color: white;
+        }
+
+        .product-priority-badge.gold {
+            background: var(--gold);
+            color: white;
+        }
+
+        .product-priority-badge.silver {
+            background: var(--silver);
+            color: white;
+        }
+
+        .product-priority-badge.r1,
+        .product-priority-badge.r2 {
+            background: var(--r1);
+            color: white;
+        }
+
+        .best-choice-badge {
+            background: var(--green);
+            color: var(--maroon-dark);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            margin-right: 0.5rem;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--gray-500);
+        }
+
+        .empty-state svg {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 1rem;
+            opacity: 0.4;
+        }
+
+        .empty-state h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: var(--gray-700);
+        }
+
+        /* Loading State */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            gap: 0.5rem;
+            color: var(--maroon);
+        }
+
+        .loading-spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid var(--gray-200);
+            border-top-color: var(--maroon);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
         }
 
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
 
-        .container { 
-            max-width: 1200px; 
-            margin: 0 auto; 
-        }
-
-        /* Header */
-        .header-container { 
-            text-align: center; 
-            margin-bottom: 25px; 
-        }
-
-        .logo-img { 
-            height: 90px; 
-            margin-bottom: 15px; 
-            filter: drop-shadow(0 2px 4px rgba(86, 28, 44, 0.2)); 
-        }
-
-        h1 { 
-            color: var(--primary); 
-            margin-bottom: 10px; 
-            font-weight: 700; 
-        }
-
-        /* Tabs */
-        .tabs { 
-            display: flex; 
-            justify-content: center; 
-            gap: 10px; 
-            margin-bottom: 25px; 
-            flex-wrap: wrap; 
-        }
-
-        .tab { 
-            background: rgba(255, 255, 255, 0.7); 
-            border: none; 
-            padding: 12px 30px; 
-            border-radius: var(--radius-full); 
-            cursor: pointer; 
-            font-weight: bold; 
-            color: var(--gray); 
-            transition: var(--transition); 
-            box-shadow: var(--shadow-sm);
-        }
-
-        .tab.active { 
-            background: var(--primary); 
-            color: white; 
-            box-shadow: 0 4px 10px rgba(86, 28, 44, 0.3); 
-        }
-
-        .tab:hover:not(.active) { 
-            background: white; 
-            transform: translateY(-2px);
-        }
-
-        /* Pages */
-        .page { 
-            display: none; 
-            animation: fadeIn 0.3s ease; 
-        }
-
-        .page.active { 
-            display: block; 
-        }
-
-        @keyframes fadeIn { 
-            from { opacity: 0; transform: translateY(5px); } 
-            to { opacity: 1; transform: translateY(0); } 
-        }
-
-        /* Grid Layout */
-        .grid { 
-            display: grid; 
-            grid-template-columns: 350px 1fr; 
-            gap: 20px; 
-        }
-
-        @media (max-width: 900px) { 
-            .grid { grid-template-columns: 1fr; } 
-        }
-
-        /* Cards */
-        .card { 
-            background: var(--white); 
-            border-radius: var(--radius-lg); 
-            padding: 25px; 
-            margin-bottom: 20px; 
-            box-shadow: var(--shadow-lg); 
-        }
-
-        .card-title {
-            color: var(--primary);
-            margin-bottom: 20px;
-            font-size: 18px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        /* Form Elements */
-        .form-group { 
-            margin-bottom: 15px; 
-        }
-
-        label { 
-            display: block; 
-            margin-bottom: 6px; 
-            color: #555; 
-            font-size: 14px; 
-            font-weight: 600; 
-        }
-
-        input, select { 
-            width: 100%; 
-            padding: 12px 14px; 
-            background: #fafafa; 
-            border: 2px solid #e5e5e5; 
-            border-radius: var(--radius-sm); 
-            color: #333; 
-            font-size: 14px; 
-            transition: var(--transition); 
-        }
-
-        input:focus, select:focus { 
-            outline: none; 
-            border-color: var(--primary); 
-            box-shadow: 0 0 0 3px rgba(86, 28, 44, 0.1); 
-            background: white; 
-        }
-
-        input.error {
-            border-color: var(--danger);
-            background: #fef2f2;
-        }
-
-        .error-message {
-            color: var(--danger);
-            font-size: 12px;
-            margin-top: 4px;
-            display: none;
-        }
-
-        .error-message.show {
-            display: block;
-        }
-
-        .row { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 10px; 
-        }
-
-        /* Buttons */
-        .btn { 
-            padding: 12px 20px; 
-            border: none; 
-            border-radius: var(--radius-sm); 
-            cursor: pointer; 
-            font-size: 14px; 
-            font-weight: bold; 
-            width: 100%; 
-            margin-top: 10px; 
-            transition: var(--transition);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .btn-primary { 
-            background: var(--primary); 
-            color: white; 
-        }
-
-        .btn-primary:hover:not(:disabled) { 
-            background: var(--primary-light);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .btn-secondary { 
-            background: #6c757d; 
-            color: white; 
-        }
-
-        .btn-secondary:hover:not(:disabled) { 
-            background: #5a6268; 
-        }
-
-        .btn:disabled { 
-            opacity: 0.6; 
-            cursor: not-allowed; 
-            transform: none !important;
-        }
-
-        .btn-sm { 
-            padding: 8px 16px; 
-            width: auto; 
-            margin: 0; 
-        }
-
-        /* Tables */
-        .table-container {
-            overflow-x: auto;
-            margin-top: 15px;
-        }
-
-        table { 
-            width: 100%; 
-            border-collapse: separate; 
-            border-spacing: 0; 
-        }
-
-        th { 
-            text-align: left; 
-            padding: 15px; 
-            background: #f9f9f9; 
-            color: var(--gray); 
-            font-size: 12px; 
-            text-transform: uppercase; 
-            border-bottom: 2px solid #eee;
-            white-space: nowrap;
-        }
-
-        td { 
-            padding: 15px; 
-            border-bottom: 1px solid #eee; 
-            vertical-align: middle; 
-        }
-
-        tr:hover { 
-            background: #fcfcfc; 
-        }
-
-        .name { 
-            font-weight: bold; 
-            color: var(--primary); 
-        }
-
-        .phone { 
-            color: #888; 
-            font-size: 13px; 
-            margin-top: 2px;
-        }
-
-        .med { 
-            color: var(--primary); 
-            font-weight: 500; 
-        }
-
-        /* Badges */
-        .badge { 
-            padding: 6px 14px; 
-            border-radius: var(--radius-full); 
-            font-size: 11px; 
-            font-weight: bold; 
-            letter-spacing: 0.5px;
-            white-space: nowrap;
-        }
-
-        .badge-ok { 
-            background: rgba(141, 198, 63, 0.15); 
-            color: var(--accent-dark); 
-        }
-
-        .badge-warn { 
-            background: rgba(245,158,11,0.15); 
-            color: #d97706; 
-        }
-
-        .badge-danger { 
-            background: rgba(239,68,68,0.15); 
-            color: #dc2626; 
-        }
-
-        /* Actions */
-        .actions { 
-            display: flex; 
-            gap: 8px; 
-        }
-
-        .actions button { 
-            width: 36px; 
-            height: 36px; 
-            border: none; 
-            border-radius: 10px; 
-            cursor: pointer; 
-            font-size: 16px; 
-            transition: var(--transition); 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-        }
-
-        .wa { background: #25D366; color: white; }
-        .edit { background: rgba(86, 28, 44, 0.1); color: var(--primary); }
-        .del { background: rgba(239,68,68,0.1); color: #ef4444; }
-
-        .actions button:hover { 
-            transform: translateY(-2px); 
-            box-shadow: var(--shadow-sm);
-        }
-
-        .empty { 
-            text-align: center; 
-            padding: 50px; 
-            color: #aaa; 
-            font-style: italic; 
-        }
-
-        /* Stats */
-        .stats { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); 
-            gap: 15px; 
-            margin-bottom: 25px; 
-        }
-
-        .stat { 
-            background: white; 
-            padding: 20px; 
-            border-radius: var(--radius-md); 
-            box-shadow: var(--shadow-md); 
-            position: relative; 
-            overflow: hidden; 
-        }
-
-        .stat::after { 
-            content: ''; 
-            position: absolute; 
-            left: 0; 
-            top: 0; 
-            bottom: 0; 
-            width: 4px; 
-            background: var(--gray); 
-        }
-
-        .stat-num { 
-            font-size: 32px; 
-            font-weight: 800; 
-            color: var(--text-dark); 
-        }
-
-        .stat-label { 
-            color: #888; 
-            font-size: 13px; 
-            text-transform: uppercase; 
-            letter-spacing: 0.5px; 
-            margin-top: 5px; 
-        }
-
-        .stat.total::after { background: var(--primary); }
-        .stat.w::after { background: #f59e0b; }
-        .stat.d::after { background: #ef4444; }
-        .stat.s::after { background: var(--accent); }
-
-        /* Sync Status */
-        .sync { 
-            text-align: center; 
-            padding: 10px 16px; 
-            font-size: 13px; 
-            margin-bottom: 15px; 
-            border-radius: var(--radius-sm); 
-            background: rgba(255,255,255,0.9);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .sync-ok { 
-            color: var(--accent-dark); 
-            border: 1px solid rgba(141, 198, 63, 0.3); 
-        }
-
-        .sync-err { 
-            color: #ef4444; 
-            border: 1px solid rgba(239,68,68,0.3); 
-        }
-
-        /* Pagination */
-        .pagination {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-
-        .pagination button {
-            padding: 8px 14px;
-            border: 1px solid #ddd;
-            background: white;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            transition: var(--transition);
-            font-weight: 500;
-        }
-
-        .pagination button:hover:not(:disabled) {
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-
-        .pagination button.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        .pagination button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .pagination-info {
-            color: var(--gray);
-            font-size: 13px;
-        }
-
-        /* Tracking Cards */
-        .track-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
-            gap: 15px; 
-        }
-
-        .track-card { 
-            background: white; 
-            border: 2px solid #eee; 
-            border-radius: var(--radius-md); 
-            padding: 20px; 
-            transition: var(--transition); 
-            box-shadow: var(--shadow-sm); 
-        }
-
-        .track-card:hover { 
-            border-color: var(--primary); 
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .track-card.converted { 
-            border-color: var(--accent); 
-            background: rgba(141, 198, 63, 0.05); 
-        }
+        /* Responsive */
+        @media (max-width: 640px) {
+            .header {
+                padding: 0.75rem 1rem;
+            }
 
-        .track-card .name { 
-            font-size: 16px; 
-            margin-bottom: 5px; 
-            color: #333; 
-        }
-
-        .track-card .med { 
-            margin: 10px 0; 
-            color: var(--primary); 
-            font-size: 14px; 
-        }
-
-        .track-card .info { 
-            font-size: 12px; 
-            color: #888; 
-            margin-bottom: 15px; 
-            line-height: 1.6; 
-        }
-
-        .track-card .history-badge { 
-            font-size: 11px; 
-            color: var(--accent-dark); 
-            background: rgba(141,198,63,0.1); 
-            padding: 4px 10px; 
-            border-radius: var(--radius-full); 
-            margin-bottom: 10px; 
-            display: inline-block; 
-        }
-
-        .track-btn { 
-            width: 100%; 
-            padding: 12px; 
-            border: none; 
-            border-radius: var(--radius-sm); 
-            cursor: pointer; 
-            font-weight: bold; 
-            font-size: 14px; 
-            background: rgba(141, 198, 63, 0.15); 
-            color: var(--accent-dark); 
-            transition: var(--transition); 
-            margin-bottom: 8px; 
-        }
-
-        .track-btn:hover { 
-            background: var(--accent); 
-            color: white; 
-        }
-
-        .track-btn.done { 
-            background: var(--accent); 
-            color: white; 
-        }
-
-        .track-btn.renew { 
-            background: rgba(86, 28, 44, 0.1); 
-            color: var(--primary); 
-        }
-
-        .track-btn.renew:hover { 
-            background: var(--primary); 
-            color: white; 
-        }
-
-        /* Reports */
-        .report-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
-            gap: 20px; 
-            margin-bottom: 25px; 
-        }
-
-        .report-card { 
-            background: var(--white); 
-            border-radius: var(--radius-md); 
-            padding: 25px; 
-            text-align: center; 
-            box-shadow: var(--shadow-lg); 
-        }
+            .logo-text-ar {
+                font-size: 1.2rem;
+            }
 
-        .report-value { 
-            font-size: 48px; 
-            font-weight: bold; 
-            color: var(--primary); 
-        }
-
-        .report-label { 
-            font-size: 14px; 
-            color: #888; 
-            margin-top: 5px; 
-        }
-
-        .progress { 
-            height: 10px; 
-            background: #eee; 
-            border-radius: 6px; 
-            margin-top: 15px; 
-            overflow: hidden; 
-        }
-
-        .progress-bar { 
-            height: 100%; 
-            border-radius: 6px;
-            transition: width 0.5s ease;
-        }
-
-        .header-row { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            margin-bottom: 20px; 
-            flex-wrap: wrap; 
-            gap: 15px; 
-        }
-
-        /* Confirmation Modal */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9998;
-            opacity: 0;
-            visibility: hidden;
-            transition: var(--transition);
-        }
+            .search-tab {
+                padding: 0.6rem 0.3rem;
+                font-size: 0.75rem;
+            }
 
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .modal {
-            background: white;
-            border-radius: var(--radius-lg);
-            padding: 30px;
-            max-width: 400px;
-            width: 90%;
-            text-align: center;
-            transform: scale(0.9);
-            transition: var(--transition);
-        }
-
-        .modal-overlay.active .modal {
-            transform: scale(1);
-        }
+            .search-tab span {
+                display: none;
+            }
 
-        .modal-icon {
-            font-size: 48px;
-            margin-bottom: 15px;
-        }
-
-        .modal-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: var(--text-dark);
-            margin-bottom: 10px;
-        }
+            .search-tab svg {
+                width: 20px;
+                height: 20px;
+            }
 
-        .modal-message {
-            color: var(--gray);
-            margin-bottom: 20px;
-        }
-
-        .modal-actions {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-        }
+            .product-card {
+                flex-wrap: wrap;
+            }
 
-        .modal-actions button {
-            padding: 10px 24px;
-            border-radius: var(--radius-sm);
-            font-weight: bold;
-            cursor: pointer;
-            transition: var(--transition);
+            .product-priority-badge {
+                margin-top: 0.5rem;
+                width: 100%;
+                text-align: center;
+            }
         }
 
-        .modal-cancel {
-            background: #e5e5e5;
-            border: none;
-            color: var(--text-dark);
+        /* Scanner Active State */
+        #qr-reader {
+            width: 100%;
+            border-radius: 12px;
+            overflow: hidden;
         }
 
-        .modal-confirm {
-            background: var(--danger);
-            border: none;
-            color: white;
+        #qr-reader video {
+            border-radius: 12px;
         }
 
-        .modal-confirm:hover {
-            background: #dc2626;
+        #qr-reader__scan_region {
+            background: var(--gray-700) !important;
         }
 
-        /* Mobile Responsive */
-        @media (max-width: 600px) {
-            body { padding: 10px; }
-            
-            .header-container h1 { font-size: 18px; }
-            .logo-img { height: 60px; }
-            
-            .tabs { gap: 5px; }
-            .tab { padding: 10px 15px; font-size: 12px; }
-            
-            .card { padding: 15px; }
-            
-            .stats { grid-template-columns: 1fr 1fr; gap: 10px; }
-            .stat { padding: 15px; }
-            .stat-num { font-size: 24px; }
-            .stat-label { font-size: 10px; }
-            
-            table { font-size: 12px; }
-            th, td { padding: 10px 8px; }
-            
-            .actions { gap: 4px; }
-            .actions button { width: 32px; height: 32px; font-size: 14px; }
-            
-            .badge { padding: 4px 8px; font-size: 10px; }
-            
-            .report-grid { grid-template-columns: 1fr; }
-            .report-value { font-size: 36px; }
-            
-            .track-grid { grid-template-columns: 1fr; }
-            
-            .btn { padding: 10px 15px; }
-            
-            .header-row { flex-direction: column; align-items: stretch; }
-            
-            input, select { padding: 10px; font-size: 16px; }
-            
-            .row { grid-template-columns: 1fr !important; }
-            
-            .toast { min-width: auto; width: calc(100vw - 40px); }
+        #qr-reader__dashboard {
+            padding: 1rem !important;
         }
 
-        /* Print Styles */
-        @media print {
-            body { background: white; }
-            .tabs, .sync, .header-row button, .actions { display: none !important; }
-            .card { box-shadow: none; border: 1px solid #ddd; }
+        #qr-reader__dashboard_section_csr button {
+            background: var(--maroon) !important;
+            border: none !important;
+            padding: 0.75rem 1.5rem !important;
+            border-radius: 10px !important;
+            color: white !important;
+            font-family: 'Tajawal', sans-serif !important;
+            font-weight: 600 !important;
         }
     </style>
 </head>
 <body>
-    <!-- Toast Container -->
-    <div class="toast-container" id="toastContainer"></div>
-
-    <!-- Loading Overlay -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="spinner"></div>
-    </div>
-
-    <!-- Confirmation Modal -->
-    <div class="modal-overlay" id="confirmModal">
-        <div class="modal">
-            <div class="modal-icon">⚠️</div>
-            <div class="modal-title" id="modalTitle">Confirm Delete</div>
-            <div class="modal-message" id="modalMessage">Are you sure you want to delete this patient?</div>
-            <div class="modal-actions">
-                <button class="modal-cancel" onclick="closeModal()">Cancel</button>
-                <button class="modal-confirm" id="modalConfirm">Delete</button>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <img src="data:image/jpeg;base64,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" alt="الرازي" class="logo-img">
             </div>
+            <div class="header-badge">دليل 2026</div>
         </div>
-    </div>
+    </header>
 
-    <div class="container">
-        <div class="header-container">
-            <img src="logo.png" alt="Alrazi Pharmacy" class="logo-img" onerror="this.style.display='none'"> 
-            <h1>Rass 5 Refill Cash Patients System</h1>
-        </div>
-        
-        <div class="tabs">
-            <button class="tab active" data-page="patients">📋 Patients</button>
-            <button class="tab" data-page="tracking">📊 Tracking</button>
-            <button class="tab" data-page="reports">📈 Reports</button>
-        </div>
-        
-        <div id="sync" class="sync sync-ok">✓ Connected to Google Sheets</div>
-
-        <!-- Patients Page -->
-        <div id="patientsPage" class="page active">
-            <div class="stats">
-                <div class="stat total">
-                    <div class="stat-num" id="total">0</div>
-                    <div class="stat-label">Total Patients</div>
-                </div>
-                <div class="stat w">
-                    <div class="stat-num" id="warn">0</div>
-                    <div class="stat-label">Need Reminder</div>
-                </div>
-                <div class="stat d">
-                    <div class="stat-num" id="over">0</div>
-                    <div class="stat-label">Overdue</div>
-                </div>
+    <!-- Main Container -->
+    <main class="main-container">
+        <!-- Search Section -->
+        <section class="search-section">
+            <!-- Search Tabs -->
+            <div class="search-tabs">
+                <button class="search-tab active" data-tab="search">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.35-4.35"/>
+                    </svg>
+                    <span>بحث ذكي</span>
+                </button>
+                <button class="search-tab" data-tab="scanner">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 7V5a2 2 0 0 1 2-2h2"/>
+                        <path d="M17 3h2a2 2 0 0 1 2 2v2"/>
+                        <path d="M21 17v2a2 2 0 0 1-2 2h-2"/>
+                        <path d="M7 21H5a2 2 0 0 1-2-2v-2"/>
+                        <line x1="7" y1="12" x2="17" y2="12"/>
+                    </svg>
+                    <span>مسح باركود</span>
+                </button>
             </div>
 
-            <div class="grid">
-                <div class="card">
-                    <h3 class="card-title" id="formTitle">➕ Add Patient</h3>
-                    <form id="patientForm" novalidate>
-                        <div class="form-group">
-                            <label>Patient Name (Optional)</label>
-                            <input type="text" id="name" placeholder="Enter patient name">
-                        </div>
-                        <div class="form-group">
-                            <label>Phone <span style="color: var(--danger);">*</span></label>
-                            <input type="tel" id="phone" placeholder="966512345678">
-                            <div class="error-message" id="phoneError">Please enter a valid phone number</div>
-                        </div>
-                        <div class="form-group">
-                            <label>Medication <span style="color: var(--danger);">*</span></label>
-                            <input type="text" id="med" placeholder="Medication name">
-                            <div class="error-message" id="medError">Please enter medication name</div>
-                        </div>
-                        <div class="row">
-                            <div class="form-group">
-                                <label>Dispense Date <span style="color: var(--danger);">*</span></label>
-                                <input type="date" id="date">
-                                <div class="error-message" id="dateError">Please select a date</div>
-                            </div>
-                            <div class="form-group">
-                                <label>Duration (days) <span style="color: var(--danger);">*</span></label>
-                                <input type="number" id="days" value="30" min="1" max="365">
-                                <div class="error-message" id="daysError">Please enter a valid duration</div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Notes</label>
-                            <input type="text" id="notes" placeholder="Additional notes">
-                        </div>
-                        <button type="submit" class="btn btn-primary" id="submitBtn">
-                            <span>➕</span> Add Patient
-                        </button>
-                        <button type="button" class="btn btn-secondary" onclick="resetForm()">Cancel</button>
-                    </form>
-                </div>
-
-                <div class="card">
-                    <h3 class="card-title">📋 Patient Records</h3>
-                    <input type="text" id="search" placeholder="🔍 Search patient, medication or phone...">
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Patient</th>
-                                    <th>Medication</th>
-                                    <th>Refill Date</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="patientsTbody"></tbody>
-                        </table>
-                    </div>
-                    <div class="pagination" id="pagination"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tracking Page -->
-        <div id="trackingPage" class="page">
-            <div class="stats">
-                <div class="stat total">
-                    <div class="stat-num" id="tSent">0</div>
-                    <div class="stat-label">Reminders Sent</div>
-                </div>
-                <div class="stat s">
-                    <div class="stat-num" id="tConverted">0</div>
-                    <div class="stat-label">Converted</div>
-                </div>
-                <div class="stat" style="--stat-color: var(--primary);">
-                    <div class="stat-num" id="tRate">0%</div>
-                    <div class="stat-label">Conversion Rate</div>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="header-row">
-                    <h3 class="card-title" style="margin: 0;">📊 Track Conversions</h3>
-                    <select id="trackFilter" style="width: auto; min-width: 150px;">
-                        <option value="all">All Sent</option>
-                        <option value="waiting">⏳ Waiting</option>
-                        <option value="converted">✅ Converted</option>
-                    </select>
-                </div>
-                <div class="track-grid" id="trackGrid"></div>
-            </div>
-        </div>
-
-        <!-- Reports Page -->
-        <div id="reportsPage" class="page">
-            <div class="card">
-                <div class="header-row">
-                    <h3 class="card-title" style="margin: 0;">📈 Monthly Report</h3>
-                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                        <select id="reportMonth" style="width: auto;"></select>
-                        <select id="reportYear" style="width: auto;"></select>
-                        <button class="btn btn-secondary btn-sm" onclick="window.print()">🖨️ Print</button>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="report-grid">
-                <div class="report-card">
-                    <div class="report-value" id="rSent">0</div>
-                    <div class="report-label">📤 Reminders Sent</div>
-                </div>
-                <div class="report-card">
-                    <div class="report-value" style="color: var(--accent);" id="rConverted">0</div>
-                    <div class="report-label">✅ Converted</div>
-                </div>
-                <div class="report-card">
-                    <div class="report-value" style="color: var(--primary);" id="rRate">0%</div>
-                    <div class="report-label">📊 Conversion Rate</div>
-                    <div class="progress">
-                        <div class="progress-bar" id="rBar" style="width:0%; background:var(--accent);"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <h3 class="card-title">📋 Summary</h3>
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Metric</th>
-                                <th>Count</th>
-                                <th>Percentage</th>
-                            </tr>
-                        </thead>
-                        <tbody id="summaryTb"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="card">
-                <h3 class="card-title">✅ Converted Patients</h3>
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Patient</th>
-                                <th>Phone</th>
-                                <th>Medication</th>
-                                <th>Reminder Date</th>
-                                <th>Converted Date</th>
-                            </tr>
-                        </thead>
-                        <tbody id="convList"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-
-<script>
-// ==================== Configuration ====================
-const CONFIG = {
-    API_URL: 'https://script.google.com/macros/s/AKfycbyLVO79BGJ77JRp_VXidIKF61LSz-J1bR1OKy6UvIdWO-1bSpoyFHtXX1WgxTXezHC6/exec',
-    ITEMS_PER_PAGE: 10,
-    SEARCH_DELAY: 300,
-    TOAST_DURATION: 3000,
-    PHONE_REGEX: /^(966|0)?5\d{8}$/,
-    MONTHS: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-};
-
-// ==================== State Management ====================
-const State = {
-    patients: [],
-    editId: null,
-    currentPage: 1,
-    searchQuery: '',
-    searchTimeout: null,
-    pendingDelete: null
-};
-
-// ==================== Utility Functions ====================
-const Utils = {
-    // Format date to YYYY-MM-DD
-    formatDate(value) {
-        if (!value) return '';
-        if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
-        const date = new Date(value);
-        if (isNaN(date)) return value;
-        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-    },
-
-    // Get today's date in YYYY-MM-DD format
-    getToday() {
-        const today = new Date();
-        return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-    },
-
-    // Parse history from string or array
-    parseHistory(history) {
-        if (!history) return [];
-        if (Array.isArray(history)) return history;
-        try { return JSON.parse(history); } catch (e) { return []; }
-    },
-
-    // Calculate refill date
-    getRefillDate(patient) {
-        const date = new Date(patient.date);
-        date.setDate(date.getDate() + parseInt(patient.days));
-        return date;
-    },
-
-    // Calculate days until refill
-    getDaysUntilRefill(patient) {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const refill = this.getRefillDate(patient);
-        refill.setHours(0, 0, 0, 0);
-        return Math.ceil((refill - today) / (1000 * 60 * 60 * 24));
-    },
-
-    // Sanitize input to prevent XSS
-    sanitize(str) {
-        if (!str) return '';
-        const div = document.createElement('div');
-        div.textContent = str;
-        return div.innerHTML;
-    },
-
-    // Validate phone number
-    validatePhone(phone) {
-        const cleaned = phone.replace(/\D/g, '');
-        return CONFIG.PHONE_REGEX.test(cleaned);
-    },
-
-    // Format phone number
-    formatPhone(phone) {
-        let cleaned = phone.replace(/\D/g, '');
-        if (cleaned.startsWith('0')) {
-            cleaned = '966' + cleaned.substring(1);
-        } else if (!cleaned.startsWith('966')) {
-            cleaned = '966' + cleaned;
-        }
-        return cleaned;
-    },
-
-    // Debounce function
-    debounce(func, delay) {
-        return function (...args) {
-            clearTimeout(State.searchTimeout);
-            State.searchTimeout = setTimeout(() => func.apply(this, args), delay);
-        };
-    }
-};
-
-// ==================== UI Functions ====================
-const UI = {
-    // Show toast notification
-    showToast(message, type = 'info') {
-        const container = document.getElementById('toastContainer');
-        const toast = document.createElement('div');
-        toast.className = `toast toast-${type}`;
-        
-        const icons = {
-            success: '✅',
-            error: '❌',
-            warning: '⚠️',
-            info: 'ℹ️'
-        };
-        
-        toast.innerHTML = `<span>${icons[type]}</span><span>${message}</span>`;
-        container.appendChild(toast);
-        
-        setTimeout(() => toast.remove(), CONFIG.TOAST_DURATION);
-    },
-
-    // Show/hide loading overlay
-    setLoading(show) {
-        document.getElementById('loadingOverlay').classList.toggle('active', show);
-    },
-
-    // Update sync status
-    setSyncStatus(connected) {
-        const el = document.getElementById('sync');
-        el.className = connected ? 'sync sync-ok' : 'sync sync-err';
-        el.textContent = connected ? '✓ Connected to Google Sheets' : '⚠ Offline Mode';
-    },
-
-    // Show confirmation modal
-    showConfirmModal(title, message, onConfirm) {
-        document.getElementById('modalTitle').textContent = title;
-        document.getElementById('modalMessage').textContent = message;
-        document.getElementById('modalConfirm').onclick = () => {
-            onConfirm();
-            this.closeModal();
-        };
-        document.getElementById('confirmModal').classList.add('active');
-    },
-
-    // Close modal
-    closeModal() {
-        document.getElementById('confirmModal').classList.remove('active');
-    },
-
-    // Show field error
-    showFieldError(fieldId, show) {
-        const field = document.getElementById(fieldId);
-        const error = document.getElementById(fieldId + 'Error');
-        field.classList.toggle('error', show);
-        if (error) error.classList.toggle('show', show);
-    },
-
-    // Clear all field errors
-    clearFieldErrors() {
-        ['phone', 'med', 'date', 'days'].forEach(field => this.showFieldError(field, false));
-    }
-};
-
-// ==================== API Functions ====================
-const API = {
-    async request(action, data = null) {
-        try {
-            let url = `${CONFIG.API_URL}?action=${action}`;
-            if (data) {
-                url += `&data=${encodeURIComponent(JSON.stringify(data))}`;
-            }
-            const response = await fetch(url);
-            UI.setSyncStatus(true);
-            return await response.json();
-        } catch (error) {
-            console.error('API Error:', error);
-            UI.setSyncStatus(false);
-            throw error;
-        }
-    },
-
-    async loadPatients() {
-        UI.setLoading(true);
-        try {
-            const data = await this.request('get');
-            State.patients = data.map(p => ({
-                id: String(p.id || ''),
-                name: p.name || '',
-                phone: String(p.phone || ''),
-                med: p.med || '',
-                date: Utils.formatDate(p.date),
-                days: String(p.days || '30'),
-                notes: p.notes || '',
-                reminderSent: p.reminderSent || 'no',
-                reminderDate: Utils.formatDate(p.reminderDate),
-                converted: p.converted || 'no',
-                convertedDate: Utils.formatDate(p.convertedDate),
-                history: Utils.parseHistory(p.history)
-            }));
-            localStorage.setItem('patients', JSON.stringify(State.patients));
-        } catch (error) {
-            State.patients = JSON.parse(localStorage.getItem('patients')) || [];
-            UI.showToast('Data loaded from local storage', 'warning');
-        } finally {
-            UI.setLoading(false);
-            renderPatients();
-        }
-    },
-
-    async savePatient(patient, action) {
-        const data = { ...patient, history: JSON.stringify(patient.history || []) };
-        try {
-            if (action === 'delete') {
-                await fetch(`${CONFIG.API_URL}?action=delete&id=${patient.id}`);
-            } else {
-                await this.request(action, data);
-            }
-            UI.setSyncStatus(true);
-        } catch (error) {
-            UI.setSyncStatus(false);
-        }
-        localStorage.setItem('patients', JSON.stringify(State.patients));
-    }
-};
-
-// ==================== Form Validation ====================
-const Validation = {
-    validateForm() {
-        let isValid = true;
-        UI.clearFieldErrors();
-
-        const phone = document.getElementById('phone').value;
-        const med = document.getElementById('med').value.trim();
-        const date = document.getElementById('date').value;
-        const days = parseInt(document.getElementById('days').value);
-
-        if (!Utils.validatePhone(phone)) {
-            UI.showFieldError('phone', true);
-            isValid = false;
-        }
-
-        if (!med) {
-            UI.showFieldError('med', true);
-            isValid = false;
-        }
-
-        if (!date) {
-            UI.showFieldError('date', true);
-            isValid = false;
-        }
-
-        if (!days || days < 1 || days > 365) {
-            UI.showFieldError('days', true);
-            isValid = false;
-        }
-
-        return isValid;
-    }
-};
-
-// ==================== Patient Actions ====================
-const PatientActions = {
-    async save(event) {
-        event.preventDefault();
-        
-        if (!Validation.validateForm()) {
-            UI.showToast('Please fix the errors in the form', 'error');
-            return;
-        }
-
-        const btn = document.getElementById('submitBtn');
-        btn.disabled = true;
-        btn.innerHTML = '<span>⏳</span> Saving...';
-
-        const patient = {
-            id: State.editId || Date.now().toString(),
-            name: document.getElementById('name').value.trim(),
-            phone: Utils.formatPhone(document.getElementById('phone').value),
-            med: document.getElementById('med').value.trim(),
-            date: document.getElementById('date').value,
-            days: document.getElementById('days').value,
-            notes: document.getElementById('notes').value.trim(),
-            reminderSent: 'no',
-            reminderDate: '',
-            converted: 'no',
-            convertedDate: '',
-            history: []
-        };
-
-        if (State.editId) {
-            const existing = State.patients.find(p => p.id === State.editId);
-            patient.reminderSent = existing.reminderSent;
-            patient.reminderDate = existing.reminderDate;
-            patient.converted = existing.converted;
-            patient.convertedDate = existing.convertedDate;
-            patient.history = existing.history || [];
-            
-            const index = State.patients.findIndex(p => p.id === State.editId);
-            State.patients[index] = patient;
-        } else {
-            State.patients.push(patient);
-        }
-
-        await API.savePatient(patient, State.editId ? 'update' : 'add');
-        
-        UI.showToast(State.editId ? 'Patient updated successfully' : 'Patient added successfully', 'success');
-        
-        renderPatients();
-        resetForm();
-        
-        btn.disabled = false;
-        btn.innerHTML = '<span>➕</span> Add Patient';
-    },
-
-    edit(id) {
-        const patient = State.patients.find(p => p.id === id);
-        if (!patient) return;
-
-        State.editId = id;
-        document.getElementById('name').value = patient.name;
-        document.getElementById('phone').value = patient.phone;
-        document.getElementById('med').value = patient.med;
-        document.getElementById('date').value = patient.date;
-        document.getElementById('days').value = patient.days;
-        document.getElementById('notes').value = patient.notes || '';
-        
-        document.getElementById('formTitle').textContent = '✏️ Edit Patient';
-        document.getElementById('submitBtn').innerHTML = '<span>💾</span> Update';
-        
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    },
-
-    delete(id) {
-        const patient = State.patients.find(p => p.id === id);
-        UI.showConfirmModal(
-            'Confirm Delete',
-            `Are you sure you want to delete "${patient.name || 'Unnamed'}"?`,
-            async () => {
-                State.patients = State.patients.filter(p => p.id !== id);
-                await API.savePatient({ id }, 'delete');
-                UI.showToast('Patient deleted successfully', 'success');
-                renderPatients();
-            }
-        );
-    },
-
-    sendWhatsApp(id) {
-        const patient = State.patients.find(p => p.id === id);
-        if (!patient) return;
-
-        const message = `السلام عليكم ورحمة الله وبركاته
-صيدلية الرازي الرس 5 ترحب بكم
-
-هذا تذكير بموعد صرف الدواء الخاص بك:
-
-الدواء: ${patient.med}
-
-نسعد بتجهيزه لكم عبر:
-
-- الاستلام من الصيدلية
-- التوصيل لموقعكم
-
-موقع الصيدلية:
-https://maps.app.goo.gl/QPvDTAaDZ8rs6YwK9
-
-نتمنى لكم دوام الصحة والعافية`;
-
-        window.open(`https://wa.me/${patient.phone}?text=${encodeURIComponent(message)}`, '_blank');
-        
-        patient.reminderSent = 'yes';
-        patient.reminderDate = Utils.getToday();
-        
-        API.savePatient(patient, 'update');
-        UI.showToast('WhatsApp opened to send reminder', 'success');
-        renderPatients();
-        renderTracking();
-    },
-
-    async markConverted(id) {
-        const patient = State.patients.find(p => p.id === id);
-        patient.converted = 'yes';
-        patient.convertedDate = Utils.getToday();
-        await API.savePatient(patient, 'update');
-        UI.showToast('Patient marked as converted', 'success');
-        renderPatients();
-        renderTracking();
-    },
-
-    async undoConverted(id) {
-        const patient = State.patients.find(p => p.id === id);
-        patient.converted = 'no';
-        patient.convertedDate = '';
-        await API.savePatient(patient, 'update');
-        UI.showToast('Conversion undone', 'info');
-        renderTracking();
-    },
-
-    async renewPatient(id) {
-        const patient = State.patients.find(p => p.id === id);
-        
-        if (!patient.history) patient.history = [];
-        patient.history.push({
-            date: patient.date,
-            reminderDate: patient.reminderDate,
-            convertedDate: patient.convertedDate
-        });
-        
-        patient.date = Utils.getToday();
-        patient.reminderSent = 'no';
-        patient.reminderDate = '';
-        patient.converted = 'no';
-        patient.convertedDate = '';
-        
-        await API.savePatient(patient, 'update');
-        UI.showToast('Patient renewed for next month', 'success');
-        renderPatients();
-        renderTracking();
-    }
-};
-
-// ==================== Render Functions ====================
-function renderPatients() {
-    const search = State.searchQuery.toLowerCase();
-    let filtered = State.patients.filter(p => 
-        p.name.toLowerCase().includes(search) || 
-        p.med.toLowerCase().includes(search) || 
-        p.phone.includes(search)
-    );
-    
-    filtered.sort((a, b) => Utils.getRefillDate(a) - Utils.getRefillDate(b));
-
-    // Calculate stats
-    let warnings = 0, overdue = 0;
-    State.patients.forEach(p => {
-        const days = Utils.getDaysUntilRefill(p);
-        if (days < 0) overdue++;
-        else if (days <= 2) warnings++;
-    });
-    
-    document.getElementById('total').textContent = State.patients.length;
-    document.getElementById('warn').textContent = warnings;
-    document.getElementById('over').textContent = overdue;
-
-    // Pagination
-    const totalPages = Math.ceil(filtered.length / CONFIG.ITEMS_PER_PAGE);
-    State.currentPage = Math.min(State.currentPage, totalPages || 1);
-    const startIndex = (State.currentPage - 1) * CONFIG.ITEMS_PER_PAGE;
-    const paginated = filtered.slice(startIndex, startIndex + CONFIG.ITEMS_PER_PAGE);
-
-    const tbody = document.getElementById('patientsTbody');
-    
-    if (paginated.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5"><div class="empty">No patients found</div></td></tr>';
-        document.getElementById('pagination').innerHTML = '';
-        return;
-    }
-
-    tbody.innerHTML = paginated.map(p => {
-        const days = Utils.getDaysUntilRefill(p);
-        const refillDate = Utils.getRefillDate(p).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-        
-        let status, statusClass;
-        if (days < 0) {
-            status = `Overdue ${Math.abs(days)}d`;
-            statusClass = 'danger';
-        } else if (days <= 2) {
-            status = `${days}d left`;
-            statusClass = 'warn';
-        } else {
-            status = `${days}d left`;
-            statusClass = 'ok';
-        }
-        
-        const historyCount = (p.history || []).length;
-        const historyBadge = historyCount > 0 ? ` <span class="badge badge-ok">${historyCount} renewals</span>` : '';
-        
-        return `
-            <tr>
-                <td>
-                    <div class="name">${Utils.sanitize(p.name) || 'Unnamed'}${historyBadge}</div>
-                    <div class="phone">${Utils.sanitize(p.phone)}</div>
-                </td>
-                <td>
-                    <div class="med">${Utils.sanitize(p.med)}</div>
-                    ${p.notes ? `<div class="phone">${Utils.sanitize(p.notes)}</div>` : ''}
-                </td>
-                <td>${refillDate}</td>
-                <td><span class="badge badge-${statusClass}">${status}</span></td>
-                <td>
-                    <div class="actions">
-                        <button class="wa" onclick="PatientActions.sendWhatsApp('${p.id}')" title="WhatsApp">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
+            <!-- Search Input -->
+            <div class="search-panel active" id="search-panel">
+                <div class="search-input-container">
+                    <div class="search-input-wrapper">
+                        <span class="search-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"/>
+                                <path d="m21 21-4.35-4.35"/>
                             </svg>
-                        </button>
-                        <button class="edit" onclick="PatientActions.edit('${p.id}')" title="Edit">✏️</button>
-                        <button class="del" onclick="PatientActions.delete('${p.id}')" title="Delete">🗑️</button>
+                        </span>
+                        <input 
+                            type="text" 
+                            class="search-input" 
+                            id="searchInput"
+                            placeholder="اسم الدواء، الباركود، أو العرض (مثل: صداع، حساسية)..."
+                            autocomplete="off"
+                        >
                     </div>
-                </td>
-            </tr>
-        `;
-    }).join('');
+                    <div class="autocomplete-dropdown" id="autocompleteDropdown"></div>
+                </div>
 
-    // Render pagination
-    renderPagination(totalPages, filtered.length);
-}
+                <!-- Quick Symptoms -->
+                <div class="symptoms-section">
+                    <div class="symptoms-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                        </svg>
+                        بحث سريع بالأعراض
+                    </div>
+                    <div class="symptoms-chips">
+                        <div class="symptom-chip" data-symptom="headache">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+                            صداع
+                        </div>
+                        <div class="symptom-chip" data-symptom="stomach">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                            معدة
+                        </div>
+                        <div class="symptom-chip" data-symptom="allergy">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10H12V2z"/></svg>
+                            حساسية
+                        </div>
+                        <div class="symptom-chip" data-symptom="pain">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg>
+                            ألم
+                        </div>
+                        <div class="symptom-chip" data-symptom="vitamins">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                            فيتامينات
+                        </div>
+                        <div class="symptom-chip" data-symptom="sleep">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                            نوم
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-function renderPagination(totalPages, totalItems) {
-    const pagination = document.getElementById('pagination');
-    
-    if (totalPages <= 1) {
-        pagination.innerHTML = '';
-        return;
-    }
+            <!-- Scanner Panel -->
+            <div class="scanner-panel" id="scanner-panel">
+                <div id="qr-reader"></div>
+                <div class="barcode-manual">
+                    <label class="barcode-manual-label">أو أدخل الباركود يدوياً:</label>
+                    <div class="barcode-input-wrapper">
+                        <input type="text" class="barcode-input" id="barcodeInput" placeholder="6281086010457">
+                        <button class="barcode-submit" id="barcodeSubmit">بحث</button>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-    let html = `
-        <button onclick="changePage(1)" ${State.currentPage === 1 ? 'disabled' : ''}>«</button>
-        <button onclick="changePage(${State.currentPage - 1})" ${State.currentPage === 1 ? 'disabled' : ''}>‹</button>
-    `;
+        <!-- Results Section -->
+        <section class="results-section" id="resultsSection">
+            <div class="results-header">
+                <div class="results-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                        <polyline points="22,4 12,14.01 9,11.01"/>
+                    </svg>
+                    النتائج
+                    <span class="results-count" id="resultsCount">0</span>
+                </div>
+                <button class="results-clear" id="clearResults">مسح</button>
+            </div>
 
-    const maxVisiblePages = 5;
-    let startPage = Math.max(1, State.currentPage - Math.floor(maxVisiblePages / 2));
-    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-    
-    if (endPage - startPage + 1 < maxVisiblePages) {
-        startPage = Math.max(1, endPage - maxVisiblePages + 1);
-    }
+            <!-- Current Product -->
+            <div class="current-product" id="currentProduct" style="display: none;">
+                <div class="current-product-label">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                    </svg>
+                    المنتج المطلوب
+                </div>
+                <div class="current-product-name" id="currentProductName"></div>
+                <div class="current-product-details">
+                    <span id="currentProductCategory"></span>
+                    <span id="currentProductBarcode"></span>
+                </div>
+                <div class="current-product-priority" id="currentProductPriority"></div>
+            </div>
 
-    for (let i = startPage; i <= endPage; i++) {
-        html += `<button onclick="changePage(${i})" class="${i === State.currentPage ? 'active' : ''}">${i}</button>`;
-    }
+            <!-- Alternatives -->
+            <div class="alternatives-section" id="alternativesSection">
+                <div class="alternatives-header">
+                    <div class="alternatives-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="23,6 13.5,15.5 8.5,10.5 1,18"/>
+                            <polyline points="17,6 23,6 23,12"/>
+                        </svg>
+                        البدائل المقترحة (حسب الأولوية)
+                    </div>
+                </div>
+                <div id="alternativesList"></div>
+            </div>
+        </section>
+    </main>
 
-    html += `
-        <button onclick="changePage(${State.currentPage + 1})" ${State.currentPage === totalPages ? 'disabled' : ''}>›</button>
-        <button onclick="changePage(${totalPages})" ${State.currentPage === totalPages ? 'disabled' : ''}>»</button>
-        <span class="pagination-info">${totalItems} patients</span>
-    `;
+    <script>
+        // ==================== DATA ====================
+        const products = [
+            // A TO Z VITAMINS
+            {barcode: "5060748880192", name: "GUMAZING ESSENTIAL PACK 2 COMBO PACK", category: "A TO Z VITAMINS", class: "Multivitamins Gummies", priority: "Diamond"},
+            {barcode: "925272730700", name: "BIOVIT HERO MULTIVITAMINS 60 GUMMIES", category: "A TO Z VITAMINS", class: "Multivitamins Gummies", priority: "Diamond"},
+            {barcode: "6285756004593", name: "VITA TAB 60/CHEW.TAB", category: "A TO Z VITAMINS", class: "Multivitamins Chewable", priority: "Diamond"},
+            {barcode: "6286127000145", name: "NHS DAILY SACH POWDER 30 PACKETS", category: "A TO Z VITAMINS", class: "MULTIVITAMINS", priority: "Platinum"},
+            {barcode: "6286127000305", name: "DAILY TAB 60 CHEWABLE TABLETS", category: "A TO Z VITAMINS", class: "Multivitamins Chewable", priority: "Platinum"},
+            {barcode: "835776001049", name: "TRQ ADULT GUMMI MULTI VITAMIN 60 GUMMIES", category: "A TO Z VITAMINS", class: "Multivitamins Gummies", priority: "Diamond"},
+            {barcode: "8596024009782", name: "SPEKTRUM WELLBEING WOMEN 60CHEW TAB", category: "A TO Z VITAMINS", class: "MULTIVITAMINS CHEWABLE", priority: "Platinum"},
+            {barcode: "6286001000124", name: "BLUM-D 50000 I.U 20TAB", category: "A TO Z VITAMINS", class: "VITAMIN D 50k", priority: "Platinum"},
+            {barcode: "6285128003773", name: "PRIMA D3 50.000 IU VITAMIN 30 SOFT GEL CAPS", category: "A TO Z VITAMINS", class: "VITAMIN D 50k", priority: "Platinum"},
+            {barcode: "6286069000029", name: "VEGGIE VITAMIN D3 50 000 IU 20 CAPS", category: "A TO Z VITAMINS", class: "VITAMIN D 50k", priority: "Silver"},
+            {barcode: "6251107426802", name: "DIVAD 10000 i.u VITAMIN D3 100 CAPSULES", category: "A TO Z VITAMINS", class: "VITAMIN D 10k", priority: "Platinum"},
+            {barcode: "852968007405", name: "HEBS NANO-D3 DROPS 30ML", category: "A TO Z VITAMINS", class: "Vitamin D Drops", priority: "Diamond"},
+            {barcode: "8596024026703", name: "MARTIANS CALCIUM MULTI-VITAMINS&MINERALS SYRUP 125ML", category: "A TO Z VITAMINS", class: "MULTIVITAMINS liquid", priority: "Diamond"},
+            {barcode: "6285128022194", name: "JP VITAMIN D3 1000 IU 90CAP", category: "A TO Z VITAMINS", class: "VITAMIN D 1k", priority: "Platinum"},
+            {barcode: "5023652136267", name: "MARTIANS MULTI VITAMINS DROPS 50ML", category: "A TO Z VITAMINS", class: "MULTIVITAMINS DROPS", priority: "Platinum"},
+            {barcode: "8596024022958", name: "VITAMIN D3 DROPS 15 ML (STADA)", category: "A TO Z VITAMINS", class: "VITAMIN D DROPS", priority: "Gold"},
+            {barcode: "6286069000005", name: "VEGGIE VITAMIN D3 5000 IU 60/CAP", category: "A TO Z VITAMINS", class: "VITAMIN D 5k", priority: "Gold"},
+            {barcode: "6285128006552", name: "PRIMA D3 5000 IU 60 CAP", category: "A TO Z VITAMINS", class: "VITAMIN D 5k", priority: "Silver"},
+            {barcode: "6285128006583", name: "PRIMA D3 2000IU VITAMIN 60 SOFTGEL CAPSULES", category: "A TO Z VITAMINS", class: "VITAMIN D 2k", priority: "Gold"},
 
-    pagination.innerHTML = html;
-}
+            // ADULT PAIN KILLERS
+            {barcode: "6286573000041", name: "BENTOGESIC EMULGEL 100GM", category: "ADULT PAIN KILLERS", class: "Topical Pain Killer", priority: "Diamond"},
+            {barcode: "6430030150057", name: "RADIAN ICE COOLING GEL TUBE 150 ML", category: "ADULT PAIN KILLERS", class: "Topical Pain Killer", priority: "Platinum"},
+            {barcode: "6285095009761", name: "AVALON ACTIVE ORIGINAL CREAM 150ML", category: "ADULT PAIN KILLERS", class: "Topical Pain Killer", priority: "Platinum"},
+            {barcode: "6285095009600", name: "AVALON ACTIVE COLD SPRAY 118ML", category: "ADULT PAIN KILLERS", class: "Topical Pain Killer Spray", priority: "Gold"},
+            {barcode: "6287002331682", name: "MYOLEX MASSAGE EMULGEL 100 ML", category: "ADULT PAIN KILLERS", class: "Topical Pain Killer", priority: "Platinum"},
+            {barcode: "7612797197622", name: "VOLTAREN RETARD 100 MG 30 TABLET", category: "ADULT PAIN KILLERS", class: "DICLOFENAC Oral tab", priority: "Platinum"},
+            {barcode: "6281080012181", name: "RUMAFEN 50 MG 20 TAB", category: "ADULT PAIN KILLERS", class: "DICLOFENAC Oral tab", priority: "Platinum"},
+            {barcode: "6291103730459", name: "EMIFENAC 50 DT 20TAB", category: "ADULT PAIN KILLERS", class: "DICLOFENAC Oral tab", priority: "Platinum"},
+            {barcode: "6281086010457", name: "ROFENAC D 50MG 20TAB", category: "ADULT PAIN KILLERS", class: "DICLOFENAC Oral tab", priority: "Platinum"},
+            {barcode: "6285147003730", name: "RAPIDUS 50 mg 20 tab", category: "ADULT PAIN KILLERS", class: "DICLOFENAC Oral tab", priority: "Gold"},
+            {barcode: "6285128000376", name: "FAST-FLAM DICLOFINAC 20 TAB", category: "ADULT PAIN KILLERS", class: "DICLOFENAC Oral tab", priority: "Gold"},
+            {barcode: "6285101000041", name: "DICLOMAX 50 20 TABLETS", category: "ADULT PAIN KILLERS", class: "DICLOFENAC Oral tab", priority: "Platinum"},
+            {barcode: "6281080014222", name: "RUMAFEN GEL 100 G", category: "ADULT PAIN KILLERS", class: "Topical Pain Killer", priority: "Platinum"},
+            {barcode: "6281080011023", name: "COXICAM 7.5/30 TAB", category: "ADULT PAIN KILLERS", class: "MELOXICAM - 7.5 MG TAB", priority: "Gold"},
+            {barcode: "6285147000920", name: "DIVIDO 75 MG 20 caps", category: "ADULT PAIN KILLERS", class: "DICLOFENAC Oral tab", priority: "Gold"},
+            {barcode: "6285147003396", name: "PROF 600 MG 30 TAB", category: "ADULT PAIN KILLERS", class: "IBUPROFEN 600mg Tablet", priority: "Silver"},
+            {barcode: "6281086011065", name: "SAPOFEN 600MG 30 TAB", category: "ADULT PAIN KILLERS", class: "IBUPROFEN 600mg Tablet", priority: "Silver"},
+            {barcode: "6285147003365", name: "PROF 400 MG 30 TAB", category: "ADULT PAIN KILLERS", class: "IBUPROFEN 400mg Tablet", priority: "Silver"},
+            {barcode: "6281086107638", name: "SAPOFEN 400MG 30TAB", category: "ADULT PAIN KILLERS", class: "IBUPROFEN 400mg Tablet", priority: "Silver"},
+            {barcode: "6281086010662", name: "ROFENAC GEL 50G", category: "ADULT PAIN KILLERS", class: "Topical Pain Killer", priority: "Silver"},
 
-function changePage(page) {
-    State.currentPage = page;
-    renderPatients();
-}
+            // ADULT SIMPLE ANALGESICS
+            {barcode: "6281086010532", name: "FEVADOL PLUS 20TAB", category: "ADULT SIMPLE ANALGESICS", class: "PARACETAMOL/CAFFEINE", priority: "Silver"},
+            {barcode: "6291100084555", name: "ADOL 500MG 48/CAPLET", category: "ADULT SIMPLE ANALGESICS", class: "PARACETAMOL 500mg", priority: "Silver"},
 
-function renderTracking() {
-    const filter = document.getElementById('trackFilter').value;
-    let list = State.patients.filter(p => p.reminderSent === 'yes');
-    
-    if (filter === 'waiting') {
-        list = list.filter(p => p.converted !== 'yes');
-    } else if (filter === 'converted') {
-        list = list.filter(p => p.converted === 'yes');
-    }
-    
-    list.sort((a, b) => new Date(b.reminderDate) - new Date(a.reminderDate));
+            // ANTIHISTAMINES
+            {barcode: "6286434000265", name: "FEXOFIN 180 MG 30 TABLET", category: "ADULT SYSTEMIC ANTI HISTAMINES", class: "FEXOFENADINE 180 TAB", priority: "Diamond"},
+            {barcode: "6291103731555", name: "GLOZAL 5 MG 30 TAB", category: "ADULT SYSTEMIC ANTI HISTAMINES", class: "LEVOCETIRIZINE 5mg Tab", priority: "Platinum"},
+            {barcode: "6286434000456", name: "LEVOZYRT 5 MG 30 TABLET", category: "ADULT SYSTEMIC ANTI HISTAMINES", class: "LEVOCETIRIZINE 5mg Tab", priority: "Platinum"},
+            {barcode: "6285128000987", name: "DESLOR 5 mg 20 TAB", category: "ADULT SYSTEMIC ANTI HISTAMINES", class: "DESLORATADINE 5mg Tab", priority: "Platinum"},
+            {barcode: "6281086002513", name: "NEORIN 5 MG 20 TABLETS", category: "ADULT SYSTEMIC ANTI HISTAMINES", class: "DESLORATADINE 5mg Tab", priority: "Gold"},
+            {barcode: "6285147000234", name: "ARTIZ 10MG 30TAB", category: "ADULT SYSTEMIC ANTI HISTAMINES", class: "CETIRIZINE 10 mg T", priority: "Gold"},
+            {barcode: "6285128000260", name: "CLARA 10 TABLETS", category: "ADULT SYSTEMIC ANTI HISTAMINES", class: "LORATADINE 10mg Tab", priority: "Platinum"},
+            {barcode: "6291100085439", name: "CHLOROHISTOL 20 TABLETS", category: "ADULT SYSTEMIC ANTI HISTAMINES", class: "CHLORPHENIRAMINE Tab", priority: "Silver"},
 
-    // Calculate totals including history
-    let totalSent = 0, totalConverted = 0;
-    State.patients.forEach(p => {
-        if (p.reminderSent === 'yes') totalSent++;
-        if (p.converted === 'yes') totalConverted++;
-        (p.history || []).forEach(h => {
-            if (h.reminderDate) totalSent++;
-            if (h.convertedDate) totalConverted++;
-        });
-    });
+            // BONE AND JOINTS
+            {barcode: "6223007353731", name: "ACTI-COLLA 30/SACHET", category: "BONE AND JOINTS", class: "COLLAGEN TYPE 2", priority: "Diamond"},
+            {barcode: "816169005080", name: "MARINE COLLAGEN EXTRA 250 GM", category: "BONE AND JOINTS", class: "COLLAGEN TYPE 2", priority: "Platinum"},
+            {barcode: "6286127000237", name: "NHS ALFLEX 60CHEW TAB", category: "BONE AND JOINTS", class: "GLUCOSAMINE-MSM-CHONDROITIN", priority: "Diamond"},
+            {barcode: "19962401039", name: "OPTI FLEX 30 SACHETS", category: "BONE AND JOINTS", class: "CURCUMIN", priority: "Diamond"},
+            {barcode: "6285756003626", name: "OSTEOFLEX 60 CHEWABLE TABLETS", category: "BONE AND JOINTS", class: "GLUCOSAMINE-MSM-CHONDROITIN", priority: "Gold"},
+            {barcode: "6224011817219", name: "GENUPHIL ADVANCE 30/SACHET", category: "BONE AND JOINTS", class: "GLUCOSAMINE-MSM-CHONDROITIN", priority: "Gold"},
+            {barcode: "618528968452", name: "CELFLEX 60CAP", category: "BONE AND JOINTS", class: "GLUCOSAMINE-MSM-CHONDROITIN", priority: "Platinum"},
+            {barcode: "6285128005326", name: "FLEXALL ULTRA 120TAB", category: "BONE AND JOINTS", class: "GLUCOSAMINE-MSM-CHONDROITIN", priority: "Gold"},
+            {barcode: "9327155007786", name: "MOTHERNEST TURMERIC 60 GUMMY", category: "BONE AND JOINTS", class: "CURCUMIN", priority: "Gold"},
+            {barcode: "6285128017282", name: "PRIMA K2 100 MCG 60 CAPSULE", category: "BONE AND JOINTS", class: "VITAMIN K2", priority: "Gold"},
 
-    document.getElementById('tSent').textContent = totalSent;
-    document.getElementById('tConverted').textContent = totalConverted;
-    document.getElementById('tRate').textContent = totalSent > 0 ? Math.round(totalConverted / totalSent * 100) + '%' : '0%';
+            // BURN CARE
+            {barcode: "6281080014888", name: "RIAHEAL OINTMENT 75GM", category: "BURN CARE", class: "B-SITOSTEROL ointment", priority: "Diamond"},
+            {barcode: "6285095010446", name: "AVOMEB EXTRA OINTMENT 75G", category: "BURN CARE", class: "B-SITOSTEROL ointment", priority: "Diamond"},
+            {barcode: "6291100082223", name: "MEBO OINTMENT 75G", category: "BURN CARE", class: "B-SITOSTEROL ointment", priority: "Gold"},
+            {barcode: "6285095010439", name: "AVOMEB EXTRA OINTMENT 50G", category: "BURN CARE", class: "B-SITOSTEROL ointment", priority: "Platinum"},
+            {barcode: "8594177490358", name: "HEMA GEL 30G", category: "BURN CARE", class: "Burn Relievers", priority: "Silver"},
 
-    const grid = document.getElementById('trackGrid');
-    
-    if (list.length === 0) {
-        grid.innerHTML = '<div class="empty" style="grid-column:1/-1;">No records found</div>';
-        return;
-    }
+            // DIGESTIVE CARE
+            {barcode: "8437015860695", name: "FERTY BIOTIC 30/SACHET", category: "DIGESTIVE CARE", class: "PROBIOTICS ADULT", priority: "Diamond"},
+            {barcode: "6286127000503", name: "NHS FLORANAL 10SACHET", category: "DIGESTIVE CARE", class: "PROBIOTICS ADULT", priority: "Diamond"},
+            {barcode: "3401545532105", name: "LACTIBIANE REFERENCE 30/SACHET", category: "DIGESTIVE CARE", class: "PROBIOTICS ADULT", priority: "Diamond"},
+            {barcode: "6285756004616", name: "EKAFLOR 30SACHET", category: "DIGESTIVE CARE", class: "PROBIOTICS ADULT", priority: "Platinum"},
+            {barcode: "6285343001714", name: "PROBA STICK 30 STICKS", category: "DIGESTIVE CARE", class: "PROBIOTICS ADULT", priority: "Gold"},
+            {barcode: "3401545503877", name: "LACTIBIANE ENFANT 30/SACHET", category: "DIGESTIVE CARE", class: "PROBIOTICS kids", priority: "Platinum"},
+            {barcode: "745114769329", name: "BIOCHARC 20/CAP", category: "DIGESTIVE CARE", class: "CHARCOAL", priority: "Platinum"},
 
-    grid.innerHTML = list.map(p => {
-        const historyCount = (p.history || []).length;
-        const historyBadge = historyCount > 0 ? `<div class="history-badge">🔄 ${historyCount} previous cycles</div>` : '';
+            // PROTON PUMP INHIBITORS
+            {barcode: "6285094000363", name: "OMEPREX 20MG 28CAP", category: "PROTON PUMP INHIBITORS", class: "OMEPRAZOLE 20mg", priority: "Platinum"},
+            {barcode: "6286001000407", name: "SOICARBY 40MG/1100MG 28/CAP", category: "PROTON PUMP INHIBITORS", class: "OMEPRAZOLE/SODIUM BICARBONATE", priority: "Diamond"},
+            {barcode: "6281086011249", name: "PEPTAZOL 30MG 28 CAP", category: "PROTON PUMP INHIBITORS", class: "LANSOPRAZOLE 30 MG", priority: "Platinum"},
+            {barcode: "6286434000692", name: "ESOPOLE 40MG 28CAP", category: "PROTON PUMP INHIBITORS", class: "ESOMEPRAZOLE 40 MG", priority: "Platinum"},
+            {barcode: "6281086001356", name: "PROTON 40MG 28TAB", category: "PROTON PUMP INHIBITORS", class: "PANTOPRAZOLE 40 MG", priority: "Platinum"},
+            {barcode: "6285104001212", name: "PANTOLOC 40MG 30TAB", category: "PROTON PUMP INHIBITORS", class: "PANTOPRAZOLE 40 MG", priority: "Gold"},
+            {barcode: "6291100080175", name: "RISEK 20 MG 14 CAPSULES", category: "PROTON PUMP INHIBITORS", class: "OMEPRAZOLE 20mg", priority: "Platinum"},
+            {barcode: "5000456007399", name: "NEXIUM 40MG 28TAB", category: "PROTON PUMP INHIBITORS", class: "ESOMEPRAZOLE 40 MG", priority: "Silver"},
+            {barcode: "5000456007412", name: "NEXIUM 20MG 28TAB", category: "PROTON PUMP INHIBITORS", class: "ESOMEPRAZOLE 20mg", priority: "Silver"},
+            {barcode: "6281086011966", name: "PEPTAZOL 15MG 28/CAP", category: "PROTON PUMP INHIBITORS", class: "LANSOPRAZOLE 15 MG", priority: "Gold"},
+
+            // SHORT TERM ED SOLUTIONS
+            {barcode: "6286434000128", name: "TADIL 20MG 10TAB", category: "SHORT TERM ED SOLUTIONS", class: "TADALAFIL 20mg Tablet", priority: "Diamond"},
+            {barcode: "6286085000812", name: "SAYEN 20 MG 12 TABLETS", category: "SHORT TERM ED SOLUTIONS", class: "TADALAFIL 20mg Tablet", priority: "Diamond"},
+            {barcode: "6281080015083", name: "TEDO 20 MG 8 TAB", category: "SHORT TERM ED SOLUTIONS", class: "TADALAFIL 20mg Tablet", priority: "Diamond"},
+            {barcode: "6281086003480", name: "SNAFI 20 MG 6 TAB", category: "SHORT TERM ED SOLUTIONS", class: "TADALAFIL 20mg Tablet", priority: "Gold"},
+            {barcode: "6285101001673", name: "FALLAH 100 MG 4 TAB", category: "SHORT TERM ED SOLUTIONS", class: "SILDENAFIL 100mg Tablet", priority: "Platinum"},
+            {barcode: "6281086012970", name: "WAFI 100/4", category: "SHORT TERM ED SOLUTIONS", class: "SILDENAFIL 100mg Tablet", priority: "Gold"},
+            {barcode: "6288030000045", name: "VEGA 100 MG", category: "SHORT TERM ED SOLUTIONS", class: "SILDENAFIL 100mg Tablet", priority: "Gold"},
+            {barcode: "6285128001021", name: "ERECTA 100 MG 4 TAB", category: "SHORT TERM ED SOLUTIONS", class: "SILDENAFIL 100mg Tablet", priority: "Gold"},
+
+            // LONG TERM ED
+            {barcode: "6286434000135", name: "TADIL 5MG 30TAB", category: "LONG TERM ED SOLUTIONS", class: "TADALAFIL 5mg Tablet", priority: "Diamond"},
+            {barcode: "6285095008719", name: "AVIALIS 5MG 28TAB", category: "LONG TERM ED SOLUTIONS", class: "TADALAFIL 5mg Tablet", priority: "Gold"},
+            {barcode: "26285157000884", name: "HELT 5MG 30/TAB", category: "LONG TERM ED SOLUTIONS", class: "TADALAFIL 5mg Tablet", priority: "Gold"},
+            {barcode: "6285128016223", name: "REXOFIL 5 MG 30 TAB", category: "LONG TERM ED SOLUTIONS", class: "TADALAFIL 5mg Tablet", priority: "Gold"},
+            {barcode: "6251107425881", name: "TYRA 5 MG 28 TAB", category: "LONG TERM ED SOLUTIONS", class: "TADALAFIL 5mg Tablet", priority: "Gold"},
+
+            // PREMATURE EJACULATION
+            {barcode: "6286059000343", name: "PALOT 60MG 6TAB", category: "PREMATURE EJACULATION", class: "DAPOXETINE-60", priority: "Diamond"},
+            {barcode: "6285094000752", name: "DEPOJOY 60MG 6TAB", category: "PREMATURE EJACULATION", class: "DAPOXETINE-60", priority: "Platinum"},
+            {barcode: "6285128012973", name: "DAPOX 60 MG 4 TAB", category: "PREMATURE EJACULATION", class: "DAPOXETINE-60", priority: "Gold"},
+            {barcode: "6281086002902", name: "LEJAM 60 MG 4 TAB", category: "PREMATURE EJACULATION", class: "DAPOXETINE-60", priority: "Gold"},
+            {barcode: "6285128012980", name: "DAPOX 30 MG 4 TAB", category: "PREMATURE EJACULATION", class: "DAPOXETINE-30", priority: "Diamond"},
+            {barcode: "6285095009839", name: "EVOKA 30MG 4TAB", category: "PREMATURE EJACULATION", class: "DAPOXETINE-30", priority: "Gold"},
+            {barcode: "6281086012895", name: "LEJAM 30 MG 4 TAB", category: "PREMATURE EJACULATION", class: "DAPOXETINE-30", priority: "Silver"},
+
+            // MACROLIDES
+            {barcode: "6281080010545", name: "AZIMAC 250MG 6TAB", category: "MACROLIDES ADULT", class: "AZITHROMYCIN TAB", priority: "Gold"},
+            {barcode: "6285147000685", name: "CLARITT 500MG 14TAB", category: "MACROLIDES ADULT", class: "Clarithromycin Tab", priority: "R2"},
+            {barcode: "6281086001639", name: "ZIMAX 250MG 6CAP", category: "MACROLIDES ADULT", class: "AZITHROMYCIN TAB", priority: "R2"},
+            {barcode: "6291100082605", name: "AZOMYCIN 200MG/5ML SUSPENSION 30ML", category: "MACROLIDES PAEDIATRIC", class: "AZITHROMYCIN Susp", priority: "Gold"},
+            {barcode: "6285128000192", name: "AZI-ONCE 200MG/5ML SUSPENSION 22.5ML", category: "MACROLIDES PAEDIATRIC", class: "AZITHROMYCIN Susp", priority: "Silver"},
+
+            // PENICILLIN
+            {barcode: "6285101000393", name: "MEGAMOX 1G 14TAB", category: "PENICILLIN COMBINATIONS", class: "AMOXICILLIN-CLAV-1 GM", priority: "Gold"},
+            {barcode: "6281086011508", name: "KLAVOX 1 G 14 TABLETS", category: "PENICILLIN COMBINATIONS", class: "AMOXICILLIN-CLAV-1 GM", priority: "Silver"},
+            {barcode: "6285101000683", name: "MEGAMOX 625 MG 20 TABLETS", category: "PENICILLIN COMBINATIONS", class: "AMOXICILLIN-CLAV-625", priority: "Platinum"},
+            {barcode: "6291103730053", name: "GLOCLAV 625 MG 20 F.C TABLETS", category: "PENICILLIN COMBINATIONS", class: "AMOXICILLIN-CLAV-625", priority: "Gold"},
+            {barcode: "6285101000232", name: "MEGAMOX 312MG 100ML SUSPENSION", category: "PENICILLIN COMBINATIONS", class: "AMOXICILLIN-CLAV 312", priority: "Gold"},
+            {barcode: "6285101000485", name: "MEGAMOX 457 MG 70ML SUSPENSION", category: "PENICILLIN COMBINATIONS", class: "AMOXICILLIN-CLAV-457", priority: "Gold"},
+            {barcode: "6285101000140", name: "REMOX 500 MG 20 CAPSULES", category: "PENICILLIN PLAIN", class: "AMOXICILLIN-500 MG CAP", priority: "Platinum"},
+            {barcode: "6281086010792", name: "HYMOX 500 MG 20 CAPSULES", category: "PENICILLIN PLAIN", class: "AMOXICILLIN-500 MG CAP", priority: "Gold"},
+
+            // NASAL HYGIENE
+            {barcode: "8016887000158", name: "OTOSAN NASAL WASH KIT + 30 Sachets", category: "NASAL HYGIENE", class: "Nasal Wash Kit", priority: "Diamond"},
+            {barcode: "6286573000102", name: "BENTOMIST NASAL SPRAY 30ML", category: "NASAL HYGIENE", class: "Saline Spray", priority: "Diamond"},
+            {barcode: "6285095007866", name: "CORTRIEF NASAL SPRAY 120 DOSES", category: "Nasal Corticosteroids", class: "Nasal Corticosteroids", priority: "Silver"},
+            {barcode: "6285095005374", name: "AVOCOM AQUEOUS NASAL SPRAY 120DOSE", category: "Nasal Corticosteroids", class: "Nasal Corticosteroids", priority: "Silver"},
+            {barcode: "6285095000089", name: "SALINOSE BABY NASAL DROPES 20 ML AVALON", category: "NASAL HYGIENE", class: "Saline Drops", priority: "Gold"},
+            {barcode: "6286573000096", name: "BENTOMIST NASAL DROP 20ML", category: "NASAL HYGIENE", class: "Saline Drops", priority: "Diamond"},
+
+            // SLEEP AIDS
+            {barcode: "9327155007427", name: "MOTHERNEST MELATONIN GUMMY 60 PCS", category: "SLEEP AIDS", class: "MELATONIN", priority: "Platinum"},
+            {barcode: "64642077493", name: "JAMIESON MELATONIN FAST DISSOLVING 3 MG 100 TAB", category: "SLEEP AIDS", class: "MELATONIN", priority: "Platinum"},
+            {barcode: "6286127000398", name: "NHS MELATONIN STAR GUMMIES 60/PCS", category: "SLEEP AIDS", class: "MELATONIN", priority: "Platinum"},
+            {barcode: "6285128014779", name: "JP MELATONIN 5MG 100TAB", category: "SLEEP AIDS", class: "MELATONIN", priority: "Platinum"},
+            {barcode: "6285128006729", name: "JP VALERIAN 250MG 30CAP", category: "SLEEP AIDS", class: "VALERIAN", priority: "Gold"},
+            {barcode: "6285128021487", name: "JP SAFFRON 28MG 30CAP", category: "SLEEP AIDS", class: "SAFFRON", priority: "Gold"},
+            {barcode: "6281000112823", name: "LIMITLESS SLEEP AID ORIGINAL 30/FILMS", category: "SLEEP AIDS", class: "MELATONIN", priority: "Silver"},
+
+            // WEIGHT CONTROL
+            {barcode: "9553653984414", name: "RICH FIBER SATCHES FRUITS & VEGETABLES 12 SACHES", category: "WEIGHT CONTROL", class: "FIBERS", priority: "Diamond"},
+            {barcode: "714654879771", name: "APLE FIT PLUS 60CAP", category: "WEIGHT CONTROL", class: "CHITOSAN PILLS", priority: "Diamond"},
+            {barcode: "9327155007632", name: "MOTHRNEST APPLE CIDER VINEGAR GUMMY 180G 60 CAPS", category: "WEIGHT CONTROL", class: "APPLE CIDER", priority: "Gold"},
+            {barcode: "6286127000053", name: "NHS GARCIMIUM Chewable 60 Tablet", category: "WEIGHT CONTROL", class: "GARCINIA", priority: "Diamond"},
+            {barcode: "4260103332941", name: "FORMOLINE L112 60 TABLETS", category: "WEIGHT CONTROL", class: "ORLISTAT", priority: "Diamond"},
+            {barcode: "6285147001187", name: "FATLOS 120 MG 80 CAPSULES", category: "WEIGHT CONTROL", class: "ORLISTAT", priority: "Silver"},
+
+            // ORAL CARE
+            {barcode: "6286573000065", name: "BENTOHEX MOUTH WASH 300ML", category: "Oral Care", class: "Mouth Wash", priority: "Diamond"},
+            {barcode: "6286573000027", name: "BENTODENT ORAL SPRAY 60ML", category: "Oral Care", class: "Medicated Oral Spray", priority: "Diamond"},
+            {barcode: "6286573000010", name: "BENTODENT ORAL GEL 20G", category: "Oral Care", class: "Oral Gel", priority: "Diamond"},
+            {barcode: "6281080000874", name: "ORAXINE MOUTHWASH 300ML", category: "Oral Care", class: "Mouth Wash", priority: "Gold"},
+
+            // SORE THROATS
+            {barcode: "8016887000196", name: "OTOSAN THROAT GEL FORTE 14 *10 ml STICKS", category: "SORE THROATS", class: "Sore Gel", priority: "Gold"},
+            {barcode: "8001841469829", name: "VICKS VAPO DROPS HONEY LEMON MENTHOL 36PCS", category: "SORE THROATS", class: "Sore Lozenges", priority: "Platinum"},
+            {barcode: "8596024008433", name: "SEPTOFORT 2MG LEMON 24TAB", category: "SORE THROATS", class: "Sore Lozenges", priority: "Platinum"},
+            {barcode: "8595165273496", name: "SEPTOFORT 2MG 24TAB", category: "SORE THROATS", class: "Sore Lozenges", priority: "Platinum"},
+
+            // IMMUNITY SUPPORT
+            {barcode: "748515537337", name: "BERRY CAN ZINC 120ML", category: "IMMUNITY SUPPORT", class: "Immunity_child", priority: "Diamond"},
+            {barcode: "3585555024338", name: "UPSA VITALITE ACEROLA 1000 30/CHEW.TAB", category: "IMMUNITY SUPPORT", class: "VITAMIN C", priority: "Diamond"},
+            {barcode: "9327155007410", name: "MOTHERNEST VITAMIN C 400 MG CANDY 36 PCS", category: "IMMUNITY SUPPORT", class: "VITAMIN C", priority: "Platinum"},
+            {barcode: "8410885077394", name: "MARNYS PROPOLIS 1000MG 30CAP", category: "IMMUNITY SUPPORT", class: "propolis", priority: "Gold"},
+            {barcode: "4029444423325", name: "DELEBOO VIT C + ZINC RASP BERRY 90 BEANS", category: "IMMUNITY SUPPORT", class: "Vitamin C + Zinc Pills", priority: "Platinum"},
+            {barcode: "766961100943", name: "ZINC GLUCONAATE 76MG 60TAB", category: "IMMUNITY SUPPORT", class: "ZINC", priority: "Platinum"},
+            {barcode: "748515537436", name: "VITANOOR-C 1000 20 EFF TABLETS", category: "IMMUNITY SUPPORT", class: "VITAMIN C", priority: "Gold"},
+            {barcode: "6285128005364", name: "VITA-C ZINC 60CAP", category: "IMMUNITY SUPPORT", class: "Vitamin C + Zinc Pills", priority: "Gold"},
+
+            // HAIR CARE
+            {barcode: "8058265961002", name: "VISCOFLU 20/SACHET", category: "HAIR CARE", class: "CYSTINE", priority: "Diamond"},
+            {barcode: "6286127000626", name: "NHS CYSTINE 250MG 60/CAP", category: "HAIR CARE", class: "CYSTINE", priority: "Diamond"},
+            {barcode: "9327155006888", name: "MOTHERNEST MULTI VITAMIN BIOTIN & ZINC 60 PCS", category: "HAIR CARE", class: "BIOTIN", priority: "Diamond"},
+            {barcode: "3578830148058", name: "FORCAPIL LOTION HAIR 150ML", category: "HAIR CARE", class: "BIOTIN LOTION", priority: "Platinum"},
+            {barcode: "3578830148102", name: "FORCAPIL HAIR SPRAY 125ML", category: "HAIR CARE", class: "BIOTIN SPRAY", priority: "Platinum"},
+            {barcode: "3578830123628", name: "FORCAPIL HAIR & NAIL TONIC 180 CAPS", category: "HAIR CARE", class: "CYSTINE", priority: "Gold"},
+            {barcode: "6286127000374", name: "NHS GLOWY MAX GUMMIES 60/PCS", category: "HAIR CARE", class: "BIOTIN", priority: "Gold"},
+            {barcode: "3800003304979", name: "DONNACAP 90 CAPSULES", category: "HAIR CARE", class: "MULTIVITAMINS", priority: "Gold"},
+            {barcode: "3574661047485", name: "REGAINE 5% SPRAY 60ML", category: "UNISEX HAIR FALL MEDICATIONS", class: "MINOXIDIL 5% MEN", priority: "Gold"},
+        ];
+
+        // Symptoms mapping
+        const symptomsMap = {
+            'headache': ['ADULT PAIN KILLERS', 'ADULT SIMPLE ANALGESICS'],
+            'صداع': ['ADULT PAIN KILLERS', 'ADULT SIMPLE ANALGESICS'],
+            'stomach': ['PROTON PUMP INHIBITORS', 'DIGESTIVE CARE'],
+            'معدة': ['PROTON PUMP INHIBITORS', 'DIGESTIVE CARE'],
+            'allergy': ['ADULT SYSTEMIC ANTI HISTAMINES'],
+            'حساسية': ['ADULT SYSTEMIC ANTI HISTAMINES'],
+            'pain': ['ADULT PAIN KILLERS', 'BONE AND JOINTS'],
+            'ألم': ['ADULT PAIN KILLERS', 'BONE AND JOINTS'],
+            'vitamins': ['A TO Z VITAMINS', 'IMMUNITY SUPPORT'],
+            'فيتامينات': ['A TO Z VITAMINS', 'IMMUNITY SUPPORT'],
+            'sleep': ['SLEEP AIDS'],
+            'نوم': ['SLEEP AIDS'],
+            'burn': ['BURN CARE'],
+            'حروق': ['BURN CARE'],
+            'cold': ['IMMUNITY SUPPORT', 'SORE THROATS', 'NASAL HYGIENE'],
+            'برد': ['IMMUNITY SUPPORT', 'SORE THROATS', 'NASAL HYGIENE'],
+            'throat': ['SORE THROATS'],
+            'حلق': ['SORE THROATS'],
+            'hair': ['HAIR CARE', 'UNISEX HAIR FALL MEDICATIONS'],
+            'شعر': ['HAIR CARE', 'UNISEX HAIR FALL MEDICATIONS'],
+            'weight': ['WEIGHT CONTROL'],
+            'وزن': ['WEIGHT CONTROL'],
+            'antibiotic': ['MACROLIDES ADULT', 'MACROLIDES PAEDIATRIC', 'PENICILLIN COMBINATIONS', 'PENICILLIN PLAIN'],
+            'مضاد حيوي': ['MACROLIDES ADULT', 'MACROLIDES PAEDIATRIC', 'PENICILLIN COMBINATIONS', 'PENICILLIN PLAIN'],
+        };
+
+        // Priority order
+        const priorityOrder = { 'Diamond': 1, 'Platinum': 2, 'Gold': 3, 'Silver': 4, 'R1': 5, 'R2': 6 };
+
+        // ==================== DOM ELEMENTS ====================
+        const searchInput = document.getElementById('searchInput');
+        const autocompleteDropdown = document.getElementById('autocompleteDropdown');
+        const barcodeInput = document.getElementById('barcodeInput');
+        const barcodeSubmit = document.getElementById('barcodeSubmit');
+        const resultsSection = document.getElementById('resultsSection');
+        const currentProduct = document.getElementById('currentProduct');
+        const alternativesList = document.getElementById('alternativesList');
+        const resultsCount = document.getElementById('resultsCount');
+        const clearResults = document.getElementById('clearResults');
+        const tabs = document.querySelectorAll('.search-tab');
+        const symptomChips = document.querySelectorAll('.symptom-chip');
+
+        let html5QrCode = null;
+        let selectedIndex = -1;
+
+        // ==================== FUNCTIONS ====================
         
-        if (p.converted === 'yes') {
-            return `
-                <div class="track-card converted">
-                    ${historyBadge}
-                    <div class="name">${Utils.sanitize(p.name) || 'Unnamed'}</div>
-                    <div class="phone">${Utils.sanitize(p.phone)}</div>
-                    <div class="med">${Utils.sanitize(p.med)}</div>
-                    <div class="info">
-                        📤 Sent: ${p.reminderDate}<br>
-                        ✅ Converted: ${p.convertedDate}
-                    </div>
-                    <button class="track-btn done" onclick="PatientActions.undoConverted('${p.id}')">✅ Converted (Click to Undo)</button>
-                    <button class="track-btn renew" onclick="PatientActions.renewPatient('${p.id}')">🔄 Renew for Next Month</button>
-                </div>
-            `;
-        } else {
-            return `
-                <div class="track-card">
-                    ${historyBadge}
-                    <div class="name">${Utils.sanitize(p.name) || 'Unnamed'}</div>
-                    <div class="phone">${Utils.sanitize(p.phone)}</div>
-                    <div class="med">${Utils.sanitize(p.med)}</div>
-                    <div class="info">📤 Sent: ${p.reminderDate}</div>
-                    <button class="track-btn" onclick="PatientActions.markConverted('${p.id}')">✅ Mark as Converted</button>
-                </div>
-            `;
+        // Highlight search term
+        function highlightMatch(text, term) {
+            if (!term) return text;
+            const regex = new RegExp(`(${term})`, 'gi');
+            return text.replace(regex, '<mark>$1</mark>');
         }
-    }).join('');
-}
 
-function generateReport() {
-    const month = parseInt(document.getElementById('reportMonth').value);
-    const year = parseInt(document.getElementById('reportYear').value);
+        // Get autocomplete suggestions
+        function getAutocompleteSuggestions(query) {
+            if (!query || query.length < 2) return { products: [], symptoms: [], categories: [] };
 
-    let sent = 0, converted = 0;
-    const convertedPatients = [];
+            const q = query.toLowerCase();
+            
+            // Product matches
+            const productMatches = products.filter(p => 
+                p.name.toLowerCase().includes(q) || 
+                p.barcode.includes(q)
+            ).slice(0, 5);
 
-    State.patients.forEach(p => {
-        // Check current cycle
-        if (p.reminderSent === 'yes' && p.reminderDate) {
-            const rd = new Date(p.reminderDate);
-            if (rd.getMonth() === month && rd.getFullYear() === year) {
-                sent++;
-                if (p.converted === 'yes') {
-                    converted++;
-                    convertedPatients.push({
-                        name: p.name,
-                        phone: p.phone,
-                        med: p.med,
-                        reminderDate: p.reminderDate,
-                        convertedDate: p.convertedDate
-                    });
-                }
+            // Symptom matches
+            const symptomMatches = Object.keys(symptomsMap).filter(s => 
+                s.toLowerCase().includes(q)
+            ).slice(0, 3);
+
+            // Category matches
+            const categories = [...new Set(products.map(p => p.category))];
+            const categoryMatches = categories.filter(c => 
+                c.toLowerCase().includes(q)
+            ).slice(0, 3);
+
+            return { products: productMatches, symptoms: symptomMatches, categories: categoryMatches };
+        }
+
+        // Render autocomplete
+        function renderAutocomplete(suggestions, query) {
+            const { products: prods, symptoms, categories } = suggestions;
+            
+            if (prods.length === 0 && symptoms.length === 0 && categories.length === 0) {
+                autocompleteDropdown.classList.remove('show');
+                return;
+            }
+
+            let html = '';
+
+            // Products
+            if (prods.length > 0) {
+                html += '<div class="autocomplete-section">';
+                html += '<div class="autocomplete-section-title">💊 المنتجات</div>';
+                prods.forEach((p, i) => {
+                    html += `
+                        <div class="autocomplete-item" data-type="product" data-barcode="${p.barcode}" data-index="${i}">
+                            <div class="autocomplete-item-icon product">💊</div>
+                            <div class="autocomplete-item-content">
+                                <div class="autocomplete-item-name">${highlightMatch(p.name, query)}</div>
+                                <div class="autocomplete-item-sub">${p.category}</div>
+                            </div>
+                            <div class="autocomplete-item-badge product-priority-badge ${p.priority.toLowerCase()}">${p.priority}</div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            }
+
+            // Symptoms
+            if (symptoms.length > 0) {
+                html += '<div class="autocomplete-section">';
+                html += '<div class="autocomplete-section-title">🏥 الأعراض</div>';
+                symptoms.forEach((s, i) => {
+                    html += `
+                        <div class="autocomplete-item" data-type="symptom" data-symptom="${s}" data-index="${prods.length + i}">
+                            <div class="autocomplete-item-icon symptom">🏥</div>
+                            <div class="autocomplete-item-content">
+                                <div class="autocomplete-item-name">${highlightMatch(s, query)}</div>
+                                <div class="autocomplete-item-sub">بحث بالعرض</div>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            }
+
+            // Categories
+            if (categories.length > 0) {
+                html += '<div class="autocomplete-section">';
+                html += '<div class="autocomplete-section-title">📂 الفئات</div>';
+                categories.forEach((c, i) => {
+                    html += `
+                        <div class="autocomplete-item" data-type="category" data-category="${c}" data-index="${prods.length + symptoms.length + i}">
+                            <div class="autocomplete-item-icon category">📂</div>
+                            <div class="autocomplete-item-content">
+                                <div class="autocomplete-item-name">${highlightMatch(c, query)}</div>
+                                <div class="autocomplete-item-sub">عرض جميع المنتجات</div>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            }
+
+            autocompleteDropdown.innerHTML = html;
+            autocompleteDropdown.classList.add('show');
+            selectedIndex = -1;
+        }
+
+        // Search by barcode
+        function searchByBarcode(barcode) {
+            const product = products.find(p => p.barcode === barcode);
+            if (product) {
+                showProductResults(product);
+            } else {
+                showNoResults();
             }
         }
-        
-        // Check history
-        (p.history || []).forEach(h => {
-            if (h.reminderDate) {
-                const rd = new Date(h.reminderDate);
-                if (rd.getMonth() === month && rd.getFullYear() === year) {
-                    sent++;
-                    if (h.convertedDate) {
-                        converted++;
-                        convertedPatients.push({
-                            name: p.name,
-                            phone: p.phone,
-                            med: p.med,
-                            reminderDate: h.reminderDate,
-                            convertedDate: h.convertedDate
-                        });
-                    }
-                }
+
+        // Search by symptom
+        function searchBySymptom(symptom) {
+            const categories = symptomsMap[symptom.toLowerCase()] || symptomsMap[symptom];
+            if (categories) {
+                const filtered = products.filter(p => categories.includes(p.category));
+                showCategoryResults(symptom, filtered);
+            }
+        }
+
+        // Search by category
+        function searchByCategory(category) {
+            const filtered = products.filter(p => p.category === category);
+            showCategoryResults(category, filtered);
+        }
+
+        // Show product results with alternatives
+        function showProductResults(product) {
+            resultsSection.classList.add('show');
+            
+            // Show current product
+            currentProduct.style.display = 'block';
+            document.getElementById('currentProductName').textContent = product.name;
+            document.getElementById('currentProductCategory').innerHTML = `📂 ${product.category}`;
+            document.getElementById('currentProductBarcode').innerHTML = `🔢 ${product.barcode}`;
+            document.getElementById('currentProductPriority').innerHTML = `⭐ ${product.priority}`;
+
+            // Get alternatives from same subcategory
+            const alternatives = products
+                .filter(p => p.category === product.category && p.barcode !== product.barcode)
+                .sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+
+            renderAlternatives(alternatives);
+            resultsCount.textContent = alternatives.length + 1;
+        }
+
+        // Show category results
+        function showCategoryResults(title, filtered) {
+            resultsSection.classList.add('show');
+            currentProduct.style.display = 'none';
+
+            const sorted = filtered.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+            renderAlternatives(sorted, true);
+            resultsCount.textContent = sorted.length;
+        }
+
+        // Render alternatives list
+        function renderAlternatives(alternatives, showAll = false) {
+            if (alternatives.length === 0) {
+                alternativesList.innerHTML = `
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 8v4M12 16h.01"/>
+                        </svg>
+                        <h3>لا توجد بدائل</h3>
+                        <p>لم نجد منتجات أخرى في نفس الفئة</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            alternatives.forEach((p, index) => {
+                const isBest = index === 0;
+                html += `
+                    <div class="product-card ${p.priority.toLowerCase()}" onclick="searchByBarcode('${p.barcode}')">
+                        <div class="product-rank">${index + 1}</div>
+                        <div class="product-info">
+                            <div class="product-name">
+                                ${isBest ? '<span class="best-choice-badge">⭐ الأفضل</span>' : ''}
+                                ${p.name}
+                            </div>
+                            <div class="product-meta">${p.class} • ${p.barcode}</div>
+                        </div>
+                        <div class="product-priority-badge ${p.priority.toLowerCase()}">${p.priority}</div>
+                    </div>
+                `;
+            });
+
+            alternativesList.innerHTML = html;
+        }
+
+        // Show no results
+        function showNoResults() {
+            resultsSection.classList.add('show');
+            currentProduct.style.display = 'none';
+            alternativesList.innerHTML = `
+                <div class="empty-state">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.35-4.35"/>
+                    </svg>
+                    <h3>لم نجد نتائج</h3>
+                    <p>جرب البحث بكلمات مختلفة أو تأكد من الباركود</p>
+                </div>
+            `;
+            resultsCount.textContent = '0';
+        }
+
+        // Clear results
+        function clearAllResults() {
+            resultsSection.classList.remove('show');
+            searchInput.value = '';
+            barcodeInput.value = '';
+            autocompleteDropdown.classList.remove('show');
+        }
+
+        // Tab switching
+        function switchTab(tabName) {
+            tabs.forEach(t => t.classList.remove('active'));
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+
+            document.getElementById('search-panel').style.display = tabName === 'search' ? 'block' : 'none';
+            document.getElementById('scanner-panel').style.display = tabName === 'scanner' ? 'block' : 'none';
+
+            if (tabName === 'scanner') {
+                startScanner();
+            } else {
+                stopScanner();
+            }
+        }
+
+        // Start barcode scanner
+        function startScanner() {
+            if (html5QrCode) return;
+
+            html5QrCode = new Html5Qrcode("qr-reader");
+            html5QrCode.start(
+                { facingMode: "environment" },
+                { fps: 10, qrbox: { width: 250, height: 100 } },
+                (decodedText) => {
+                    html5QrCode.stop();
+                    searchByBarcode(decodedText);
+                    switchTab('search');
+                },
+                () => {}
+            ).catch(err => {
+                console.log("Scanner error:", err);
+            });
+        }
+
+        // Stop scanner
+        function stopScanner() {
+            if (html5QrCode) {
+                html5QrCode.stop().then(() => {
+                    html5QrCode = null;
+                }).catch(() => {});
+            }
+        }
+
+        // ==================== EVENT LISTENERS ====================
+
+        // Search input
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.trim();
+            const suggestions = getAutocompleteSuggestions(query);
+            renderAutocomplete(suggestions, query);
+        });
+
+        // Search input focus
+        searchInput.addEventListener('focus', () => {
+            if (searchInput.value.length >= 2) {
+                const suggestions = getAutocompleteSuggestions(searchInput.value);
+                renderAutocomplete(suggestions, searchInput.value);
             }
         });
-    });
 
-    const rate = sent > 0 ? Math.round(converted / sent * 100) : 0;
-    const waiting = sent - converted;
-    const waitingRate = sent > 0 ? Math.round(waiting / sent * 100) : 0;
+        // Click outside to close dropdown
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.search-input-container')) {
+                autocompleteDropdown.classList.remove('show');
+            }
+        });
 
-    document.getElementById('rSent').textContent = sent;
-    document.getElementById('rConverted').textContent = converted;
-    document.getElementById('rRate').textContent = rate + '%';
-    document.getElementById('rBar').style.width = rate + '%';
+        // Autocomplete item click
+        autocompleteDropdown.addEventListener('click', (e) => {
+            const item = e.target.closest('.autocomplete-item');
+            if (!item) return;
 
-    document.getElementById('summaryTb').innerHTML = `
-        <tr><td>📤 Reminders Sent</td><td>${sent}</td><td>100%</td></tr>
-        <tr><td>✅ Converted</td><td>${converted}</td><td>${rate}%</td></tr>
-        <tr><td>⏳ Waiting</td><td>${waiting}</td><td>${waitingRate}%</td></tr>
-    `;
+            const type = item.dataset.type;
+            if (type === 'product') {
+                searchByBarcode(item.dataset.barcode);
+            } else if (type === 'symptom') {
+                searchBySymptom(item.dataset.symptom);
+            } else if (type === 'category') {
+                searchByCategory(item.dataset.category);
+            }
 
-    document.getElementById('convList').innerHTML = convertedPatients.length > 0
-        ? convertedPatients.map(p => `
-            <tr>
-                <td class="name">${Utils.sanitize(p.name) || 'Unnamed'}</td>
-                <td class="phone">${Utils.sanitize(p.phone)}</td>
-                <td class="med">${Utils.sanitize(p.med)}</td>
-                <td>${p.reminderDate}</td>
-                <td>${p.convertedDate}</td>
-            </tr>
-        `).join('')
-        : '<tr><td colspan="5"><div class="empty">No conversions this month</div></td></tr>';
-}
+            autocompleteDropdown.classList.remove('show');
+            searchInput.value = '';
+        });
 
-function resetForm() {
-    State.editId = null;
-    document.getElementById('patientForm').reset();
-    document.getElementById('days').value = '30';
-    document.getElementById('date').valueAsDate = new Date();
-    document.getElementById('formTitle').textContent = '➕ Add Patient';
-    document.getElementById('submitBtn').innerHTML = '<span>➕</span> Add Patient';
-    UI.clearFieldErrors();
-}
+        // Keyboard navigation
+        searchInput.addEventListener('keydown', (e) => {
+            const items = autocompleteDropdown.querySelectorAll('.autocomplete-item');
+            
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
+                items.forEach((item, i) => item.classList.toggle('selected', i === selectedIndex));
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                selectedIndex = Math.max(selectedIndex - 1, 0);
+                items.forEach((item, i) => item.classList.toggle('selected', i === selectedIndex));
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                if (selectedIndex >= 0 && items[selectedIndex]) {
+                    items[selectedIndex].click();
+                }
+            } else if (e.key === 'Escape') {
+                autocompleteDropdown.classList.remove('show');
+            }
+        });
 
-function showPage(pageName) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.getElementById(pageName + 'Page').classList.add('active');
-    document.querySelector(`[data-page="${pageName}"]`).classList.add('active');
-    
-    if (pageName === 'tracking') renderTracking();
-    if (pageName === 'reports') generateReport();
-}
+        // Barcode submit
+        barcodeSubmit.addEventListener('click', () => {
+            const barcode = barcodeInput.value.trim();
+            if (barcode) {
+                searchByBarcode(barcode);
+            }
+        });
 
-// Make functions globally accessible
-window.PatientActions = PatientActions;
-window.changePage = changePage;
-window.resetForm = resetForm;
-window.closeModal = UI.closeModal;
+        barcodeInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                barcodeSubmit.click();
+            }
+        });
 
-// ==================== Initialization ====================
-document.addEventListener('DOMContentLoaded', () => {
-    // Initialize date picker
-    document.getElementById('date').valueAsDate = new Date();
-    
-    // Initialize month/year selectors
-    const monthSelect = document.getElementById('reportMonth');
-    const yearSelect = document.getElementById('reportYear');
-    const currentDate = new Date();
-    
-    CONFIG.MONTHS.forEach((month, index) => {
-        monthSelect.innerHTML += `<option value="${index}">${month}</option>`;
-    });
-    monthSelect.value = currentDate.getMonth();
-    
-    for (let year = currentDate.getFullYear(); year <= currentDate.getFullYear() + 3; year++) {
-        yearSelect.innerHTML += `<option value="${year}">${year}</option>`;
-    }
-    yearSelect.value = currentDate.getFullYear();
-    
-    // Tab click handlers
-    document.querySelectorAll('.tab').forEach(tab => {
-        tab.addEventListener('click', () => showPage(tab.dataset.page));
-    });
-    
-    // Form submit handler
-    document.getElementById('patientForm').addEventListener('submit', PatientActions.save);
-    
-    // Search with debounce
-    document.getElementById('search').addEventListener('input', Utils.debounce((e) => {
-        State.searchQuery = e.target.value;
-        State.currentPage = 1;
-        renderPatients();
-    }, CONFIG.SEARCH_DELAY));
-    
-    // Track filter change
-    document.getElementById('trackFilter').addEventListener('change', renderTracking);
-    
-    // Report selectors change
-    document.getElementById('reportMonth').addEventListener('change', generateReport);
-    document.getElementById('reportYear').addEventListener('change', generateReport);
-    
-    // Load data
-    API.loadPatients();
-});
-</script>
+        // Tabs
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+        });
+
+        // Symptom chips
+        symptomChips.forEach(chip => {
+            chip.addEventListener('click', () => {
+                searchBySymptom(chip.dataset.symptom);
+            });
+        });
+
+        // Clear results
+        clearResults.addEventListener('click', clearAllResults);
+
+        // Make searchByBarcode global for onclick
+        window.searchByBarcode = searchByBarcode;
+    </script>
 </body>
 </html>
