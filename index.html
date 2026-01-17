@@ -190,7 +190,6 @@ const sheetID = '1CZHMQnkhoXCpHlehZAHuYLWdpgAx-fXgn2PXT9H72-Y';
 const csvURL = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:csv&sheet=Sheet1`;
 
 // ================= ORIGINAL CATEGORIES STRUCTURE =================
-// هذه هي الأقسام الثابتة التي طلبتها
 const mainCategoriesData = [
     { id: 'vitamins', icon: '💊', name: 'الفيتامينات', subs: ['A TO Z VITAMINS', 'HAIR VITAMINS', 'BONE AND JOINTS', 'COGNITIVE HEALTH', 'IMMUNITY SUPPORT'] },
     { id: 'pain', icon: '🩹', name: 'المسكنات', subs: ['ORAL PAIN KILLERS', 'TOPICAL PAIN KILLERS', 'ADULT SIMPLE ANALGESICS', 'PEDIATRIC SIMPLE ANALGESICS', 'MUSCLE RELAXANTS'] },
@@ -205,7 +204,6 @@ const mainCategoriesData = [
 ];
 
 // ================= ARABIC KEYWORDS DICTIONARY =================
-// قاموس البحث العربي القديم والممتاز
 const arabicKeywords = {
     "فيتامين": ["VITAMIN", "MULTIVITAMIN", "VITA"],
     "فيتامين د": ["VITAMIN D", "D3", "D 50", "D 10", "D 5", "D 2", "D 1"],
@@ -279,11 +277,11 @@ let currentPriorityFilter = 'all';
 let activeMainCategory = null;
 
 document.addEventListener('DOMContentLoaded', () => {
-    fetchDataCSV(); // This now populates allProducts from the sheet
+    fetchDataCSV(); 
     setupScrollToTop();
 });
 
-// Fetch Data via CSV
+// Fetch Data via CSV with SMART ROW DETECTION
 function fetchDataCSV() {
     const listContainer = document.getElementById('productsList');
     listContainer.innerHTML = '<div class="loading-state">جاري سحب البيانات... ⏳</div>';
@@ -294,21 +292,29 @@ function fetchDataCSV() {
         header: false,
         complete: function(results) {
             const rows = results.data;
-            const dataRows = rows.slice(2); // Skip first 2 header rows
+            const validPriorities = ['Diamond', 'Platinum', 'Gold', 'Silver', 'R1', 'R2'];
+            
+            // Smart Filtering: Only keep rows that look like products (Have a known priority OR a barcode)
+            const filteredRows = rows.filter(row => {
+                 const priorityCell = (row[5] || '').trim(); // Column F is Priority
+                 const barcodeCell = (row[0] || '').trim();  // Column A is Barcode
+                 
+                 const hasValidPriority = validPriorities.some(p => priorityCell.toLowerCase().includes(p.toLowerCase()));
+                 const hasValidBarcode = barcodeCell.length > 3 && !isNaN(barcodeCell.replace(/['"]/g, ''));
+                 
+                 return hasValidPriority || hasValidBarcode;
+            });
 
-            allProducts = dataRows.map(row => {
+            allProducts = filteredRows.map(row => {
                 return {
                     barcode: row[0] || '',
                     name: row[1] || '',
-                    // هنا يتم ربط العمود الثالث أو الرابع بالقسم الموجود في الكود
-                    // (SubCategory from sheet = category in code)
-                    category: (row[3] || row[2] || '').trim(), 
-                    class: row[4] || '',
+                    category: (row[3] || row[2] || '').trim(), // SubCategory
+                    class: row[4] || '', // Active Ingredient (Class)
                     priority: row[5] || 'Silver'
                 };
             }).filter(p => p.name && p.name.length > 2);
 
-            // بعد تحميل البيانات، نعرض الأقسام الثابتة والإحصائيات
             updateStats();
             renderMainCategories();
             listContainer.innerHTML = '';
@@ -322,7 +328,7 @@ function fetchDataCSV() {
     });
 }
 
-// ================= ORIGINAL RENDER LOGIC =================
+// ================= UI RENDERING =================
 function renderMainCategories() {
     const container = document.getElementById('mainCategories');
     container.innerHTML = mainCategoriesData.map(cat => `
@@ -366,8 +372,10 @@ function searchByCategory(catName, btn) {
     
     document.getElementById('searchInput').value = catName;
     
-    // الفلترة بناءً على الاسم الموجود في ملف الإكسل والمطابق للكود
-    let filtered = allProducts.filter(p => p.category === catName);
+    // Case-insensitive comparison for categories
+    const targetCat = catName.trim().toLowerCase();
+    
+    let filtered = allProducts.filter(p => p.category.trim().toLowerCase() === targetCat);
     
     if (currentPriorityFilter !== 'all') {
         filtered = filtered.filter(p => p.priority === currentPriorityFilter);
@@ -383,16 +391,21 @@ function filterByPriority(priority, btn) {
     
     const searchVal = document.getElementById('searchInput').value.trim();
     if (searchVal) {
-        performSearch(searchVal);
+        // Check if it's a category search or text search
+        const isCat = mainCategoriesData.some(m => m.subs.some(s => s.toLowerCase() === searchVal.toLowerCase()));
+        if(isCat) {
+             searchByCategory(searchVal, null);
+        } else {
+             performSearch(searchVal);
+        }
     }
 }
 
-// ================= ORIGINAL SEARCH LOGIC =================
+// ================= SEARCH LOGIC (Updated for Active Ingredient) =================
 function performSearch(val) {
     const lowerVal = val.toLowerCase();
     let searchTerms = [lowerVal];
     
-    // Add Arabic keyword mappings
     Object.entries(arabicKeywords).forEach(([ar, en]) => {
         if (val.includes(ar)) {
             searchTerms = searchTerms.concat(en.map(e => e.toLowerCase()));
@@ -400,6 +413,7 @@ function performSearch(val) {
     });
     
     let filtered = allProducts.filter(p => {
+        // SEARCH IN: Name, Category, Active Ingredient (Class), Barcode
         const searchable = `${p.name} ${p.category} ${p.class} ${p.barcode}`.toLowerCase();
         return searchTerms.some(term => searchable.includes(term));
     });
@@ -409,7 +423,7 @@ function performSearch(val) {
     }
     
     renderResults(filtered);
-    return filtered; // Return for suggestions
+    return filtered;
 }
 
 const searchInput = document.getElementById('searchInput');
