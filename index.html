@@ -3,86 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>الرازي - الدليل الحي</title>
+    <title>الرازي - الدليل الشامل 2026</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <style>
         :root {
             --maroon: #6B2D5B; --maroon-light: #8B4D7B;
             --cream: #F9F7F4; --white: #FFFFFF;
-            --gray-100: #F5F3F0; --gray-500: #8B8580; --gray-700: #4A4744;
+            --gray-100: #F5F3F0; --gray-200: #E8E5E0; --gray-500: #8B8580; --gray-700: #4A4744;
             --diamond: #1E3A5F; --platinum: #2D5B4D; --gold: #8B6914; --silver: #5A5A5A;
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Tajawal', sans-serif; background: var(--cream); color: var(--gray-700); padding-bottom: 2rem; }
-
-        .header { background: linear-gradient(135deg, var(--maroon) 0%, #5a2550 100%); padding: 1rem; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .header-content { max-width: 800px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        
+        .header { background: linear-gradient(135deg, var(--maroon) 0%, #5a2550 100%); padding: 1rem; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
+        .header-content { max-width: 900px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo-section { display: flex; align-items: center; gap: 10px; }
         .logo-img { height: 45px; background: rgba(255,255,255,0.95); padding: 4px; border-radius: 8px; }
-        .header-badge { background: #8DC63F; color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; }
+        .logo-text { color: white; font-weight: 900; font-size: 1.3rem; }
+        .header-badge { background: #8DC63F; color: #fff; padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; }
 
-        .main-container { max-width: 800px; margin: 0 auto; padding: 1.5rem 1rem; }
+        .main-container { max-width: 900px; margin: 0 auto; padding: 1.5rem 1rem; }
 
-        .search-box { background: white; padding: 1rem; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); margin-bottom: 1.5rem; position: relative; }
-        .search-input { width: 100%; padding: 1rem; border: 2px solid var(--gray-100); border-radius: 12px; font-family: 'Tajawal'; font-size: 1rem; transition: 0.3s; }
-        .search-input:focus { border-color: var(--maroon); outline: none; }
-        
-        .status-bar { font-size: 0.8rem; color: var(--gray-500); margin-top: 10px; display: flex; align-items: center; gap: 5px; }
-        .status-dot { width: 8px; height: 8px; background: #ccc; border-radius: 50%; display: inline-block; }
-        .status-dot.active { background: #4CAF50; box-shadow: 0 0 5px #4CAF50; }
-        .status-dot.error { background: #F44336; box-shadow: 0 0 5px #F44336; }
+        .search-box { background: white; padding: 1.25rem; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); margin-bottom: 1rem; position: relative; }
+        .search-wrapper { position: relative; }
+        .search-icon { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); font-size: 1.2rem; color: var(--gray-500); }
+        .search-input { width: 100%; padding: 1rem 1rem 1rem 3rem; padding-right: 45px; border: 2px solid var(--gray-100); border-radius: 12px; font-family: 'Tajawal'; font-size: 1rem; transition: all 0.3s ease; background: var(--gray-100); }
+        .search-input:focus { border-color: var(--maroon); outline: none; background: white; box-shadow: 0 0 0 4px rgba(107, 45, 91, 0.1); }
+        .search-input::placeholder { color: var(--gray-500); }
 
-        .suggestions { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 0 0 12px 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 50; max-height: 300px; overflow-y: auto; display: none; margin-top: 5px; }
+        .suggestions { position: absolute; top: calc(100% + 5px); left: 0; right: 0; background: white; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.15); z-index: 50; max-height: 350px; overflow-y: auto; display: none; border: 1px solid var(--gray-200); }
         .suggestions.show { display: block; }
-        .suggestion-item { padding: 10px 15px; border-bottom: 1px solid var(--gray-100); cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .suggestion-item { padding: 12px 15px; border-bottom: 1px solid var(--gray-100); cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: background 0.2s; }
+        .suggestion-item:last-child { border-bottom: none; }
         .suggestion-item:hover { background: var(--gray-100); }
-        .sugg-name { font-weight: 700; font-size: 0.9rem; }
-        .sugg-cat { font-size: 0.75rem; color: var(--gray-500); }
+        .sugg-info { flex: 1; }
+        .sugg-name { font-weight: 700; font-size: 0.9rem; color: var(--gray-700); }
+        .sugg-cat { font-size: 0.7rem; color: var(--gray-500); margin-top: 3px; }
+        .sugg-priority { font-size: 0.65rem; padding: 3px 8px; border-radius: 4px; color: white; font-weight: 700; }
 
-        .cats-title { font-size: 0.9rem; font-weight: 700; margin: 15px 0 8px 0; color: var(--gray-500); display: flex; justify-content: space-between; }
-        .cats-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 0.5rem; max-height: 250px; overflow-y: auto; padding-bottom: 5px; }
-        .cat-chip { background: white; border: 1px solid var(--gray-200); padding: 8px 12px; border-radius: 20px; text-align: center; font-size: 0.8rem; cursor: pointer; transition: 0.2s; white-space: nowrap; flex-grow: 1; }
-        .cat-chip:hover, .cat-chip.active { border-color: var(--maroon); background: var(--maroon); color: white; font-weight: 700; }
+        .filters-section { background: white; padding: 1rem 1.25rem; border-radius: 12px; margin-bottom: 1rem; box-shadow: 0 2px 10px rgba(0,0,0,0.04); }
+        .filters-title { font-size: 0.85rem; font-weight: 700; color: var(--gray-500); margin-bottom: 10px; }
+        .priority-filters { display: flex; gap: 8px; flex-wrap: wrap; }
+        .priority-chip { padding: 8px 16px; border-radius: 25px; font-size: 0.8rem; font-weight: 700; cursor: pointer; transition: all 0.2s; border: 2px solid transparent; display: flex; align-items: center; gap: 6px; }
+        .priority-chip.all { background: var(--gray-100); color: var(--gray-700); }
+        .priority-chip.all.active, .priority-chip.all:hover { background: var(--maroon); color: white; }
+        .priority-chip.diamond { background: rgba(30, 58, 95, 0.1); color: var(--diamond); }
+        .priority-chip.diamond.active, .priority-chip.diamond:hover { background: var(--diamond); color: white; }
+        .priority-chip.platinum { background: rgba(45, 91, 77, 0.1); color: var(--platinum); }
+        .priority-chip.platinum.active, .priority-chip.platinum:hover { background: var(--platinum); color: white; }
+        .priority-chip.gold { background: rgba(139, 105, 20, 0.1); color: var(--gold); }
+        .priority-chip.gold.active, .priority-chip.gold:hover { background: var(--gold); color: white; }
+        .priority-chip.silver { background: rgba(90, 90, 90, 0.1); color: var(--silver); }
+        .priority-chip.silver.active, .priority-chip.silver:hover { background: var(--silver); color: white; }
 
-        .results-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; margin-top: 1rem; }
-        .results-count { font-weight: 700; color: var(--maroon); }
-        .clear-btn { background: var(--gray-100); border: none; padding: 5px 12px; border-radius: 8px; cursor: pointer; font-family: 'Tajawal'; }
+        .categories-section { background: white; padding: 1.25rem; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); margin-bottom: 1.5rem; }
+        .cats-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .cats-title { font-size: 1rem; font-weight: 800; color: var(--gray-700); }
+        .cats-count { font-size: 0.75rem; color: var(--gray-500); background: var(--gray-100); padding: 4px 10px; border-radius: 15px; }
 
-        .product-card { background: white; border-radius: 12px; padding: 1rem; margin-bottom: 1rem; border: 1px solid var(--gray-100); transition: 0.2s; position: relative; overflow: hidden; }
-        .product-card::before { content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: 6px; }
-        
+        .main-categories { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; }
+        @media (min-width: 600px) { .main-categories { grid-template-columns: repeat(4, 1fr); } }
+        .main-cat-btn { background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-light) 100%); color: white; padding: 12px 10px; border-radius: 12px; text-align: center; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: all 0.3s; border: none; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+        .main-cat-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(107, 45, 91, 0.3); }
+        .main-cat-btn.active { box-shadow: 0 0 0 3px rgba(107, 45, 91, 0.3); transform: scale(0.98); }
+        .main-cat-icon { font-size: 1.5rem; }
+        .main-cat-name { font-size: 0.7rem; line-height: 1.3; }
+
+        .sub-categories-wrapper { position: relative; margin-top: 10px; display: none; }
+        .sub-categories-wrapper.show { display: block; }
+        .sub-categories { display: flex; gap: 8px; overflow-x: auto; padding: 10px 5px; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+        .sub-categories::-webkit-scrollbar { display: none; }
+        .sub-cat-chip { background: var(--gray-100); border: 1px solid var(--gray-200); padding: 8px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: all 0.2s; white-space: nowrap; flex-shrink: 0; }
+        .sub-cat-chip:hover, .sub-cat-chip.active { background: var(--maroon); color: white; border-color: var(--maroon); }
+
+        .stats-bar { display: flex; justify-content: center; gap: 20px; padding: 10px; background: rgba(107, 45, 91, 0.05); border-radius: 10px; margin-top: 15px; }
+        .stat-item { text-align: center; }
+        .stat-number { font-size: 1.2rem; font-weight: 800; color: var(--maroon); }
+        .stat-label { font-size: 0.65rem; color: var(--gray-500); }
+
+        .results-area { display: none; }
+        .results-area.show { display: block; }
+        .results-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding: 0 5px; }
+        .results-count { font-weight: 800; color: var(--maroon); font-size: 1rem; }
+        .clear-btn { background: var(--gray-100); border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-family: 'Tajawal'; font-weight: 600; color: var(--gray-700); transition: all 0.2s; }
+        .clear-btn:hover { background: var(--maroon); color: white; }
+
+        .product-card { background: white; border-radius: 14px; padding: 1rem; margin-bottom: 12px; border: 1px solid var(--gray-100); transition: all 0.2s; position: relative; overflow: hidden; }
+        .product-card::before { content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: 5px; }
         .card-Diamond::before { background: var(--diamond); }
         .card-Platinum::before { background: var(--platinum); }
         .card-Gold::before { background: var(--gold); }
         .card-Silver::before { background: var(--silver); }
         
-        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; }
-        .p-name { font-weight: 800; font-size: 1rem; color: var(--gray-700); line-height: 1.4; }
-        .p-active-ingredient { font-size: 0.85rem; color: #E65100; font-weight: 600; margin-top: 2px; display: block; }
-        .p-badge { font-size: 0.7rem; font-weight: 700; padding: 3px 8px; border-radius: 6px; color: white; white-space: nowrap; margin-right: 8px; height: fit-content;}
-        
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+        .p-info { flex: 1; }
+        .p-name { font-weight: 800; font-size: 0.95rem; color: var(--gray-700); line-height: 1.4; margin-bottom: 4px; }
+        .p-active-ingredient { font-size: 0.8rem; color: #E65100; font-weight: 600; }
+        .p-badge { font-size: 0.65rem; font-weight: 800; padding: 4px 10px; border-radius: 6px; color: white; white-space: nowrap; flex-shrink: 0; }
         .bg-Diamond { background: var(--diamond); }
         .bg-Platinum { background: var(--platinum); }
         .bg-Gold { background: var(--gold); }
         .bg-Silver { background: var(--silver); }
+        .bg-R1 { background: var(--gray-500); }
 
-        .p-meta { font-size: 0.8rem; color: var(--gray-500); display: flex; gap: 10px; flex-wrap: wrap; margin-top: 0.8rem; border-top: 1px solid #f0f0f0; padding-top: 8px; }
-        .p-meta span { background: var(--gray-100); padding: 2px 8px; border-radius: 4px; }
+        .p-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--gray-100); }
+        .p-meta span { font-size: 0.7rem; background: var(--gray-100); padding: 4px 8px; border-radius: 5px; color: var(--gray-500); }
 
-        .badge-container { margin-bottom: 8px; display: flex; gap: 5px; flex-wrap: wrap; }
-        .best-choice { background-color: #E8F5E9; color: #2E7D32; border: 1px solid #C8E6C9; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; display: inline-flex; align-items: center; gap: 5px; }
-        .your-search { background-color: #E3F2FD; color: #1565C0; border: 1px solid #BBDEFB; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; display: inline-flex; align-items: center; gap: 5px; }
-        .highlight-product { border: 2px solid #1565C0; background-color: #F5F9FF; transform: scale(1.02); margin-bottom: 1.5rem; }
+        .badge-container { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+        .best-choice { background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%); color: #2E7D32; border: 1px solid #A5D6A7; padding: 5px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; display: inline-flex; align-items: center; gap: 5px; }
+        .your-search { background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%); color: #1565C0; border: 1px solid #90CAF9; padding: 5px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; display: inline-flex; align-items: center; gap: 5px; }
+        .highlight-product { border: 2px solid #1565C0; background: linear-gradient(135deg, #F8FBFF 0%, #EDF4FC 100%); }
+
+        .empty-state { text-align: center; padding: 3rem 1rem; color: var(--gray-500); }
+        .empty-state-icon { font-size: 3rem; margin-bottom: 1rem; }
+        .loading-state { text-align: center; padding: 2rem; color: var(--maroon); font-weight: bold; }
+
+        .scroll-top { position: fixed; bottom: 20px; left: 20px; width: 45px; height: 45px; background: var(--maroon); color: white; border: none; border-radius: 50%; cursor: pointer; font-size: 1.2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.2); display: none; align-items: center; justify-content: center; z-index: 99; }
+        .scroll-top.show { display: flex; }
     </style>
 </head>
 <body>
 
 <header class="header">
     <div class="header-content">
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <img src="logo.png" alt="ALRAZI" class="logo-img" onerror="this.style.display='none'; document.getElementById('txtLogo').style.display='block'">
-            <span id="txtLogo" style="color: white; font-weight: 900; display: none;">ALRAZI</span>
+        <div class="logo-section">
+            <img src="logo.png" alt="ALRAZI" class="logo-img" onerror="this.style.display='none'">
+            <span class="logo-text">ALRAZI</span>
         </div>
         <div class="header-badge">دليل 2026</div>
     </div>
@@ -90,181 +136,338 @@
 
 <main class="main-container">
     <div class="search-box">
-        <input type="text" id="searchInput" class="search-input" placeholder="جاري تحميل البيانات..." disabled>
-        <div class="status-bar">
-            <span class="status-dot" id="statusDot"></span>
-            <span id="statusText">جاري الاتصال بـ Google Sheets...</span>
+        <div class="search-wrapper">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="searchInput" class="search-input" placeholder="ابحث بالعربي أو الإنجليزي... (مثال: فيتامين د، Panadol، مسكن)">
+            <div class="suggestions" id="suggestions"></div>
         </div>
-        <div class="suggestions" id="suggestions"></div>
-        
-        <div class="cats-title">
-            <span>تصفح حسب القسم:</span>
-            <span id="productsCount" style="font-size: 0.7rem; font-weight: normal; color: #888;">(...)</span>
-        </div>
-        <div class="cats-grid" id="categoriesContainer"></div>
     </div>
 
-    <div id="resultsArea" style="display: none;">
+    <div class="filters-section">
+        <div class="filters-title">⚡ فلترة حسب الأولوية:</div>
+        <div class="priority-filters">
+            <div class="priority-chip all active" onclick="filterByPriority('all', this)">الكل</div>
+            <div class="priority-chip diamond" onclick="filterByPriority('Diamond', this)">💎 Diamond</div>
+            <div class="priority-chip platinum" onclick="filterByPriority('Platinum', this)">🥈 Platinum</div>
+            <div class="priority-chip gold" onclick="filterByPriority('Gold', this)">🥇 Gold</div>
+            <div class="priority-chip silver" onclick="filterByPriority('Silver', this)">🥉 Silver</div>
+        </div>
+    </div>
+
+    <div class="categories-section">
+        <div class="cats-header">
+            <span class="cats-title">📂 تصفح حسب القسم</span>
+            <span class="cats-count" id="totalCount">...</span>
+        </div>
+        <div class="main-categories" id="mainCategories"></div>
+        <div class="sub-categories-wrapper" id="subCategoriesWrapper">
+            <div class="sub-categories" id="subCategories"></div>
+        </div>
+        <div class="stats-bar">
+            <div class="stat-item"><div class="stat-number" id="diamondCount">0</div><div class="stat-label">Diamond</div></div>
+            <div class="stat-item"><div class="stat-number" id="platinumCount">0</div><div class="stat-label">Platinum</div></div>
+            <div class="stat-item"><div class="stat-number" id="goldCount">0</div><div class="stat-label">Gold</div></div>
+            <div class="stat-item"><div class="stat-number" id="silverCount">0</div><div class="stat-label">Silver</div></div>
+        </div>
+    </div>
+
+    <div class="results-area" id="resultsArea">
         <div class="results-header">
             <span class="results-count" id="resCount">0 نتائج</span>
-            <button class="clear-btn" onclick="clearSearch()">مسح البحث</button>
+            <button class="clear-btn" onclick="clearSearch()">✕ مسح البحث</button>
         </div>
         <div id="productsList"></div>
     </div>
 </main>
 
+<button class="scroll-top" id="scrollTop" onclick="scrollToTop()">↑</button>
+
 <script>
-    // ================= CONFIGURATION =================
-    // تم إضافة رابط الشيت الخاص بك هنا
-    const SHEET_URL = "https://docs.google.com/spreadsheets/d/1CZHMQnkhoXCpHlehZAHuYLWdpgAx-fXgn2PXT9H72-Y/export?format=csv";
+// ================= CONFIGURATION =================
+// رابط الشيت الخاص بك
+const sheetID = '1CZHMQnkhoXCpHlehZAHuYLWdpgAx-fXgn2PXT9H72-Y';
+const sheetURL = `https://opensheet.elk.sh/${sheetID}/Sheet1`;
 
-    // ================= LOGIC =================
-    let products = [];
-    const priorityOrder = { 'Diamond': 1, 'Platinum': 2, 'Gold': 3, 'Silver': 4, 'R1': 5, 'R2': 6, 'Standard': 99 };
+// ================= ARABIC KEYWORDS DICTIONARY =================
+const arabicKeywords = {
+    "فيتامين": ["VITAMIN", "MULTIVITAMIN", "VITA"],
+    "فيتامين د": ["VITAMIN D", "D3", "D 50", "D 10"],
+    "مسكن": ["PAIN", "PARACETAMOL", "IBUPROFEN", "DICLOFENAC"],
+    "الم": ["PAIN", "ANALGESIC"],
+    "صداع": ["PARACETAMOL", "ADOL", "FEVADOL", "PANADOL"],
+    "حرارة": ["PARACETAMOL", "FEVADOL", "ADOL"],
+    "معدة": ["STOMACH", "ANTACID", "OMEPRAZOLE", "NEXIUM"],
+    "قولون": ["COLON", "DUSPATALIN", "MEBEVERINE"],
+    "حساسية": ["ALLERGY", "ANTIHISTAMINE", "CETIRIZINE", "LORATADINE"],
+    "جلد": ["SKIN", "DERMA", "CREAM", "OINTMENT"],
+    "شعر": ["HAIR", "BIOTIN", "CYSTINE", "MINOXIDIL"],
+    "اكتئاب": ["DEPRESSION", "ANTIDEPRESSANT", "ESCITALOPRAM"],
+    "انتصاب": ["ERECTILE", "TADALAFIL", "SILDENAFIL", "ED"],
+    "حمل": ["PREGNANCY", "PRENATAL", "FOLIC"],
+    "مضاد حيوي": ["ANTIBIOTIC", "AMOXICILLIN", "AZITHROMYCIN"],
+    "التهاب": ["INFECTION", "INFLAMMATION", "ANTIBIOTIC"],
+    "سكر": ["DIABETES", "METFORMIN"],
+    "ضغط": ["BLOOD PRESSURE", "HYPERTENSION"]
+};
 
-    const searchInput = document.getElementById('searchInput');
-    const suggestionsBox = document.getElementById('suggestions');
+// Main Categories Structure - Mapped to your Sheet's "SubCategory"
+const mainCategoriesData = [
+    { id: 'vitamins', icon: '💊', name: 'الفيتامينات', subs: ['A TO Z VITAMINS', 'HAIR VITAMINS', 'BONE AND JOINTS', 'COGNITIVE HEALTH', 'IMMUNITY SUPPORT'] },
+    { id: 'pain', icon: '🩹', name: 'المسكنات', subs: ['ADULT PAIN KILLERS', 'ADULT SIMPLE ANALGESICS', 'PEDIATRIC SIMPLE ANALGESICS', 'MUSCLE RELAXANTS'] },
+    { id: 'stomach', icon: '🫃', name: 'المعدة والهضم', subs: ['PROTON PUMP INHIBITORS', 'DIGESTIVE CARE', 'ANTIULCERANTS', 'ANTISPASMODICS', 'ANTIEMETIC', 'Laxatives'] },
+    { id: 'allergy', icon: '🤧', name: 'الحساسية والبرد', subs: ['ADULT SYSTEMIC ANTI HISTAMINES', 'NON SEDATING COLD MEDICATIONS', 'NASAL HYGIENE', 'Nasal Corticosteroids', 'SORE THROATS', 'EXPECTORANTS AND MUCOLYTICS', 'HERBAL ANTITUSSIVES'] },
+    { id: 'skin', icon: '🧴', name: 'الجلد والعناية', subs: ['BURN CARE', 'BLEACHING MEDICATIONS', 'SKIN CARE', 'ANTIFRICTIONS AND HEALING AIDS', 'TOPICAL CORTICOSTEROIDS', 'TOPICAL ANTI Itching'] },
+    { id: 'mental', icon: '🧠', name: 'الصحة النفسية', subs: ['ANTIDEPRESSANTS', 'ANTIPSYCHOTICS', 'ANTIEPILEPTICS', 'SLEEP AIDS', 'STRESS RELIEF', 'ANTI ALZhiemer '] },
+    { id: 'men', icon: '👨', name: 'صحة الرجل', subs: ['SHORT TERM ED SOLUTIONS', 'LONG TERM ED SOLUTIONS', 'PREMATURE EJACULATION', 'SEXUAL HEALTH'] },
+    { id: 'women', icon: '👩', name: 'صحة المرأة', subs: ['PREGNANCY CARE', 'lady Care'] },
+    { id: 'antibiotics', icon: '💉', name: 'المضادات الحيوية', subs: ['PENICILLIN COMBINATIONS', 'PENICILLIN PLAIN', 'MACROLIDES ADULT', 'MACROLIDES PAEDIATRIC', 'ANAEROBICIDES'] },
+    { id: 'others', icon: '📦', name: 'أخرى', subs: ['Oral Care', 'ARTIFICIAL TEARS ', 'CORTICOSTEROIDS EYE', 'CORTICOSTEROIDS Inhalation', 'ORAL CORTICOSTEROID ', 'DIABETES CARE', 'ENERGY BOOSTERS', 'HEART HEALTH', 'BRAIN/HEART HEALTH', 'CIRCULATORY SUPPORT', 'ANTIHAEMORRHOIDS ', 'URINARY HEALTH', 'WEIGHT CONTROL', 'Loca Anaethesia', 'MANUKA HONEY'] }
+];
+
+const priorityOrder = { 'Diamond': 1, 'Platinum': 2, 'Gold': 3, 'Silver': 4, 'R1': 5, 'R2': 6 };
+
+// Global Data State
+let allProducts = [];
+let currentPriorityFilter = 'all';
+let activeMainCategory = null;
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    fetchData();
+    renderMainCategories();
+    setupScrollToTop();
+});
+
+// Fetch Data from Google Sheet
+async function fetchData() {
+    const listContainer = document.getElementById('productsList');
+    listContainer.innerHTML = '<div class="loading-state">جاري تحميل أحدث البيانات من الرازي... ⏳</div>';
+    document.getElementById('resultsArea').classList.add('show');
+
+    try {
+        const response = await fetch(sheetURL);
+        const rawData = await response.json();
+        
+        // Map Google Sheet columns to our App structure
+        allProducts = rawData.map(item => {
+            // Mapping Logic based on your sheet headers
+            return {
+                barcode: item['Internal Reference'] || '',
+                name: item['Juleb name'] || '',
+                category: item['SubCategory'] || 'Uncategorized', // Using SubCategory as the main grouper
+                class: item['Class'] || '',
+                priority: item['2026_List'] || 'Silver' // This column has the Diamond/Platinum status
+            };
+        }).filter(p => p.name); // Filter out empty rows
+
+        // Remove loading and update UI
+        listContainer.innerHTML = '';
+        document.getElementById('resultsArea').classList.remove('show');
+        updateStats();
+        console.log(`Loaded ${allProducts.length} products`);
+
+    } catch (error) {
+        console.error('Error:', error);
+        listContainer.innerHTML = '<div class="empty-state" style="color:red">فشل تحميل البيانات. تأكد من إعدادات الشيت.</div>';
+    }
+}
+
+// Render main categories
+function renderMainCategories() {
+    const container = document.getElementById('mainCategories');
+    container.innerHTML = mainCategoriesData.map(cat => `
+        <div class="main-cat-btn" onclick="selectMainCategory('${cat.id}', this)">
+            <span class="main-cat-icon">${cat.icon}</span>
+            <span class="main-cat-name">${cat.name}</span>
+        </div>
+    `).join('');
+}
+
+// Select main category
+function selectMainCategory(catId, btn) {
+    document.querySelectorAll('.main-cat-btn').forEach(b => b.classList.remove('active'));
+    
+    if (activeMainCategory === catId) {
+        activeMainCategory = null;
+        document.getElementById('subCategoriesWrapper').classList.remove('show');
+        return;
+    }
+    
+    btn.classList.add('active');
+    activeMainCategory = catId;
+    
+    const category = mainCategoriesData.find(c => c.id === catId);
+    renderSubCategories(category.subs);
+}
+
+// Render sub categories
+function renderSubCategories(subs) {
+    const container = document.getElementById('subCategories');
+    const wrapper = document.getElementById('subCategoriesWrapper');
+    
+    container.innerHTML = subs.map(sub => `
+        <div class="sub-cat-chip" onclick="searchByCategory('${sub}', this)">${sub}</div>
+    `).join('');
+    
+    wrapper.classList.add('show');
+}
+
+// Search by category
+function searchByCategory(catName, btn) {
+    document.querySelectorAll('.sub-cat-chip').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    
+    document.getElementById('searchInput').value = catName;
+    
+    // Normalize string for comparison (trim spaces)
+    const cleanCatName = catName.trim().toLowerCase();
+    
+    let filtered = allProducts.filter(p => p.category && p.category.trim().toLowerCase() === cleanCatName);
+    
+    if (currentPriorityFilter !== 'all') {
+        filtered = filtered.filter(p => p.priority === currentPriorityFilter);
+    }
+    
+    renderResults(filtered);
+}
+
+// Filter by priority
+function filterByPriority(priority, btn) {
+    document.querySelectorAll('.priority-chip').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentPriorityFilter = priority;
+    
+    const searchVal = document.getElementById('searchInput').value.trim();
+    if (searchVal) {
+        // Check if search value is a category name or text search
+        const isCategorySearch = mainCategoriesData.some(m => m.subs.some(s => s === searchVal));
+        if (isCategorySearch) {
+             searchByCategory(searchVal, null); // Re-run category search
+        } else {
+             const filtered = performSearchLogic(searchVal); // Re-run text search
+             renderResults(filtered);
+        }
+    }
+}
+
+// Enhanced search with Arabic support
+function performSearchLogic(val) {
+    const lowerVal = val.toLowerCase();
+    let searchTerms = [lowerVal];
+    
+    Object.entries(arabicKeywords).forEach(([ar, en]) => {
+        if (val.includes(ar)) {
+            searchTerms = searchTerms.concat(en.map(e => e.toLowerCase()));
+        }
+    });
+    
+    let filtered = allProducts.filter(p => {
+        const searchable = `${p.name} ${p.category} ${p.class} ${p.barcode}`.toLowerCase();
+        return searchTerms.some(term => searchable.includes(term));
+    });
+    
+    if (currentPriorityFilter !== 'all') {
+        filtered = filtered.filter(p => p.priority === currentPriorityFilter);
+    }
+    return filtered;
+}
+
+// Search input handler
+const searchInput = document.getElementById('searchInput');
+const suggestionsBox = document.getElementById('suggestions');
+
+searchInput.addEventListener('input', (e) => {
+    const val = e.target.value.trim();
+    
+    if (val.length < 2) {
+        suggestionsBox.classList.remove('show');
+        return;
+    }
+    
+    const matched = performSearchLogic(val).slice(0, 6);
+    
+    if (matched.length > 0) {
+        suggestionsBox.innerHTML = matched.map(p => `
+            <div class="suggestion-item" onclick="showProduct('${p.barcode}')">
+                <div class="sugg-info">
+                    <div class="sugg-name">${p.name}</div>
+                    <div class="sugg-cat">💊 ${p.class} | 📂 ${p.category}</div>
+                </div>
+                <span class="sugg-priority bg-${p.priority}">${p.priority}</span>
+            </div>
+        `).join('');
+        suggestionsBox.classList.add('show');
+    } else {
+        suggestionsBox.innerHTML = '<div style="padding:15px;text-align:center;color:#888;">لا توجد نتائج</div>';
+        suggestionsBox.classList.add('show');
+    }
+});
+
+searchInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        const filtered = performSearchLogic(searchInput.value);
+        renderResults(filtered);
+        suggestionsBox.classList.remove('show');
+    }
+});
+
+// Show specific product
+function showProduct(barcode) {
+    const target = allProducts.find(p => p.barcode === barcode);
+    if (target) {
+        let siblings = allProducts.filter(p => p.category === target.category && p.barcode !== barcode);
+        siblings.sort((a, b) => (priorityOrder[a.priority] || 99) - (priorityOrder[b.priority] || 99));
+        
+        if (currentPriorityFilter !== 'all') {
+            siblings = siblings.filter(p => p.priority === currentPriorityFilter);
+        }
+        
+        renderResults([target, ...siblings], true);
+    }
+    suggestionsBox.classList.remove('show');
+}
+
+// Render results
+function renderResults(list, isSpecificSearch = false) {
+    if (!isSpecificSearch) {
+        list.sort((a, b) => (priorityOrder[a.priority] || 99) - (priorityOrder[b.priority] || 99));
+    }
+    
     const resultsArea = document.getElementById('resultsArea');
     const productsList = document.getElementById('productsList');
     const resCount = document.getElementById('resCount');
-    const categoriesContainer = document.getElementById('categoriesContainer');
-    const statusText = document.getElementById('statusText');
-    const statusDot = document.getElementById('statusDot');
-    const productsCountLabel = document.getElementById('productsCount');
-
-    // 1. تحميل البيانات عند فتح الصفحة
-    window.addEventListener('DOMContentLoaded', () => {
-        Papa.parse(SHEET_URL, {
-            download: true,
-            header: true,
-            skipEmptyLines: true,
-            complete: function(results) {
-                // معالجة البيانات وتحويلها للصيغة المطلوبة
-                products = results.data
-                    .filter(row => row['Juleb name'] && row['Juleb name'].trim() !== '') 
-                    .map(row => ({
-                        barcode: row['Internal Reference'] || '',
-                        name: row['Juleb name'] || '',
-                        category: row['SubCategory'] || 'Uncategorized',
-                        class: row['Class'] || '',
-                        priority: row['2026_List'] || 'Standard'
-                    }));
-
-                // تفعيل البحث
-                statusText.innerText = "تم التحديث (متصل)";
-                statusText.style.color = "green";
-                statusDot.classList.remove('error');
-                statusDot.classList.add('active');
-                searchInput.placeholder = "ابحث باسم المنتج، المادة الفعالة، أو القسم...";
-                searchInput.disabled = false;
-                productsCountLabel.innerText = `(${products.length} منتج)`;
-
-                // توليد الأقسام
-                generateCategories();
-            },
-            error: function(err) {
-                statusText.innerText = "خطأ! تأكد أن الشيت متاح للمشاركة (Anyone with link)";
-                statusText.style.color = "red";
-                statusDot.classList.add('error');
-                console.error("Error:", err);
-            }
-        });
-    });
-
-    function generateCategories() {
-        const uniqueCategories = [...new Set(products.map(p => p.category))].sort();
-        categoriesContainer.innerHTML = '';
-        uniqueCategories.forEach(cat => {
-            const btn = document.createElement('div');
-            btn.className = 'cat-chip';
-            btn.innerText = cat;
-            btn.onclick = () => searchByCategory(cat, btn);
-            categoriesContainer.appendChild(btn);
-        });
+    
+    resultsArea.classList.add('show');
+    resCount.innerText = list.length + ' نتائج';
+    
+    if (list.length === 0) {
+        productsList.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-state-icon">🔍</div>
+                <div>لا توجد نتائج مطابقة</div>
+            </div>
+        `;
+        return;
     }
-
-    function searchByCategory(catName, btnElement) {
-        document.querySelectorAll('.cat-chip').forEach(b => b.classList.remove('active'));
-        if(btnElement) btnElement.classList.add('active');
-        searchInput.value = catName;
-        const filtered = products.filter(p => p.category === catName);
-        renderResults(filtered);
-    }
-
-    searchInput.addEventListener('input', (e) => {
-        const val = e.target.value.trim().toLowerCase();
-        if(val.length > 0) document.querySelectorAll('.cat-chip').forEach(b => b.classList.remove('active'));
-        if(val.length < 2) { suggestionsBox.classList.remove('show'); return; }
+    
+    productsList.innerHTML = list.map((p, i) => {
+        let badgeHTML = '';
+        let highlightClass = '';
         
-        const matched = products.filter(p => 
-            p.name.toLowerCase().includes(val) || 
-            p.barcode.includes(val) ||
-            p.category.toLowerCase().includes(val) ||
-            p.class.toLowerCase().includes(val)
-        ).slice(0, 5);
-
-        let html = '';
-        matched.forEach(p => {
-            html += `<div class="suggestion-item" onclick="showProduct('${p.barcode}')">
-                        <div>
-                            <div class="sugg-name">${p.name}</div>
-                            <div class="sugg-cat">💊 ${p.class}</div>
-                        </div>
-                     </div>`;
-        });
-
-        if(html) {
-            suggestionsBox.innerHTML = html;
-            suggestionsBox.classList.add('show');
-        } else {
-            suggestionsBox.classList.remove('show');
+        if (isSpecificSearch && i === 0) {
+            badgeHTML = '<div class="your-search">🔍 طلبك</div>';
+            highlightClass = 'highlight-product';
+        } else if (p.priority === 'Diamond' || (i === 0 && !isSpecificSearch)) {
+            badgeHTML = '<div class="best-choice">⭐ الخيار الأفضل</div>';
         }
-    });
-
-    function showProduct(barcode) {
-        const targetProduct = products.find(p => p.barcode === barcode);
-        if(targetProduct) {
-            let siblings = products.filter(p => p.category === targetProduct.category && p.barcode !== targetProduct.barcode);
-            siblings.sort((a,b) => (priorityOrder[a.priority] || 99) - (priorityOrder[b.priority] || 99));
-            const finalList = [targetProduct, ...siblings];
-            renderResults(finalList, true); 
-        }
-        suggestionsBox.classList.remove('show');
-    }
-
-    function renderResults(list, isSpecificSearch = false) {
-        if (!isSpecificSearch) {
-            list.sort((a,b) => (priorityOrder[a.priority] || 99) - (priorityOrder[b.priority] || 99));
-        }
-
-        resultsArea.style.display = 'block';
-        resCount.innerText = list.length + ' نتائج';
         
-        if(list.length === 0) {
-            productsList.innerHTML = '<div style="text-align:center; padding:2rem;">لا توجد نتائج مطابقة</div>';
-            return;
-        }
-
-        let html = '';
-        list.forEach((p, index) => {
-            let badgeHTML = '';
-            let highlightClass = '';
-
-            if (isSpecificSearch && index === 0) {
-                badgeHTML = `<div class="your-search">🔍 طلبك (Your Search)</div>`;
-                highlightClass = 'highlight-product';
-            } 
-            else if (index === (isSpecificSearch ? 1 : 0) && p.priority === 'Diamond') {
-                badgeHTML = `<div class="best-choice">⭐ الخيار الأفضل (Recommendation)</div>`;
-            }
-
-            html += `
+        return `
             <div class="product-card card-${p.priority} ${highlightClass}">
-                <div class="badge-container">${badgeHTML}</div>
+                ${badgeHTML ? `<div class="badge-container">${badgeHTML}</div>` : ''}
                 <div class="card-header">
-                    <div>
+                    <div class="p-info">
                         <div class="p-name">${p.name}</div>
-                        <div class="p-active-ingredient">المادة الفعالة: ${p.class}</div>
+                        <div class="p-active-ingredient">💊 ${p.class}</div>
                     </div>
                     <span class="p-badge bg-${p.priority}">${p.priority}</span>
                 </div>
@@ -272,32 +475,39 @@
                     <span>📂 ${p.category}</span>
                     <span>🔢 ${p.barcode}</span>
                 </div>
-            </div>`;
-        });
-        productsList.innerHTML = html;
-    }
+            </div>
+        `;
+    }).join('');
+}
 
-    function clearSearch() {
-        searchInput.value = '';
-        resultsArea.style.display = 'none';
-        suggestionsBox.classList.remove('show');
-        document.querySelectorAll('.cat-chip').forEach(b => b.classList.remove('active'));
-    }
+// Clear search
+function clearSearch() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('resultsArea').classList.remove('show');
+    suggestionsBox.classList.remove('show');
+    document.querySelectorAll('.sub-cat-chip').forEach(b => b.classList.remove('active'));
+}
 
-    searchInput.addEventListener('keypress', (e) => {
-        if(e.key === 'Enter') {
-            const val = searchInput.value.toLowerCase();
-            const filtered = products.filter(p => 
-                p.name.toLowerCase().includes(val) || 
-                p.barcode.includes(val) ||
-                p.category.toLowerCase().includes(val) ||
-                p.class.toLowerCase().includes(val)
-            );
-            renderResults(filtered);
-            suggestionsBox.classList.remove('show');
-        }
+// Update stats
+function updateStats() {
+    document.getElementById('totalCount').textContent = allProducts.length + ' منتج';
+    document.getElementById('diamondCount').textContent = allProducts.filter(p => p.priority === 'Diamond').length;
+    document.getElementById('platinumCount').textContent = allProducts.filter(p => p.priority === 'Platinum').length;
+    document.getElementById('goldCount').textContent = allProducts.filter(p => p.priority === 'Gold').length;
+    document.getElementById('silverCount').textContent = allProducts.filter(p => p.priority === 'Silver').length;
+}
+
+// Scroll to top
+function setupScrollToTop() {
+    const btn = document.getElementById('scrollTop');
+    window.addEventListener('scroll', () => {
+        btn.classList.toggle('show', window.scrollY > 300);
     });
-</script>
+}
 
+function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
 </body>
 </html>
