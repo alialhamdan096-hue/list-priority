@@ -281,7 +281,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupScrollToTop();
 });
 
-// Fetch Data via CSV with SMART ROW DETECTION
+// Fetch Data via CSV - LOAD EVERYTHING MODE
 function fetchDataCSV() {
     const listContainer = document.getElementById('productsList');
     listContainer.innerHTML = '<div class="loading-state">جاري سحب البيانات... ⏳</div>';
@@ -292,28 +292,27 @@ function fetchDataCSV() {
         header: false,
         complete: function(results) {
             const rows = results.data;
-            const validPriorities = ['Diamond', 'Platinum', 'Gold', 'Silver', 'R1', 'R2'];
             
-            // Smart Filtering: Only keep rows that look like products (Have a known priority OR a barcode)
+            // الفلترة الجديدة: نقبل أي صف يحتوي على اسم دواء في العمود الثاني
+            // ونتأكد أنه ليس صف العناوين (Juleb name)
             const filteredRows = rows.filter(row => {
-                 const priorityCell = (row[5] || '').trim(); // Column F is Priority
-                 const barcodeCell = (row[0] || '').trim();  // Column A is Barcode
-                 
-                 const hasValidPriority = validPriorities.some(p => priorityCell.toLowerCase().includes(p.toLowerCase()));
-                 const hasValidBarcode = barcodeCell.length > 3 && !isNaN(barcodeCell.replace(/['"]/g, ''));
-                 
-                 return hasValidPriority || hasValidBarcode;
+                 const nameCell = (row[1] || '').trim(); // Column B is Name
+                 return nameCell.length > 1 && !nameCell.includes('Juleb name') && !nameCell.includes('الاسم');
             });
 
             allProducts = filteredRows.map(row => {
+                // إذا لم توجد أولوية، نضع Silver افتراضياً
+                let prio = (row[5] || 'Silver').trim();
+                if(!['Diamond','Platinum','Gold','Silver'].includes(prio)) prio = 'Silver';
+
                 return {
                     barcode: row[0] || '',
                     name: row[1] || '',
-                    category: (row[3] || row[2] || '').trim(), // SubCategory
-                    class: row[4] || '', // Active Ingredient (Class)
-                    priority: row[5] || 'Silver'
+                    category: (row[3] || row[2] || '').trim(), 
+                    class: row[4] || '', 
+                    priority: prio
                 };
-            }).filter(p => p.name && p.name.length > 2);
+            }).filter(p => p.name);
 
             updateStats();
             renderMainCategories();
@@ -328,7 +327,6 @@ function fetchDataCSV() {
     });
 }
 
-// ================= UI RENDERING =================
 function renderMainCategories() {
     const container = document.getElementById('mainCategories');
     container.innerHTML = mainCategoriesData.map(cat => `
@@ -372,7 +370,6 @@ function searchByCategory(catName, btn) {
     
     document.getElementById('searchInput').value = catName;
     
-    // Case-insensitive comparison for categories
     const targetCat = catName.trim().toLowerCase();
     
     let filtered = allProducts.filter(p => p.category.trim().toLowerCase() === targetCat);
@@ -391,7 +388,6 @@ function filterByPriority(priority, btn) {
     
     const searchVal = document.getElementById('searchInput').value.trim();
     if (searchVal) {
-        // Check if it's a category search or text search
         const isCat = mainCategoriesData.some(m => m.subs.some(s => s.toLowerCase() === searchVal.toLowerCase()));
         if(isCat) {
              searchByCategory(searchVal, null);
@@ -401,7 +397,6 @@ function filterByPriority(priority, btn) {
     }
 }
 
-// ================= SEARCH LOGIC (Updated for Active Ingredient) =================
 function performSearch(val) {
     const lowerVal = val.toLowerCase();
     let searchTerms = [lowerVal];
@@ -413,7 +408,6 @@ function performSearch(val) {
     });
     
     let filtered = allProducts.filter(p => {
-        // SEARCH IN: Name, Category, Active Ingredient (Class), Barcode
         const searchable = `${p.name} ${p.category} ${p.class} ${p.barcode}`.toLowerCase();
         return searchTerms.some(term => searchable.includes(term));
     });
