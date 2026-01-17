@@ -295,11 +295,10 @@ function fetchDataCSV() {
         complete: function(results) {
             const rows = results.data;
             
-            // Loop through ALL rows (no slicing)
-            // Filter logic: Check if Column B (Name) has actual text and isn't a header
+            // Filter Loop: Keep EVERYTHING that has a valid name in Column B
+            // Only skip the headers (rows containing "Juleb name", "الاسم", etc.)
             const filteredRows = rows.filter(row => {
                  const nameCell = (row[1] || '').trim(); // Column B
-                 // Exclude empty rows and rows that look like headers
                  return nameCell.length > 1 
                         && !nameCell.includes('Juleb name') 
                         && !nameCell.includes('الاسم')
@@ -399,13 +398,23 @@ function filterByPriority(priority, btn) {
     currentPriorityFilter = priority;
     
     const searchVal = document.getElementById('searchInput').value.trim();
+    const activeSubBtn = document.querySelector('.sub-cat-chip.active');
+
+    // 1. If searching text
     if (searchVal) {
-        const isCat = mainCategoriesData.some(m => m.subs.some(s => s.toLowerCase() === searchVal.toLowerCase()));
-        if(isCat) {
-             searchByCategory(searchVal, null);
-        } else {
-             performSearch(searchVal);
+        performSearch(searchVal);
+    } 
+    // 2. If a category is selected
+    else if (activeSubBtn) {
+        searchByCategory(activeSubBtn.innerText, activeSubBtn);
+    }
+    // 3. If nothing selected, show ALL for this priority
+    else {
+        let list = allProducts;
+        if (currentPriorityFilter !== 'all') {
+            list = list.filter(p => p.priority === currentPriorityFilter);
         }
+        renderResults(list);
     }
 }
 
