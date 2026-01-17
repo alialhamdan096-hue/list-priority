@@ -183,7 +183,8 @@
             <span class="cats-title">📂 تصفح حسب القسم</span>
             <span class="cats-count" id="totalCount">...</span>
         </div>
-        <div class="main-categories" id="mainCategories"></div>
+        <div class="main-categories" id="mainCategories">
+            </div>
         <div class="sub-categories-wrapper" id="subCategoriesWrapper">
             <div class="sub-categories" id="subCategories"></div>
         </div>
@@ -213,79 +214,19 @@
 const sheetID = '1CZHMQnkhoXCpHlehZAHuYLWdpgAx-fXgn2PXT9H72-Y';
 const csvURL = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:csv&sheet=Sheet1`;
 
-// ================= SMART CATEGORIES CONFIGURATION =================
-// هنا نحدد الأقسام الثابتة والكلمات المفتاحية التي تتبع لها
-const smartCategories = [
-    { 
-        id: 'vitamins', 
-        icon: '💊', 
-        en: 'Vitamins', 
-        ar: 'فيتامينات ومكملات',
-        keywords: ['vit', 'supp', 'mineral', 'omega', 'iron', 'calc', 'magn', 'zinc', 'multi'] 
-    },
-    { 
-        id: 'pain', 
-        icon: '🩹', 
-        en: 'Pain & Fever', 
-        ar: 'مسكنات وحرارة',
-        keywords: ['pain', 'analgesic', 'adol', 'panadol', 'headache', 'fever', 'nsaid', 'paracetamol', 'ibuprofen', 'diclofenac'] 
-    },
-    { 
-        id: 'cold', 
-        icon: '🤧', 
-        en: 'Cold & Allergy', 
-        ar: 'البرد والحساسية',
-        keywords: ['cold', 'flu', 'allergy', 'cough', 'nose', 'throat', 'histamine', 'loratadine', 'sinus'] 
-    },
-    { 
-        id: 'stomach', 
-        icon: '🫃', 
-        en: 'Stomach & Colon', 
-        ar: 'المعدة والقولون',
-        keywords: ['gastro', 'stomach', 'acid', 'gerd', 'digest', 'laxative', 'colon', 'omeprazole', 'spasm'] 
-    },
-    { 
-        id: 'skin', 
-        icon: '🧴', 
-        en: 'Skin Care', 
-        ar: 'العناية بالبشرة',
-        keywords: ['skin', 'derma', 'acne', 'sun', 'cream', 'lotion', 'oint', 'moist'] 
-    },
-    { 
-        id: 'mom_baby', 
-        icon: '👶', 
-        en: 'Mom & Baby', 
-        ar: 'الأم والطفل',
-        keywords: ['baby', 'mom', 'milk', 'diaper', 'feed', 'child', 'infant'] 
-    },
-    { 
-        id: 'men_women', 
-        icon: '👫', 
-        en: 'Men & Women', 
-        ar: 'صحة الرجل والمرأة',
-        keywords: ['men', 'women', 'sex', 'erect', 'lady', 'preg', 'fertil'] 
-    },
-    { 
-        id: 'chronic', 
-        icon: '🩺', 
-        en: 'Chronic Diseases', 
-        ar: 'الأمراض المزمنة',
-        keywords: ['diabet', 'pressure', 'hyper', 'cholest', 'heart', 'sugar', 'insul'] 
-    },
-    { 
-        id: 'first_aid', 
-        icon: '🩹', 
-        en: 'First Aid', 
-        ar: 'إسعافات أولية',
-        keywords: ['aid', 'band', 'wound', 'burn', 'antiseptic'] 
-    },
-    { 
-        id: 'others', 
-        icon: '📦', 
-        en: 'Others', 
-        ar: 'أقسام أخرى',
-        keywords: [] // This will catch everything else
-    }
+// ================= FIXED CATEGORIES (The "Nice" Buttons) =================
+// هذه هي الأقسام الثابتة التي تريدها
+const fixedCategories = [
+    { id: 'vitamins', icon: '💊', en: 'Vitamins', ar: 'فيتامينات ومكملات', keywords: ['vit', 'supp', 'mineral', 'omega', 'iron', 'calc', 'magn', 'zinc', 'multi'] },
+    { id: 'pain', icon: '🩹', en: 'Pain & Fever', ar: 'مسكنات وحرارة', keywords: ['pain', 'analgesic', 'adol', 'panadol', 'headache', 'fever', 'nsaid', 'paracetamol', 'ibuprofen', 'diclofenac'] },
+    { id: 'cold', icon: '🤧', en: 'Cold & Allergy', ar: 'البرد والحساسية', keywords: ['cold', 'flu', 'allergy', 'cough', 'nose', 'throat', 'histamine', 'loratadine', 'sinus'] },
+    { id: 'stomach', icon: '🫃', en: 'Stomach & Colon', ar: 'المعدة والقولون', keywords: ['gastro', 'stomach', 'acid', 'gerd', 'digest', 'laxative', 'colon', 'omeprazole', 'spasm'] },
+    { id: 'skin', icon: '🧴', en: 'Skin Care', ar: 'العناية بالبشرة', keywords: ['skin', 'derma', 'acne', 'sun', 'cream', 'lotion', 'oint', 'moist'] },
+    { id: 'mom_baby', icon: '👶', en: 'Mom & Baby', ar: 'الأم والطفل', keywords: ['baby', 'mom', 'milk', 'diaper', 'feed', 'child', 'infant'] },
+    { id: 'men_women', icon: '👫', en: 'Men & Women', ar: 'صحة الرجل والمرأة', keywords: ['men', 'women', 'sex', 'erect', 'lady', 'preg', 'fertil'] },
+    { id: 'chronic', icon: '🩺', en: 'Chronic Diseases', ar: 'الأمراض المزمنة', keywords: ['diabet', 'pressure', 'hyper', 'cholest', 'heart', 'sugar', 'insul'] },
+    { id: 'first_aid', icon: '🩹', en: 'First Aid', ar: 'إسعافات أولية', keywords: ['aid', 'band', 'wound', 'burn', 'antiseptic'] },
+    { id: 'others', icon: '📦', en: 'Others', ar: 'أقسام أخرى', keywords: [] }
 ];
 
 // ================= ARABIC KEYWORDS DICTIONARY =================
@@ -314,7 +255,7 @@ const priorityOrder = { 'Diamond': 1, 'Platinum': 2, 'Gold': 3, 'Silver': 4, 'R1
 
 let allProducts = [];
 let currentPriorityFilter = 'all';
-let activeMainCategory = null;
+let activeFixedCategory = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     fetchDataCSV(); 
@@ -352,18 +293,21 @@ function fetchDataCSV() {
                 else if (pLower.includes('r2')) prio = 'R2';
                 else prio = 'Unknown';
 
+                // Sheet Columns: 0=Barcode, 1=Name, 2=Category(Main), 3=SubCategory, 4=Class, 5=Priority
                 return {
                     barcode: row[0] || '',
                     name: row[1] || '',
-                    rawCategory: (row[3] || row[2] || '').trim(), // Original Category from sheet
+                    sheetCategory: (row[2] || '').trim(), // Not used for UI grouping, but kept
+                    sheetSubCategory: (row[3] || row[2] || 'عام').trim(), // This will be the chips
                     class: row[4] || '', 
                     priority: prio,
-                    smartCat: assignToSmartCategory((row[3] || row[2] || '') + ' ' + (row[1] || ''))
+                    // Assign to a fixed UI category based on text analysis
+                    fixedCatID: assignToFixedCategory((row[3] || row[2] || '') + ' ' + (row[1] || ''))
                 };
             });
 
             updateStats();
-            renderSmartCategories();
+            renderFixedCategories();
             listContainer.innerHTML = '';
             document.getElementById('resultsArea').classList.remove('show');
             console.log(`تم تحميل ${allProducts.length} منتج`);
@@ -375,10 +319,10 @@ function fetchDataCSV() {
     });
 }
 
-// دالة ذكية لتوزيع المنتجات على الأقسام الثابتة
-function assignToSmartCategory(text) {
+// Map product to one of the fixed categories
+function assignToFixedCategory(text) {
     const lowerText = text.toLowerCase();
-    for (const cat of smartCategories) {
+    for (const cat of fixedCategories) {
         if (cat.id === 'others') continue;
         if (cat.keywords.some(k => lowerText.includes(k))) {
             return cat.id;
@@ -387,10 +331,11 @@ function assignToSmartCategory(text) {
     return 'others';
 }
 
-function renderSmartCategories() {
+// Render the big fixed buttons
+function renderFixedCategories() {
     const container = document.getElementById('mainCategories');
-    container.innerHTML = smartCategories.map(cat => `
-        <div class="main-cat-btn" onclick="selectSmartCategory('${cat.id}', this)">
+    container.innerHTML = fixedCategories.map(cat => `
+        <div class="main-cat-btn" onclick="selectFixedCategory('${cat.id}', this)">
             <span class="main-cat-icon">${cat.icon}</span>
             <span class="cat-name-en">${cat.en}</span>
             <span class="cat-name-ar">${cat.ar}</span>
@@ -398,24 +343,60 @@ function renderSmartCategories() {
     `).join('');
 }
 
-function selectSmartCategory(catId, btn) {
+// When a fixed button is clicked
+function selectFixedCategory(catId, btn) {
     document.querySelectorAll('.main-cat-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('subCategoriesWrapper').classList.remove('show');
     
-    // إذا ضغط نفس الزر يطفيه
-    if (activeMainCategory === catId) {
-        activeMainCategory = null;
+    if (activeFixedCategory === catId) {
+        activeFixedCategory = null;
         return;
     }
     
     btn.classList.add('active');
-    activeMainCategory = catId;
+    activeFixedCategory = catId;
     
-    // فلترة وعرض المنتجات التابعة لهذا القسم الذكي
-    let filtered = allProducts.filter(p => p.smartCat === catId);
+    // 1. Filter products belonging to this fixed category
+    let groupProducts = allProducts.filter(p => p.fixedCatID === catId);
+    
+    // 2. Extract unique "sheetSubCategory" names from these products
+    const uniqueSubs = [...new Set(groupProducts.map(p => p.sheetSubCategory))].sort();
+    
+    // 3. Render these real sub-categories as chips
+    renderDynamicSubCategories(uniqueSubs);
+    
+    // 4. Show products (filtered by priority if needed)
+    if (currentPriorityFilter !== 'all') {
+        groupProducts = groupProducts.filter(p => p.priority === currentPriorityFilter);
+    }
+    renderResults(groupProducts);
+}
+
+function renderDynamicSubCategories(subs) {
+    const container = document.getElementById('subCategories');
+    const wrapper = document.getElementById('subCategoriesWrapper');
+    
+    container.innerHTML = subs.map(sub => `
+        <div class="sub-cat-chip" onclick="filterBySubCategory('${sub}', this)">${sub}</div>
+    `).join('');
+    
+    wrapper.classList.add('show');
+}
+
+function filterBySubCategory(subName, btn) {
+    document.querySelectorAll('.sub-cat-chip').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    
+    document.getElementById('searchInput').value = subName;
+    
+    // Filter from ALL products to ensure accuracy, but constrained by active main category implies mapping is correct
+    // Actually better to filter from the currently active fixed group to avoid confusion
+    let filtered = allProducts.filter(p => p.fixedCatID === activeFixedCategory && p.sheetSubCategory === subName);
+    
     if (currentPriorityFilter !== 'all') {
         filtered = filtered.filter(p => p.priority === currentPriorityFilter);
     }
+    
     renderResults(filtered);
 }
 
@@ -425,30 +406,37 @@ function filterByPriority(priority, btn) {
     currentPriorityFilter = priority;
     
     const searchVal = document.getElementById('searchInput').value.trim();
+    const activeSubBtn = document.querySelector('.sub-cat-chip.active');
 
-    // 1. If searching text
-    if (searchVal) {
-        performSearch(searchVal);
+    // Logic hierarchy: Search Text > Active Sub Category > Active Main Category > All
+    let list = allProducts;
+
+    if (searchVal && !activeSubBtn) {
+        list = performSearchLogic(searchVal);
     } 
-    // 2. If a category is selected
-    else if (activeMainCategory) {
-        let filtered = allProducts.filter(p => p.smartCat === activeMainCategory);
-        if (priority !== 'all') {
-            filtered = filtered.filter(p => p.priority === priority);
-        }
-        renderResults(filtered);
+    else if (activeSubBtn) {
+        // Re-apply sub category filter
+        list = allProducts.filter(p => p.fixedCatID === activeFixedCategory && p.sheetSubCategory === activeSubBtn.innerText);
     }
-    // 3. If nothing selected, show ALL for this priority
-    else {
-        let list = allProducts;
-        if (currentPriorityFilter !== 'all') {
-            list = list.filter(p => p.priority === currentPriorityFilter);
-        }
-        renderResults(list);
+    else if (activeFixedCategory) {
+        // Re-apply main category filter
+        list = allProducts.filter(p => p.fixedCatID === activeFixedCategory);
     }
+
+    // Apply priority filter
+    if (priority !== 'all') {
+        list = list.filter(p => p.priority === priority);
+    }
+    
+    renderResults(list);
 }
 
 function performSearch(val) {
+    const list = performSearchLogic(val);
+    renderResults(list);
+}
+
+function performSearchLogic(val) {
     const lowerVal = val.toLowerCase();
     let searchTerms = [lowerVal];
     
@@ -459,7 +447,7 @@ function performSearch(val) {
     });
     
     let filtered = allProducts.filter(p => {
-        const searchable = `${p.name} ${p.rawCategory} ${p.class} ${p.barcode}`.toLowerCase();
+        const searchable = `${p.name} ${p.sheetCategory} ${p.sheetSubCategory} ${p.class} ${p.barcode}`.toLowerCase();
         return searchTerms.some(term => searchable.includes(term));
     });
     
@@ -467,7 +455,6 @@ function performSearch(val) {
         filtered = filtered.filter(p => p.priority === currentPriorityFilter);
     }
     
-    renderResults(filtered);
     return filtered;
 }
 
@@ -478,13 +465,13 @@ searchInput.addEventListener('input', (e) => {
     const val = e.target.value.trim();
     if (val.length < 2) { suggestionsBox.classList.remove('show'); return; }
     
-    const matched = performSearch(val).slice(0, 6);
+    const matched = performSearchLogic(val).slice(0, 6);
     if (matched.length > 0) {
         suggestionsBox.innerHTML = matched.map(p => `
             <div class="suggestion-item" onclick="showProduct('${p.barcode}')">
                 <div class="sugg-info">
                     <div class="sugg-name">${p.name}</div>
-                    <div class="sugg-cat">💊 ${p.class}</div>
+                    <div class="sugg-cat">💊 ${p.class} | 📂 ${p.sheetSubCategory}</div>
                 </div>
                 <span class="sugg-priority bg-${p.priority}">${p.priority}</span>
             </div>
@@ -498,8 +485,7 @@ searchInput.addEventListener('input', (e) => {
 
 searchInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
-        const filtered = performSearch(searchInput.value);
-        renderResults(filtered);
+        performSearch(searchInput.value);
         suggestionsBox.classList.remove('show');
     }
 });
@@ -507,8 +493,8 @@ searchInput.addEventListener('keypress', (e) => {
 function showProduct(barcode) {
     const target = allProducts.find(p => p.barcode === barcode);
     if (target) {
-        // عند اختيار منتج، نعرض المنتجات المشابهة له في نفس التصنيف
-        let siblings = allProducts.filter(p => p.smartCat === target.smartCat && p.barcode !== barcode);
+        // Show siblings from the same SHEET sub-category
+        let siblings = allProducts.filter(p => p.sheetSubCategory === target.sheetSubCategory && p.barcode !== barcode);
         siblings.sort((a, b) => (priorityOrder[a.priority] || 99) - (priorityOrder[b.priority] || 99));
         
         if (currentPriorityFilter !== 'all') {
@@ -564,7 +550,7 @@ function renderResults(list, isSpecificSearch = false) {
                     <span class="p-badge bg-${p.priority}">${p.priority}</span>
                 </div>
                 <div class="p-meta">
-                    <span>📂 ${p.rawCategory}</span>
+                    <span>📂 ${p.sheetSubCategory}</span>
                     <span>🔢 ${p.barcode}</span>
                 </div>
             </div>
@@ -577,7 +563,7 @@ function clearSearch() {
     document.getElementById('resultsArea').classList.remove('show');
     suggestionsBox.classList.remove('show');
     document.querySelectorAll('.main-cat-btn').forEach(b => b.classList.remove('active'));
-    activeMainCategory = null;
+    activeFixedCategory = null;
 }
 
 function updateStats() {
