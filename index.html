@@ -53,13 +53,7 @@
         
         .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; }
         .p-name { font-weight: 800; font-size: 1rem; color: var(--gray-700); line-height: 1.4; }
-        
-        /* تنسيق المادة الفعالة الجديد */
-        .p-active-ingredient { 
-            font-size: 0.85rem; color: #E65100; font-weight: 600; 
-            margin-top: 2px; display: block; 
-        }
-
+        .p-active-ingredient { font-size: 0.85rem; color: #E65100; font-weight: 600; margin-top: 2px; display: block; }
         .p-badge { font-size: 0.7rem; font-weight: 700; padding: 3px 8px; border-radius: 6px; color: white; white-space: nowrap; margin-right: 8px; height: fit-content;}
         
         .bg-Diamond { background: var(--diamond); }
@@ -70,11 +64,23 @@
         .p-meta { font-size: 0.8rem; color: var(--gray-500); display: flex; gap: 10px; flex-wrap: wrap; margin-top: 0.8rem; border-top: 1px solid #f0f0f0; padding-top: 8px; }
         .p-meta span { background: var(--gray-100); padding: 2px 8px; border-radius: 4px; }
 
+        /* شارات التمييز */
+        .badge-container { margin-bottom: 8px; display: flex; gap: 5px; flex-wrap: wrap; }
+        
         .best-choice {
             background-color: #E8F5E9; color: #2E7D32; border: 1px solid #C8E6C9;
-            padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 800;
-            display: inline-flex; align-items: center; gap: 5px; margin-bottom: 8px;
+            padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 800;
+            display: inline-flex; align-items: center; gap: 5px;
         }
+        
+        .your-search {
+            background-color: #E3F2FD; color: #1565C0; border: 1px solid #BBDEFB;
+            padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 800;
+            display: inline-flex; align-items: center; gap: 5px;
+        }
+
+        /* تمييز المنتج المطلوب بحدود أوضح */
+        .highlight-product { border: 2px solid #1565C0; background-color: #F5F9FF; transform: scale(1.02); margin-bottom: 1.5rem; }
 
     </style>
 </head>
@@ -92,7 +98,7 @@
 
 <main class="main-container">
     <div class="search-box">
-        <input type="text" id="searchInput" class="search-input" placeholder="ابحث باسم الدواء، المادة الفعالة، أو القسم...">
+        <input type="text" id="searchInput" class="search-input" placeholder="ابحث باسم المنتج (مثال: Cipralex) أو المادة الفعالة...">
         <div class="suggestions" id="suggestions"></div>
         
         <div class="cats-title">
@@ -124,8 +130,9 @@
     const resCount = document.getElementById('resCount');
     const categoriesContainer = document.getElementById('categoriesContainer');
 
-    // توليد أزرار الأقسام
+    // 1. توليد أزرار الأقسام تلقائياً
     const uniqueCategories = [...new Set(products.map(p => p.category))].sort();
+    
     uniqueCategories.forEach(cat => {
         const btn = document.createElement('div');
         btn.className = 'cat-chip';
@@ -149,7 +156,6 @@
 
         if(val.length < 2) { suggestionsBox.classList.remove('show'); return; }
         
-        // البحث يشمل: الاسم، الباركود، الفئة، والمادة الفعالة
         const matched = products.filter(p => 
             p.name.toLowerCase().includes(val) || 
             p.barcode.includes(val) ||
@@ -175,27 +181,42 @@
         }
     });
 
-    // عند اختيار منتج -> عرض كل الفئة
+    // 🌟 الذكاء في البحث: المنتج المطلوب أولاً، ثم الباقي مرتباً
     function showProduct(barcode) {
-        const product = products.find(p => p.barcode === barcode);
+        const targetProduct = products.find(p => p.barcode === barcode);
         
-        if(product) {
-            // عرض كل منتجات الفئة (لإظهار البدائل الأفضل)
-            const relatedProducts = products.filter(p => p.category === product.category);
-            renderResults(relatedProducts); 
+        if(targetProduct) {
+            // 1. جلب باقي المنتجات في نفس الفئة (مع استبعاد المنتج المطلوب)
+            let siblings = products.filter(p => p.category === targetProduct.category && p.barcode !== targetProduct.barcode);
+            
+            // 2. ترتيب الباقي حسب الأولوية
+            siblings.sort((a,b) => {
+                const pA = priorityOrder[a.priority] || 99;
+                const pB = priorityOrder[b.priority] || 99;
+                return pA - pB;
+            });
+
+            // 3. دمج المنتج المطلوب في البداية
+            const finalList = [targetProduct, ...siblings];
+
+            // 4. عرض النتائج (مع تمرير true لنقول للنظام أن هذا بحث محدد)
+            renderResults(finalList, true); 
         }
         suggestionsBox.classList.remove('show');
     }
 
-    function renderResults(list) {
-        list.sort((a,b) => {
-            const pA = priorityOrder[a.priority] || 99;
-            const pB = priorityOrder[b.priority] || 99;
-            return pA - pB;
-        });
+    function renderResults(list, isSpecificSearch = false) {
+        // إذا لم يكن بحثاً محدداً، نرتب القائمة بالكامل حسب الأولوية
+        if (!isSpecificSearch) {
+            list.sort((a,b) => {
+                const pA = priorityOrder[a.priority] || 99;
+                const pB = priorityOrder[b.priority] || 99;
+                return pA - pB;
+            });
+        }
 
         resultsArea.style.display = 'block';
-        resCount.innerText = list.length + ' نتائج (مرتبة بالأولوية)';
+        resCount.innerText = list.length + ' نتائج';
         
         if(list.length === 0) {
             productsList.innerHTML = '<div style="text-align:center; padding:2rem;">لا توجد نتائج مطابقة</div>';
@@ -204,12 +225,23 @@
 
         let html = '';
         list.forEach((p, index) => {
-            const bestChoiceBadge = index === 0 ? 
-                `<div class="best-choice">⭐ الخيار الأفضل (Recommendation)</div>` : '';
+            let badgeHTML = '';
+            let highlightClass = '';
+
+            // المنطق الذكي للشارات (Badges)
+            if (isSpecificSearch && index === 0) {
+                // المنتج الأول في البحث المحدد = طلب العميل
+                badgeHTML = `<div class="your-search">🔍 طلبك (Your Search)</div>`;
+                highlightClass = 'highlight-product';
+            } 
+            else if (p.priority === 'Diamond' || (index === 0 && !isSpecificSearch)) {
+                // المنتج الأول في القائمة العامة أو أي منتج ماسي = الخيار الأفضل
+                badgeHTML = `<div class="best-choice">⭐ الخيار الأفضل (Recommendation)</div>`;
+            }
 
             html += `
-            <div class="product-card card-${p.priority}">
-                ${bestChoiceBadge}
+            <div class="product-card card-${p.priority} ${highlightClass}">
+                <div class="badge-container">${badgeHTML}</div>
                 <div class="card-header">
                     <div>
                         <div class="p-name">${p.name}</div>
