@@ -96,7 +96,7 @@
         .card-Platinum::before { background: var(--platinum); }
         .card-Gold::before { background: var(--gold); }
         .card-Silver::before { background: var(--silver); }
-        .card-Unknown::before { background: var(--gray-500); } /* للنسخ الاحتياطي */
+        .card-Unknown::before { background: var(--gray-500); }
         
         .card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
         .p-info { flex: 1; }
@@ -283,7 +283,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupScrollToTop();
 });
 
-// Fetch Data via CSV - NO FILTERING (SHOW ALL)
+// Fetch Data via CSV - READ ALL MODE
 function fetchDataCSV() {
     const listContainer = document.getElementById('productsList');
     listContainer.innerHTML = '<div class="loading-state">جاري سحب البيانات... ⏳</div>';
@@ -294,16 +294,27 @@ function fetchDataCSV() {
         header: false,
         complete: function(results) {
             const rows = results.data;
-            // Skip ONLY the first 2 header rows
-            const dataRows = rows.slice(2);
             
-            // Map EVERYTHING that has a name
-            allProducts = dataRows.map(row => {
+            // Loop through ALL rows (no slicing)
+            // Filter logic: Check if Column B (Name) has actual text and isn't a header
+            const filteredRows = rows.filter(row => {
+                 const nameCell = (row[1] || '').trim(); // Column B
+                 // Exclude empty rows and rows that look like headers
+                 return nameCell.length > 1 
+                        && !nameCell.includes('Juleb name') 
+                        && !nameCell.includes('الاسم')
+                        && !nameCell.includes('Juleb Name');
+            });
+
+            allProducts = filteredRows.map(row => {
                 let prio = (row[5] || '').trim();
-                // If priority is weird or empty, label it Unknown so it shows up
-                if (!['Diamond', 'Platinum', 'Gold', 'Silver'].includes(prio)) {
-                    prio = 'Unknown'; 
-                }
+                // Normalize priority
+                const pLower = prio.toLowerCase();
+                if (pLower.includes('diamond')) prio = 'Diamond';
+                else if (pLower.includes('platinum')) prio = 'Platinum';
+                else if (pLower.includes('gold')) prio = 'Gold';
+                else if (pLower.includes('silver')) prio = 'Silver';
+                else prio = 'Unknown';
 
                 return {
                     barcode: row[0] || '',
@@ -312,7 +323,7 @@ function fetchDataCSV() {
                     class: row[4] || '', 
                     priority: prio
                 };
-            }).filter(p => p.name && p.name.trim().length > 1 && !p.name.includes('Juleb name'));
+            });
 
             updateStats();
             renderMainCategories();
