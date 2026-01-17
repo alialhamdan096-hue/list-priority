@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>الرازي - الدليل الشامل 2026</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+
     <style>
         :root {
             --maroon: #6B2D5B; --maroon-light: #8B4D7B;
@@ -184,10 +186,10 @@
 <button class="scroll-top" id="scrollTop" onclick="scrollToTop()">↑</button>
 
 <script>
-// ================= إعدادات الرابط =================
-// تأكد أن الورقة في قوقل شيت اسمها (Sheet1)
+// ================= إعدادات الرابط (CSV Force) =================
+// هذا الرابط يجلب البيانات "خام" ويتجاوز مشاكل العناوين
 const sheetID = '1CZHMQnkhoXCpHlehZAHuYLWdpgAx-fXgn2PXT9H72-Y';
-const sheetURL = `https://opensheet.elk.sh/${sheetID}/Sheet1`;
+const csvURL = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:csv&sheet=Sheet1`;
 
 // ================= قاموس البحث العربي =================
 const arabicKeywords = {
@@ -211,97 +213,79 @@ const arabicKeywords = {
     "ضغط": ["BLOOD PRESSURE", "HYPERTENSION"]
 };
 
-// ترتيب الأولويات للألوان
 const priorityOrder = { 'Diamond': 1, 'Platinum': 2, 'Gold': 3, 'Silver': 4, 'R1': 5, 'R2': 6 };
 
-// متغيرات عامة
 let allProducts = [];
-let dynamicCategories = {}; // لتخزين الأقسام المكتشفة من الملف
+let dynamicCategories = {};
 let currentPriorityFilter = 'all';
 
-// تشغيل عند البداية
 document.addEventListener('DOMContentLoaded', () => {
-    fetchData();
+    fetchDataCSV();
     setupScrollToTop();
 });
 
-// دالة جلب البيانات (محدثة لتكون ذكية)
-async function fetchData() {
+// دالة جلب البيانات باستخدام CSV (الحل الجذري)
+function fetchDataCSV() {
     const listContainer = document.getElementById('productsList');
-    const categoriesContainer = document.getElementById('mainCategories');
-    
-    listContainer.innerHTML = '<div class="loading-state">جاري سحب البيانات من الشيت... ⏳</div>';
+    listContainer.innerHTML = '<div class="loading-state">جاري سحب البيانات (CSV)... ⏳</div>';
     document.getElementById('resultsArea').classList.add('show');
 
-    try {
-        const response = await fetch(sheetURL);
-        if (!response.ok) throw new Error("Network response was not ok");
-        
-        const rawData = await response.json();
-        
-        // تنظيف وتجهيز البيانات
-        allProducts = rawData.map(item => {
-            return {
-                barcode: item['Internal Reference'] || '',
-                name: item['Juleb name'] || '',
-                // هنا السر: نستخدم اسم العمود في ملفك سواء كان Category أو SubCategory
-                mainCat: (item['Category'] || 'عام').trim(), 
-                subCat: (item['SubCategory'] || item['Category'] || 'أخرى').trim(),
-                class: item['Class'] || '',
-                priority: item['2026_List'] || 'Silver'
-            };
-        }).filter(p => p.name); // استبعاد الصفوف الفارغة
+    Papa.parse(csvURL, {
+        download: true,
+        header: false, // لا نعتمد على العناوين لأنها قد تكون عربية وتخرب الكود
+        complete: function(results) {
+            const rows = results.data;
+            
+            // نتخطى أول صفين (العناوين العربية والإنجليزية) ونبدأ من البيانات
+            // الصف 0 = العناوين العربية، الصف 1 = العناوين الإنجليزية، البيانات تبدأ من الصف 2
+            const dataRows = rows.slice(2); 
 
-        // تحديث الإحصائيات
-        updateStats();
-        
-        // بناء الأقسام تلقائياً من البيانات
-        buildDynamicCategories();
-        
-        // إزالة رسالة التحميل
-        listContainer.innerHTML = ''; 
-        document.getElementById('resultsArea').classList.remove('show');
-        
-        console.log(`تم تحميل ${allProducts.length} منتج`);
+            allProducts = dataRows.map(row => {
+                // تعيين الأعمدة بالأرقام (Index) بدلاً من الأسماء
+                // العمود A=0, B=1, C=2, D=3, E=4, F=5
+                return {
+                    barcode: row[0] || '',      // Internal Reference
+                    name: row[1] || '',         // Juleb name
+                    mainCat: (row[2] || 'عام').trim(), // Category
+                    subCat: (row[3] || row[2] || 'أخرى').trim(), // SubCategory
+                    class: row[4] || '',        // Class
+                    priority: row[5] || 'Silver' // 2026_List
+                };
+            }).filter(p => p.name && p.name.length > 2); // استبعاد الصفوف الفارغة
 
-    } catch (error) {
-        console.error('Error:', error);
-        listContainer.innerHTML = `
-            <div class="empty-state" style="color:red">
-                حدثت مشكلة في قراءة البيانات.<br>
-                1. تأكد أن اسم الورقة في أسفل الإكسل هو <b>Sheet1</b><br>
-                2. تأكد أن الصف الأول يحتوي على العناوين الإنجليزية (Category, Juleb name...)
-            </div>`;
-    }
+            // تحديث الواجهة
+            updateStats();
+            buildDynamicCategories();
+            listContainer.innerHTML = ''; 
+            document.getElementById('resultsArea').classList.remove('show');
+            console.log(`تم تحميل ${allProducts.length} منتج بنجاح`);
+        },
+        error: function(err) {
+            console.error('Error:', err);
+            listContainer.innerHTML = '<div class="empty-state" style="color:red">فشل التحميل. تأكد أن الملف منشور (File > Share > Publish to web)</div>';
+        }
+    });
 }
 
-// دالة بناء الأقسام تلقائياً
 function buildDynamicCategories() {
-    // 1. تجميع الأقسام الموجودة في الملف
     dynamicCategories = {};
-    
     allProducts.forEach(p => {
         if (!p.mainCat) return;
-        if (!dynamicCategories[p.mainCat]) {
-            dynamicCategories[p.mainCat] = new Set();
-        }
+        if (!dynamicCategories[p.mainCat]) dynamicCategories[p.mainCat] = new Set();
         if(p.subCat) dynamicCategories[p.mainCat].add(p.subCat);
     });
 
-    // 2. رسم الأزرار الرئيسية
     const container = document.getElementById('mainCategories');
-    const iconsMap = { // أيقونات تقريبية للأقسام المشهورة
+    const iconsMap = {
         'Pharma': '💊', 'Cosmetics': '🧴', 'Medication': '💉', 
         'Vitamins': '🍊', 'Supplements': '💪', 'Mom & Baby': '👶', 'Personal Care': '🛁'
     };
 
     container.innerHTML = Object.keys(dynamicCategories).map(catName => {
-        // محاولة تخمين الأيقونة بناءً على الاسم
         let icon = '📦';
         for (const [key, val] of Object.entries(iconsMap)) {
             if (catName.includes(key)) icon = val;
         }
-
         return `
             <div class="main-cat-btn" onclick="selectDynamicMainCategory('${catName}', this)">
                 <span class="main-cat-icon">${icon}</span>
@@ -311,53 +295,37 @@ function buildDynamicCategories() {
     }).join('');
 }
 
-// عند اختيار قسم رئيسي
 function selectDynamicMainCategory(mainCatName, btn) {
-    // تلوين الزر النشط
     document.querySelectorAll('.main-cat-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-
-    // إظهار الأقسام الفرعية التابعة له
     const subCats = Array.from(dynamicCategories[mainCatName]);
     renderDynamicSubCategories(subCats);
 }
 
-// رسم الأقسام الفرعية
 function renderDynamicSubCategories(subs) {
     const container = document.getElementById('subCategories');
     const wrapper = document.getElementById('subCategoriesWrapper');
-    
     container.innerHTML = subs.map(sub => `
         <div class="sub-cat-chip" onclick="filterByDynamicSubCat('${sub}', this)">${sub}</div>
     `).join('');
-    
     wrapper.classList.add('show');
 }
 
-// عند اختيار قسم فرعي (هنا يتم عرض الأدوية أخيراً!)
 function filterByDynamicSubCat(subCatName, btn) {
     document.querySelectorAll('.sub-cat-chip').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    
-    // البحث في البيانات
     let filtered = allProducts.filter(p => p.subCat === subCatName);
-    
     if (currentPriorityFilter !== 'all') {
         filtered = filtered.filter(p => p.priority === currentPriorityFilter);
     }
-    
     renderResults(filtered);
 }
 
-// البحث النصي (كما هو)
 function performSearchLogic(val) {
     const lowerVal = val.toLowerCase();
     let searchTerms = [lowerVal];
-    
     Object.entries(arabicKeywords).forEach(([ar, en]) => {
-        if (val.includes(ar)) {
-            searchTerms = searchTerms.concat(en.map(e => e.toLowerCase()));
-        }
+        if (val.includes(ar)) searchTerms = searchTerms.concat(en.map(e => e.toLowerCase()));
     });
     
     let filtered = allProducts.filter(p => {
@@ -365,40 +333,33 @@ function performSearchLogic(val) {
         return searchTerms.some(term => searchable.includes(term));
     });
     
-    if (currentPriorityFilter !== 'all') {
-        filtered = filtered.filter(p => p.priority === currentPriorityFilter);
-    }
+    if (currentPriorityFilter !== 'all') filtered = filtered.filter(p => p.priority === currentPriorityFilter);
     return filtered;
 }
 
-// عرض النتائج
 function renderResults(list, isSpecificSearch = false) {
     if (!isSpecificSearch) {
         list.sort((a, b) => (priorityOrder[a.priority] || 99) - (priorityOrder[b.priority] || 99));
     }
-    
     const productsList = document.getElementById('productsList');
     const resCount = document.getElementById('resCount');
-    
     document.getElementById('resultsArea').classList.add('show');
     resCount.innerText = list.length + ' نتائج';
     
     if (list.length === 0) {
-        productsList.innerHTML = `<div class="empty-state">🚫 لا توجد منتجات في هذا القسم</div>`;
+        productsList.innerHTML = `<div class="empty-state">🚫 لا توجد منتجات</div>`;
         return;
     }
     
     productsList.innerHTML = list.map((p, i) => {
         let badgeHTML = '';
         let highlightClass = '';
-        
         if (isSpecificSearch && i === 0) {
             badgeHTML = '<div class="your-search">🔍 طلبك</div>';
             highlightClass = 'highlight-product';
         } else if (p.priority === 'Diamond' || (i === 0 && !isSpecificSearch)) {
             badgeHTML = '<div class="best-choice">⭐ الخيار الأفضل</div>';
         }
-        
         return `
             <div class="product-card card-${p.priority} ${highlightClass}">
                 ${badgeHTML ? `<div class="badge-container">${badgeHTML}</div>` : ''}
@@ -418,13 +379,11 @@ function renderResults(list, isSpecificSearch = false) {
     }).join('');
 }
 
-// فلترة الأولويات
 function filterByPriority(priority, btn) {
     document.querySelectorAll('.priority-chip').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     currentPriorityFilter = priority;
     
-    // إعادة تطبيق البحث الحالي إن وجد
     const activeSubBtn = document.querySelector('.sub-cat-chip.active');
     if (activeSubBtn) {
         filterByDynamicSubCat(activeSubBtn.innerText, activeSubBtn);
@@ -434,14 +393,12 @@ function filterByPriority(priority, btn) {
     }
 }
 
-// البحث والمقترحات
 const searchInput = document.getElementById('searchInput');
 const suggestionsBox = document.getElementById('suggestions');
 
 searchInput.addEventListener('input', (e) => {
     const val = e.target.value.trim();
     if (val.length < 2) { suggestionsBox.classList.remove('show'); return; }
-    
     const matched = performSearchLogic(val).slice(0, 6);
     if (matched.length > 0) {
         suggestionsBox.innerHTML = matched.map(p => `
@@ -462,9 +419,7 @@ searchInput.addEventListener('input', (e) => {
 
 function showProduct(barcode) {
     const target = allProducts.find(p => p.barcode === barcode);
-    if (target) {
-        renderResults([target], true);
-    }
+    if (target) { renderResults([target], true); }
     suggestionsBox.classList.remove('show');
 }
 
