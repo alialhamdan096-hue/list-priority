@@ -1,25 +1,21 @@
-a<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>الرازي - دليل المنتجات الذكي</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <style>
         :root {
             --maroon: #6B2D5B;
             --maroon-dark: #5a2550;
             --maroon-light: #8B4D7B;
             --olive: #5B6B2D;
-            --olive-light: #7B8B4D;
             --green: #8DC63F;
-            --green-light: #A8D465;
             --cream: #F9F7F4;
             --white: #FFFFFF;
             --gray-100: #F5F3F0;
             --gray-200: #E8E4DF;
-            --gray-300: #D1CBC3;
             --gray-500: #8B8580;
             --gray-700: #4A4744;
             
@@ -35,11 +31,7 @@ a<!DOCTYPE html>
             --r1-bg: #FDE8E8;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Tajawal', sans-serif;
@@ -75,44 +67,10 @@ a<!DOCTYPE html>
         .logo-img {
             height: 50px;
             object-fit: contain;
+            /* خلفية بيضاء خفيفة لضمان وضوح الشعار إذا كان شفافاً */
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 2px;
             border-radius: 8px;
-        }
-
-        .logo-placeholder {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: white;
-        }
-
-        .logo-icon {
-            width: 45px;
-            height: 45px;
-            position: relative;
-        }
-
-        .logo-icon svg {
-            width: 100%;
-            height: 100%;
-        }
-
-        .logo-text {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .logo-text-ar {
-            font-size: 1.4rem;
-            font-weight: 900;
-            color: white;
-            line-height: 1.2;
-        }
-
-        .logo-text-en {
-            font-size: 0.75rem;
-            color: rgba(255,255,255,0.8);
-            letter-spacing: 2px;
-            text-transform: lowercase;
         }
 
         .header-badge {
@@ -140,48 +98,7 @@ a<!DOCTYPE html>
             margin-bottom: 1.5rem;
         }
 
-        .search-tabs {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1.25rem;
-            background: var(--gray-100);
-            padding: 0.35rem;
-            border-radius: 12px;
-        }
-
-        .search-tab {
-            flex: 1;
-            padding: 0.75rem 0.5rem;
-            border: none;
-            background: transparent;
-            border-radius: 10px;
-            font-family: 'Tajawal', sans-serif;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--gray-500);
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.4rem;
-        }
-
-        .search-tab.active {
-            background: var(--white);
-            color: var(--maroon);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
-
-        .search-tab svg {
-            width: 18px;
-            height: 18px;
-        }
-
-        /* Search Input */
-        .search-input-container {
-            position: relative;
-        }
+        .search-input-container { position: relative; }
 
         .search-input-wrapper {
             position: relative;
@@ -208,20 +125,11 @@ a<!DOCTYPE html>
             box-shadow: 0 0 0 4px rgba(107, 45, 91, 0.1);
         }
 
-        .search-input::placeholder {
-            color: var(--gray-500);
-        }
-
         .search-icon {
             position: absolute;
             right: 1rem;
             color: var(--gray-500);
             pointer-events: none;
-        }
-
-        .search-icon svg {
-            width: 22px;
-            height: 22px;
         }
 
         /* Autocomplete Dropdown */
@@ -250,21 +158,13 @@ a<!DOCTYPE html>
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .autocomplete-section {
-            padding: 0.5rem 0;
-        }
-
-        .autocomplete-section:not(:last-child) {
-            border-bottom: 1px solid var(--gray-200);
-        }
-
+        .autocomplete-section { padding: 0.5rem 0; }
+        .autocomplete-section:not(:last-child) { border-bottom: 1px solid var(--gray-200); }
         .autocomplete-section-title {
             padding: 0.5rem 1rem;
             font-size: 0.75rem;
             font-weight: 700;
             color: var(--gray-500);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
         .autocomplete-item {
@@ -276,192 +176,26 @@ a<!DOCTYPE html>
             transition: background 0.2s;
         }
 
-        .autocomplete-item:hover, .autocomplete-item.selected {
-            background: var(--gray-100);
-        }
+        .autocomplete-item:hover, .autocomplete-item.selected { background: var(--gray-100); }
 
         .autocomplete-item-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-            flex-shrink: 0;
+            width: 36px; height: 36px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; flex-shrink: 0;
         }
-
-        .autocomplete-item-icon.product {
-            background: var(--maroon);
-            background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-light) 100%);
-            color: white;
-        }
-
-        .autocomplete-item-icon.symptom {
-            background: var(--green);
-            color: var(--maroon-dark);
-        }
-
-        .autocomplete-item-icon.category {
-            background: var(--olive);
-            color: white;
-        }
-
-        .autocomplete-item-content {
-            flex: 1;
-            min-width: 0;
-        }
+        .autocomplete-item-icon.product { background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-light) 100%); color: white; }
+        .autocomplete-item-icon.symptom { background: var(--green); color: var(--maroon-dark); }
+        .autocomplete-item-icon.category { background: var(--olive); color: white; }
 
         .autocomplete-item-name {
-            font-weight: 600;
-            color: var(--gray-700);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            font-weight: 600; color: var(--gray-700);
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
-
-        .autocomplete-item-name mark {
-            background: var(--gold-bg);
-            color: var(--gold);
-            padding: 0 2px;
-            border-radius: 2px;
-        }
-
-        .autocomplete-item-sub {
-            font-size: 0.8rem;
-            color: var(--gray-500);
-        }
-
+        .autocomplete-item-name mark { background: var(--gold-bg); color: var(--gold); padding: 0 2px; }
+        .autocomplete-item-sub { font-size: 0.8rem; color: var(--gray-500); }
         .autocomplete-item-badge {
-            padding: 0.25rem 0.5rem;
-            border-radius: 6px;
-            font-size: 0.65rem;
-            font-weight: 700;
-            flex-shrink: 0;
-        }
-
-        /* Scanner Section */
-        .scanner-section {
-            display: none;
-        }
-
-        .scanner-section.active {
-            display: block;
-        }
-
-        .scanner-container {
-            background: var(--gray-700);
-            border-radius: 16px;
-            overflow: hidden;
-            position: relative;
-            aspect-ratio: 4/3;
-            max-height: 300px;
-        }
-
-        #scanner-video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .scanner-overlay {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            pointer-events: none;
-        }
-
-        .scanner-frame {
-            width: 70%;
-            max-width: 250px;
-            aspect-ratio: 3/1;
-            border: 3px solid var(--green);
-            border-radius: 12px;
-            box-shadow: 0 0 0 9999px rgba(0,0,0,0.5);
-            position: relative;
-        }
-
-        .scanner-frame::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: var(--green);
-            animation: scanLine 2s infinite;
-        }
-
-        @keyframes scanLine {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-
-        .scanner-hint {
-            text-align: center;
-            padding: 1rem;
-            color: var(--gray-500);
-            font-size: 0.9rem;
-        }
-
-        .scanner-hint svg {
-            width: 24px;
-            height: 24px;
-            margin-bottom: 0.5rem;
-            color: var(--maroon);
-        }
-
-        /* Manual Barcode Input */
-        .barcode-manual {
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--gray-200);
-        }
-
-        .barcode-manual-label {
-            font-size: 0.85rem;
-            color: var(--gray-500);
-            margin-bottom: 0.5rem;
-            display: block;
-        }
-
-        .barcode-input-wrapper {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .barcode-input {
-            flex: 1;
-            padding: 0.75rem 1rem;
-            font-size: 1rem;
-            border: 2px solid var(--gray-200);
-            border-radius: 10px;
-            font-family: 'Tajawal', monospace;
-            text-align: center;
-            letter-spacing: 2px;
-        }
-
-        .barcode-input:focus {
-            outline: none;
-            border-color: var(--maroon);
-        }
-
-        .barcode-submit {
-            padding: 0.75rem 1.5rem;
-            background: var(--maroon);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-family: 'Tajawal', sans-serif;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .barcode-submit:hover {
-            background: var(--maroon-dark);
+            padding: 0.25rem 0.5rem; border-radius: 6px;
+            font-size: 0.65rem; font-weight: 700; flex-shrink: 0;
         }
 
         /* Symptoms Quick Access */
@@ -472,20 +206,11 @@ a<!DOCTYPE html>
         }
 
         .symptoms-title {
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--gray-500);
-            margin-bottom: 0.75rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            font-size: 0.85rem; font-weight: 700; color: var(--gray-500);
+            margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;
         }
 
-        .symptoms-chips {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
+        .symptoms-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 
         .symptom-chip {
             padding: 0.5rem 1rem;
@@ -497,527 +222,170 @@ a<!DOCTYPE html>
             color: var(--gray-700);
             cursor: pointer;
             transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
+            display: flex; align-items: center; gap: 0.4rem;
         }
 
         .symptom-chip:hover {
-            background: var(--green);
-            border-color: var(--green);
-            color: var(--maroon-dark);
-            transform: translateY(-2px);
-        }
-
-        .symptom-chip svg {
-            width: 16px;
-            height: 16px;
+            background: var(--green); border-color: var(--green);
+            color: var(--maroon-dark); transform: translateY(-2px);
         }
 
         /* Results Section */
-        .results-section {
-            display: none;
-        }
-
-        .results-section.show {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
+        .results-section { display: none; }
+        .results-section.show { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         .results-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1rem;
+            display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;
         }
-
         .results-title {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--maroon);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            font-size: 1.1rem; font-weight: 700; color: var(--maroon);
+            display: flex; align-items: center; gap: 0.5rem;
         }
-
         .results-count {
-            background: var(--maroon);
-            color: white;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
+            background: var(--maroon); color: white; padding: 0.25rem 0.75rem;
+            border-radius: 20px; font-size: 0.8rem; font-weight: 600;
         }
-
         .results-clear {
-            padding: 0.5rem 1rem;
-            background: var(--gray-100);
-            border: none;
-            border-radius: 8px;
-            font-family: 'Tajawal', sans-serif;
-            font-size: 0.85rem;
-            color: var(--gray-500);
-            cursor: pointer;
-            transition: all 0.2s;
+            padding: 0.5rem 1rem; background: var(--gray-100); border: none;
+            border-radius: 8px; font-family: 'Tajawal'; font-size: 0.85rem;
+            color: var(--gray-500); cursor: pointer; transition: all 0.2s;
         }
-
-        .results-clear:hover {
-            background: var(--gray-200);
-            color: var(--gray-700);
-        }
+        .results-clear:hover { background: var(--gray-200); color: var(--gray-700); }
 
         /* Current Product Card */
         .current-product {
             background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-light) 100%);
-            border-radius: 16px;
-            padding: 1.25rem;
-            margin-bottom: 1rem;
-            color: white;
+            border-radius: 16px; padding: 1.25rem; margin-bottom: 1rem; color: white;
         }
-
-        .current-product-label {
-            font-size: 0.75rem;
-            opacity: 0.8;
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-
-        .current-product-name {
-            font-size: 1.2rem;
-            font-weight: 800;
-            margin-bottom: 0.5rem;
-        }
-
-        .current-product-details {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.75rem;
-            font-size: 0.85rem;
-            opacity: 0.9;
-        }
-
-        .current-product-details span {
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-        }
-
+        .current-product-label { font-size: 0.75rem; opacity: 0.8; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem; }
+        .current-product-name { font-size: 1.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+        .current-product-details { display: flex; flex-wrap: wrap; gap: 0.75rem; font-size: 0.85rem; opacity: 0.9; }
         .current-product-priority {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-            padding: 0.35rem 0.75rem;
-            background: rgba(255,255,255,0.2);
-            border-radius: 8px;
-            font-weight: 700;
-            font-size: 0.8rem;
-            margin-top: 0.75rem;
+            display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.35rem 0.75rem;
+            background: rgba(255,255,255,0.2); border-radius: 8px; font-weight: 700;
+            font-size: 0.8rem; margin-top: 0.75rem;
         }
 
         /* Alternatives Section */
         .alternatives-section {
-            background: var(--white);
-            border-radius: 16px;
-            padding: 1.25rem;
+            background: var(--white); border-radius: 16px; padding: 1.25rem;
             box-shadow: 0 4px 25px rgba(107, 45, 91, 0.08);
         }
-
         .alternatives-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 1px solid var(--gray-200);
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--gray-200);
         }
-
-        .alternatives-title {
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--olive);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .alternatives-title svg {
-            width: 20px;
-            height: 20px;
-        }
+        .alternatives-title { font-size: 1rem; font-weight: 700; color: var(--olive); display: flex; align-items: center; gap: 0.5rem; }
 
         /* Product Cards */
         .product-card {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1rem;
-            border-radius: 12px;
-            background: var(--gray-100);
-            margin-bottom: 0.75rem;
-            transition: all 0.2s;
-            cursor: pointer;
-            border-right: 4px solid transparent;
+            display: flex; align-items: center; gap: 1rem; padding: 1rem;
+            border-radius: 12px; background: var(--gray-100); margin-bottom: 0.75rem;
+            transition: all 0.2s; cursor: pointer; border-right: 4px solid transparent;
         }
-
-        .product-card:last-child {
-            margin-bottom: 0;
-        }
-
-        .product-card:hover {
-            background: var(--gray-200);
-            transform: translateX(-4px);
-        }
-
-        .product-card.diamond {
-            border-right-color: var(--diamond);
-            background: var(--diamond-bg);
-        }
-
-        .product-card.platinum {
-            border-right-color: var(--platinum);
-            background: var(--platinum-bg);
-        }
-
-        .product-card.gold {
-            border-right-color: var(--gold);
-            background: var(--gold-bg);
-        }
-
-        .product-card.silver {
-            border-right-color: var(--silver);
-            background: var(--silver-bg);
-        }
-
-        .product-card.r1, .product-card.r2 {
-            border-right-color: var(--r1);
-            background: var(--r1-bg);
-        }
+        .product-card:hover { background: var(--gray-200); transform: translateX(-4px); }
+        
+        .product-card.diamond { border-right-color: var(--diamond); background: var(--diamond-bg); }
+        .product-card.platinum { border-right-color: var(--platinum); background: var(--platinum-bg); }
+        .product-card.gold { border-right-color: var(--gold); background: var(--gold-bg); }
+        .product-card.silver { border-right-color: var(--silver); background: var(--silver-bg); }
+        .product-card.r1, .product-card.r2 { border-right-color: var(--r1); background: var(--r1-bg); }
 
         .product-rank {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            font-size: 0.9rem;
-            flex-shrink: 0;
+            width: 32px; height: 32px; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem; flex-shrink: 0;
         }
+        .product-card.diamond .product-rank { background: var(--diamond); color: white; }
+        .product-card.platinum .product-rank { background: var(--platinum); color: white; }
+        .product-card.gold .product-rank { background: var(--gold); color: white; }
+        .product-card.silver .product-rank { background: var(--silver); color: white; }
+        .product-card.r1 .product-rank, .product-card.r2 .product-rank { background: var(--r1); color: white; }
 
-        .product-card.diamond .product-rank {
-            background: var(--diamond);
-            color: white;
-        }
-
-        .product-card.platinum .product-rank {
-            background: var(--platinum);
-            color: white;
-        }
-
-        .product-card.gold .product-rank {
-            background: var(--gold);
-            color: white;
-        }
-
-        .product-card.silver .product-rank {
-            background: var(--silver);
-            color: white;
-        }
-
-        .product-card.r1 .product-rank,
-        .product-card.r2 .product-rank {
-            background: var(--r1);
-            color: white;
-        }
-
-        .product-info {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .product-name {
-            font-weight: 700;
-            font-size: 0.95rem;
-            color: var(--gray-700);
-            margin-bottom: 0.25rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .product-meta {
-            font-size: 0.8rem;
-            color: var(--gray-500);
-        }
-
+        .product-info { flex: 1; min-width: 0; }
+        .product-name { font-weight: 700; font-size: 0.95rem; color: var(--gray-700); margin-bottom: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .product-meta { font-size: 0.8rem; color: var(--gray-500); }
+        
         .product-priority-badge {
-            padding: 0.35rem 0.75rem;
-            border-radius: 8px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            flex-shrink: 0;
+            padding: 0.35rem 0.75rem; border-radius: 8px; font-size: 0.7rem; font-weight: 700; flex-shrink: 0;
         }
-
-        .product-priority-badge.diamond {
-            background: var(--diamond);
-            color: white;
-        }
-
-        .product-priority-badge.platinum {
-            background: var(--platinum);
-            color: white;
-        }
-
-        .product-priority-badge.gold {
-            background: var(--gold);
-            color: white;
-        }
-
-        .product-priority-badge.silver {
-            background: var(--silver);
-            color: white;
-        }
-
-        .product-priority-badge.r1,
-        .product-priority-badge.r2 {
-            background: var(--r1);
-            color: white;
-        }
+        .product-priority-badge.diamond { background: var(--diamond); color: white; }
+        .product-priority-badge.platinum { background: var(--platinum); color: white; }
+        .product-priority-badge.gold { background: var(--gold); color: white; }
+        .product-priority-badge.silver { background: var(--silver); color: white; }
+        .product-priority-badge.r1, .product-priority-badge.r2 { background: var(--r1); color: white; }
 
         .best-choice-badge {
-            background: var(--green);
-            color: var(--maroon-dark);
-            padding: 0.2rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.65rem;
-            font-weight: 700;
-            margin-right: 0.5rem;
+            background: var(--green); color: var(--maroon-dark); padding: 0.2rem 0.5rem;
+            border-radius: 4px; font-size: 0.65rem; font-weight: 700; margin-right: 0.5rem;
         }
 
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 3rem 2rem;
-            color: var(--gray-500);
-        }
+        .empty-state { text-align: center; padding: 3rem 2rem; color: var(--gray-500); }
+        .empty-state svg { width: 64px; height: 64px; margin-bottom: 1rem; opacity: 0.4; }
+        .empty-state h3 { font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--gray-700); }
 
-        .empty-state svg {
-            width: 64px;
-            height: 64px;
-            margin-bottom: 1rem;
-            opacity: 0.4;
-        }
-
-        .empty-state h3 {
-            font-size: 1.1rem;
-            margin-bottom: 0.5rem;
-            color: var(--gray-700);
-        }
-
-        /* Loading State */
-        .loading {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-            gap: 0.5rem;
-            color: var(--maroon);
-        }
-
-        .loading-spinner {
-            width: 24px;
-            height: 24px;
-            border: 3px solid var(--gray-200);
-            border-top-color: var(--maroon);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Responsive */
         @media (max-width: 640px) {
-            .header {
-                padding: 0.75rem 1rem;
-            }
-
-            .logo-text-ar {
-                font-size: 1.2rem;
-            }
-
-            .search-tab {
-                padding: 0.6rem 0.3rem;
-                font-size: 0.75rem;
-            }
-
-            .search-tab span {
-                display: none;
-            }
-
-            .search-tab svg {
-                width: 20px;
-                height: 20px;
-            }
-
-            .product-card {
-                flex-wrap: wrap;
-            }
-
-            .product-priority-badge {
-                margin-top: 0.5rem;
-                width: 100%;
-                text-align: center;
-            }
-        }
-
-        /* Scanner Active State */
-        #qr-reader {
-            width: 100%;
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        #qr-reader video {
-            border-radius: 12px;
-        }
-
-        #qr-reader__scan_region {
-            background: var(--gray-700) !important;
-        }
-
-        #qr-reader__dashboard {
-            padding: 1rem !important;
-        }
-
-        #qr-reader__dashboard_section_csr button {
-            background: var(--maroon) !important;
-            border: none !important;
-            padding: 0.75rem 1.5rem !important;
-            border-radius: 10px !important;
-            color: white !important;
-            font-family: 'Tajawal', sans-serif !important;
-            font-weight: 600 !important;
+            .header { padding: 0.75rem 1rem; }
+            .product-card { flex-wrap: wrap; }
+            .product-priority-badge { margin-top: 0.5rem; width: 100%; text-align: center; }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
     <header class="header">
         <div class="header-content">
             <div class="logo">
-                <img src="data:image/jpeg;base64,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" alt="الرازي" class="logo-img">
+                <img src="" 
+                     alt="الرازي" 
+                     class="logo-img"
+                     id="pharmacyLogo"
+                     style="display: none;"> <span id="logoText" style="color: white; font-weight: 900; font-size: 1.5rem;">ALRAZI</span>
             </div>
             <div class="header-badge">دليل 2026</div>
         </div>
     </header>
 
-    <!-- Main Container -->
     <main class="main-container">
-        <!-- Search Section -->
         <section class="search-section">
-            <!-- Search Tabs -->
-            <div class="search-tabs">
-                <button class="search-tab active" data-tab="search">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="11" cy="11" r="8"/>
-                        <path d="m21 21-4.35-4.35"/>
-                    </svg>
-                    <span>بحث ذكي</span>
-                </button>
-                <button class="search-tab" data-tab="scanner">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M3 7V5a2 2 0 0 1 2-2h2"/>
-                        <path d="M17 3h2a2 2 0 0 1 2 2v2"/>
-                        <path d="M21 17v2a2 2 0 0 1-2 2h-2"/>
-                        <path d="M7 21H5a2 2 0 0 1-2-2v-2"/>
-                        <line x1="7" y1="12" x2="17" y2="12"/>
-                    </svg>
-                    <span>مسح باركود</span>
-                </button>
-            </div>
-
-            <!-- Search Input -->
-            <div class="search-panel active" id="search-panel">
-                <div class="search-input-container">
-                    <div class="search-input-wrapper">
-                        <span class="search-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="11" cy="11" r="8"/>
-                                <path d="m21 21-4.35-4.35"/>
-                            </svg>
-                        </span>
-                        <input 
-                            type="text" 
-                            class="search-input" 
-                            id="searchInput"
-                            placeholder="اسم الدواء، الباركود، أو العرض (مثل: صداع، حساسية)..."
-                            autocomplete="off"
-                        >
-                    </div>
-                    <div class="autocomplete-dropdown" id="autocompleteDropdown"></div>
-                </div>
-
-                <!-- Quick Symptoms -->
-                <div class="symptoms-section">
-                    <div class="symptoms-title">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-                            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+            <div class="search-input-container">
+                <div class="search-input-wrapper">
+                    <span class="search-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="m21 21-4.35-4.35"/>
                         </svg>
-                        بحث سريع بالأعراض
-                    </div>
-                    <div class="symptoms-chips">
-                        <div class="symptom-chip" data-symptom="headache">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
-                            صداع
-                        </div>
-                        <div class="symptom-chip" data-symptom="stomach">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                            معدة
-                        </div>
-                        <div class="symptom-chip" data-symptom="allergy">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10H12V2z"/></svg>
-                            حساسية
-                        </div>
-                        <div class="symptom-chip" data-symptom="pain">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg>
-                            ألم
-                        </div>
-                        <div class="symptom-chip" data-symptom="vitamins">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-                            فيتامينات
-                        </div>
-                        <div class="symptom-chip" data-symptom="sleep">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-                            نوم
-                        </div>
-                    </div>
+                    </span>
+                    <input 
+                        type="text" 
+                        class="search-input" 
+                        id="searchInput"
+                        placeholder="ابحث باسم الدواء أو العرض (مثال: صداع)..."
+                        autocomplete="off"
+                    >
                 </div>
+                <div class="autocomplete-dropdown" id="autocompleteDropdown"></div>
             </div>
 
-            <!-- Scanner Panel -->
-            <div class="scanner-panel" id="scanner-panel">
-                <div id="qr-reader"></div>
-                <div class="barcode-manual">
-                    <label class="barcode-manual-label">أو أدخل الباركود يدوياً:</label>
-                    <div class="barcode-input-wrapper">
-                        <input type="text" class="barcode-input" id="barcodeInput" placeholder="6281086010457">
-                        <button class="barcode-submit" id="barcodeSubmit">بحث</button>
-                    </div>
+            <div class="symptoms-section">
+                <div class="symptoms-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                        <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                    </svg>
+                    بحث سريع بالأعراض
+                </div>
+                <div class="symptoms-chips">
+                    <div class="symptom-chip" data-symptom="headache">🤕 صداع</div>
+                    <div class="symptom-chip" data-symptom="stomach">🤢 معدة</div>
+                    <div class="symptom-chip" data-symptom="allergy">🤧 حساسية</div>
+                    <div class="symptom-chip" data-symptom="pain">⚡ ألم</div>
+                    <div class="symptom-chip" data-symptom="vitamins">💊 فيتامينات</div>
+                    <div class="symptom-chip" data-symptom="sleep">😴 نوم</div>
+                    <div class="symptom-chip" data-symptom="hair">💇 شعر</div>
+                    <div class="symptom-chip" data-symptom="burn">🔥 حروق</div>
                 </div>
             </div>
         </section>
 
-        <!-- Results Section -->
         <section class="results-section" id="resultsSection">
             <div class="results-header">
                 <div class="results-title">
@@ -1031,7 +399,6 @@ a<!DOCTYPE html>
                 <button class="results-clear" id="clearResults">مسح</button>
             </div>
 
-            <!-- Current Product -->
             <div class="current-product" id="currentProduct" style="display: none;">
                 <div class="current-product-label">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
@@ -1047,11 +414,10 @@ a<!DOCTYPE html>
                 <div class="current-product-priority" id="currentProductPriority"></div>
             </div>
 
-            <!-- Alternatives -->
             <div class="alternatives-section" id="alternativesSection">
                 <div class="alternatives-header">
                     <div class="alternatives-title">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
                             <polyline points="23,6 13.5,15.5 8.5,10.5 1,18"/>
                             <polyline points="17,6 23,6 23,12"/>
                         </svg>
@@ -1064,7 +430,23 @@ a<!DOCTYPE html>
     </main>
 
     <script>
-        // ==================== DATA ====================
+        // ==================== إعدادات الشعار ====================
+        // هام: استبدل الرابط أدناه برابط صورتك الخام من Github
+        // مثال: https://raw.githubusercontent.com/username/repo/main/logo.png
+        const LOGO_URL = "https://raw.githubusercontent.com/ضع-رابط-الصورة-هنا/logo.png"; 
+
+        // تفعيل الشعار
+        const logoImg = document.getElementById('pharmacyLogo');
+        const logoText = document.getElementById('logoText');
+
+        // إذا قمت بتعديل الرابط أعلاه، ستظهر الصورة تلقائياً
+        if (LOGO_URL && !LOGO_URL.includes('ضع-رابط-الصورة-هنا')) {
+            logoImg.src = LOGO_URL;
+            logoImg.style.display = 'block';
+            logoText.style.display = 'none';
+        }
+
+        // ==================== البيانات ====================
         const products = [
             // A TO Z VITAMINS
             {barcode: "5060748880192", name: "GUMAZING ESSENTIAL PACK 2 COMBO PACK", category: "A TO Z VITAMINS", class: "Multivitamins Gummies", priority: "Diamond"},
@@ -1299,46 +681,36 @@ a<!DOCTYPE html>
         // ==================== DOM ELEMENTS ====================
         const searchInput = document.getElementById('searchInput');
         const autocompleteDropdown = document.getElementById('autocompleteDropdown');
-        const barcodeInput = document.getElementById('barcodeInput');
-        const barcodeSubmit = document.getElementById('barcodeSubmit');
         const resultsSection = document.getElementById('resultsSection');
         const currentProduct = document.getElementById('currentProduct');
         const alternativesList = document.getElementById('alternativesList');
         const resultsCount = document.getElementById('resultsCount');
         const clearResults = document.getElementById('clearResults');
-        const tabs = document.querySelectorAll('.search-tab');
         const symptomChips = document.querySelectorAll('.symptom-chip');
 
-        let html5QrCode = null;
         let selectedIndex = -1;
 
         // ==================== FUNCTIONS ====================
         
-        // Highlight search term
         function highlightMatch(text, term) {
             if (!term) return text;
             const regex = new RegExp(`(${term})`, 'gi');
             return text.replace(regex, '<mark>$1</mark>');
         }
 
-        // Get autocomplete suggestions
         function getAutocompleteSuggestions(query) {
             if (!query || query.length < 2) return { products: [], symptoms: [], categories: [] };
-
             const q = query.toLowerCase();
             
-            // Product matches
             const productMatches = products.filter(p => 
                 p.name.toLowerCase().includes(q) || 
                 p.barcode.includes(q)
             ).slice(0, 5);
 
-            // Symptom matches
             const symptomMatches = Object.keys(symptomsMap).filter(s => 
                 s.toLowerCase().includes(q)
             ).slice(0, 3);
 
-            // Category matches
             const categories = [...new Set(products.map(p => p.category))];
             const categoryMatches = categories.filter(c => 
                 c.toLowerCase().includes(q)
@@ -1347,7 +719,6 @@ a<!DOCTYPE html>
             return { products: productMatches, symptoms: symptomMatches, categories: categoryMatches };
         }
 
-        // Render autocomplete
         function renderAutocomplete(suggestions, query) {
             const { products: prods, symptoms, categories } = suggestions;
             
@@ -1357,58 +728,50 @@ a<!DOCTYPE html>
             }
 
             let html = '';
-
             // Products
             if (prods.length > 0) {
-                html += '<div class="autocomplete-section">';
-                html += '<div class="autocomplete-section-title">💊 المنتجات</div>';
+                html += '<div class="autocomplete-section"><div class="autocomplete-section-title">💊 المنتجات</div>';
                 prods.forEach((p, i) => {
                     html += `
-                        <div class="autocomplete-item" data-type="product" data-barcode="${p.barcode}" data-index="${i}">
+                        <div class="autocomplete-item" data-type="product" data-barcode="${p.barcode}">
                             <div class="autocomplete-item-icon product">💊</div>
                             <div class="autocomplete-item-content">
                                 <div class="autocomplete-item-name">${highlightMatch(p.name, query)}</div>
                                 <div class="autocomplete-item-sub">${p.category}</div>
                             </div>
                             <div class="autocomplete-item-badge product-priority-badge ${p.priority.toLowerCase()}">${p.priority}</div>
-                        </div>
-                    `;
+                        </div>`;
                 });
                 html += '</div>';
             }
-
             // Symptoms
             if (symptoms.length > 0) {
-                html += '<div class="autocomplete-section">';
-                html += '<div class="autocomplete-section-title">🏥 الأعراض</div>';
-                symptoms.forEach((s, i) => {
+                html += '<div class="autocomplete-section"><div class="autocomplete-section-title">🏥 الأعراض</div>';
+                symptoms.forEach((s) => {
                     html += `
-                        <div class="autocomplete-item" data-type="symptom" data-symptom="${s}" data-index="${prods.length + i}">
+                        <div class="autocomplete-item" data-type="symptom" data-symptom="${s}">
                             <div class="autocomplete-item-icon symptom">🏥</div>
                             <div class="autocomplete-item-content">
                                 <div class="autocomplete-item-name">${highlightMatch(s, query)}</div>
                                 <div class="autocomplete-item-sub">بحث بالعرض</div>
                             </div>
-                        </div>
-                    `;
+                        </div>`;
                 });
                 html += '</div>';
             }
 
             // Categories
             if (categories.length > 0) {
-                html += '<div class="autocomplete-section">';
-                html += '<div class="autocomplete-section-title">📂 الفئات</div>';
-                categories.forEach((c, i) => {
-                    html += `
-                        <div class="autocomplete-item" data-type="category" data-category="${c}" data-index="${prods.length + symptoms.length + i}">
+                html += '<div class="autocomplete-section"><div class="autocomplete-section-title">📂 الفئات</div>';
+                categories.forEach((c) => {
+                     html += `
+                        <div class="autocomplete-item" data-type="category" data-category="${c}">
                             <div class="autocomplete-item-icon category">📂</div>
                             <div class="autocomplete-item-content">
                                 <div class="autocomplete-item-name">${highlightMatch(c, query)}</div>
                                 <div class="autocomplete-item-sub">عرض جميع المنتجات</div>
                             </div>
-                        </div>
-                    `;
+                        </div>`;
                 });
                 html += '</div>';
             }
@@ -1418,43 +781,39 @@ a<!DOCTYPE html>
             selectedIndex = -1;
         }
 
-        // Search by barcode
         function searchByBarcode(barcode) {
             const product = products.find(p => p.barcode === barcode);
-            if (product) {
-                showProductResults(product);
-            } else {
-                showNoResults();
-            }
+            if (product) showProductResults(product);
+            else showNoResults();
+            searchInput.value = '';
+            autocompleteDropdown.classList.remove('show');
         }
 
-        // Search by symptom
         function searchBySymptom(symptom) {
             const categories = symptomsMap[symptom.toLowerCase()] || symptomsMap[symptom];
             if (categories) {
                 const filtered = products.filter(p => categories.includes(p.category));
                 showCategoryResults(symptom, filtered);
             }
+            searchInput.value = '';
+            autocompleteDropdown.classList.remove('show');
         }
 
-        // Search by category
         function searchByCategory(category) {
             const filtered = products.filter(p => p.category === category);
             showCategoryResults(category, filtered);
+            searchInput.value = '';
+            autocompleteDropdown.classList.remove('show');
         }
 
-        // Show product results with alternatives
         function showProductResults(product) {
             resultsSection.classList.add('show');
-            
-            // Show current product
             currentProduct.style.display = 'block';
             document.getElementById('currentProductName').textContent = product.name;
             document.getElementById('currentProductCategory').innerHTML = `📂 ${product.category}`;
             document.getElementById('currentProductBarcode').innerHTML = `🔢 ${product.barcode}`;
             document.getElementById('currentProductPriority').innerHTML = `⭐ ${product.priority}`;
 
-            // Get alternatives from same subcategory
             const alternatives = products
                 .filter(p => p.category === product.category && p.barcode !== product.barcode)
                 .sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
@@ -1463,18 +822,30 @@ a<!DOCTYPE html>
             resultsCount.textContent = alternatives.length + 1;
         }
 
-        // Show category results
         function showCategoryResults(title, filtered) {
             resultsSection.classList.add('show');
             currentProduct.style.display = 'none';
-
             const sorted = filtered.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
-            renderAlternatives(sorted, true);
+            renderAlternatives(sorted);
             resultsCount.textContent = sorted.length;
         }
 
-        // Render alternatives list
-        function renderAlternatives(alternatives, showAll = false) {
+        function showNoResults() {
+            resultsSection.classList.add('show');
+            currentProduct.style.display = 'none';
+            alternativesList.innerHTML = `
+                <div class="empty-state">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.35-4.35"/>
+                    </svg>
+                    <h3>لم نجد نتائج</h3>
+                    <p>جرب البحث بكلمات مختلفة</p>
+                </div>`;
+            resultsCount.textContent = '0';
+        }
+
+        function renderAlternatives(alternatives) {
             if (alternatives.length === 0) {
                 alternativesList.innerHTML = `
                     <div class="empty-state">
@@ -1484,11 +855,9 @@ a<!DOCTYPE html>
                         </svg>
                         <h3>لا توجد بدائل</h3>
                         <p>لم نجد منتجات أخرى في نفس الفئة</p>
-                    </div>
-                `;
+                    </div>`;
                 return;
             }
-
             let html = '';
             alternatives.forEach((p, index) => {
                 const isBest = index === 0;
@@ -1503,176 +872,53 @@ a<!DOCTYPE html>
                             <div class="product-meta">${p.class} • ${p.barcode}</div>
                         </div>
                         <div class="product-priority-badge ${p.priority.toLowerCase()}">${p.priority}</div>
-                    </div>
-                `;
+                    </div>`;
             });
-
             alternativesList.innerHTML = html;
         }
 
-        // Show no results
-        function showNoResults() {
-            resultsSection.classList.add('show');
-            currentProduct.style.display = 'none';
-            alternativesList.innerHTML = `
-                <div class="empty-state">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="11" cy="11" r="8"/>
-                        <path d="m21 21-4.35-4.35"/>
-                    </svg>
-                    <h3>لم نجد نتائج</h3>
-                    <p>جرب البحث بكلمات مختلفة أو تأكد من الباركود</p>
-                </div>
-            `;
-            resultsCount.textContent = '0';
-        }
-
-        // Clear results
-        function clearAllResults() {
-            resultsSection.classList.remove('show');
-            searchInput.value = '';
-            barcodeInput.value = '';
-            autocompleteDropdown.classList.remove('show');
-        }
-
-        // Tab switching
-        function switchTab(tabName) {
-            tabs.forEach(t => t.classList.remove('active'));
-            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
-
-            document.getElementById('search-panel').style.display = tabName === 'search' ? 'block' : 'none';
-            document.getElementById('scanner-panel').style.display = tabName === 'scanner' ? 'block' : 'none';
-
-            if (tabName === 'scanner') {
-                startScanner();
-            } else {
-                stopScanner();
-            }
-        }
-
-        // Start barcode scanner
-        function startScanner() {
-            if (html5QrCode) return;
-
-            html5QrCode = new Html5Qrcode("qr-reader");
-            html5QrCode.start(
-                { facingMode: "environment" },
-                { fps: 10, qrbox: { width: 250, height: 100 } },
-                (decodedText) => {
-                    html5QrCode.stop();
-                    searchByBarcode(decodedText);
-                    switchTab('search');
-                },
-                () => {}
-            ).catch(err => {
-                console.log("Scanner error:", err);
-            });
-        }
-
-        // Stop scanner
-        function stopScanner() {
-            if (html5QrCode) {
-                html5QrCode.stop().then(() => {
-                    html5QrCode = null;
-                }).catch(() => {});
-            }
-        }
-
-        // ==================== EVENT LISTENERS ====================
-
-        // Search input
+        // ==================== EVENTS ====================
         searchInput.addEventListener('input', (e) => {
-            const query = e.target.value.trim();
-            const suggestions = getAutocompleteSuggestions(query);
-            renderAutocomplete(suggestions, query);
+            renderAutocomplete(getAutocompleteSuggestions(e.target.value.trim()), e.target.value.trim());
         });
 
-        // Search input focus
-        searchInput.addEventListener('focus', () => {
-            if (searchInput.value.length >= 2) {
-                const suggestions = getAutocompleteSuggestions(searchInput.value);
-                renderAutocomplete(suggestions, searchInput.value);
-            }
-        });
-
-        // Click outside to close dropdown
+        // Click outside closes dropdown
         document.addEventListener('click', (e) => {
             if (!e.target.closest('.search-input-container')) {
                 autocompleteDropdown.classList.remove('show');
             }
         });
 
-        // Autocomplete item click
         autocompleteDropdown.addEventListener('click', (e) => {
             const item = e.target.closest('.autocomplete-item');
             if (!item) return;
-
-            const type = item.dataset.type;
-            if (type === 'product') {
-                searchByBarcode(item.dataset.barcode);
-            } else if (type === 'symptom') {
-                searchBySymptom(item.dataset.symptom);
-            } else if (type === 'category') {
-                searchByCategory(item.dataset.category);
-            }
-
-            autocompleteDropdown.classList.remove('show');
-            searchInput.value = '';
+            if (item.dataset.type === 'product') searchByBarcode(item.dataset.barcode);
+            else if (item.dataset.type === 'symptom') searchBySymptom(item.dataset.symptom);
+            else if (item.dataset.type === 'category') searchByCategory(item.dataset.category);
         });
 
-        // Keyboard navigation
+        // Enter key to search
         searchInput.addEventListener('keydown', (e) => {
-            const items = autocompleteDropdown.querySelectorAll('.autocomplete-item');
-            
-            if (e.key === 'ArrowDown') {
-                e.preventDefault();
-                selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
-                items.forEach((item, i) => item.classList.toggle('selected', i === selectedIndex));
-            } else if (e.key === 'ArrowUp') {
-                e.preventDefault();
-                selectedIndex = Math.max(selectedIndex - 1, 0);
-                items.forEach((item, i) => item.classList.toggle('selected', i === selectedIndex));
-            } else if (e.key === 'Enter') {
-                e.preventDefault();
-                if (selectedIndex >= 0 && items[selectedIndex]) {
-                    items[selectedIndex].click();
+            if (e.key === 'Enter') {
+                const val = searchInput.value.trim();
+                if (/^\d+$/.test(val)) searchByBarcode(val);
+                else {
+                    const suggestions = getAutocompleteSuggestions(val);
+                    if (suggestions.products.length > 0) searchByBarcode(suggestions.products[0].barcode);
+                    else showNoResults();
                 }
-            } else if (e.key === 'Escape') {
                 autocompleteDropdown.classList.remove('show');
             }
         });
 
-        // Barcode submit
-        barcodeSubmit.addEventListener('click', () => {
-            const barcode = barcodeInput.value.trim();
-            if (barcode) {
-                searchByBarcode(barcode);
-            }
-        });
-
-        barcodeInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                barcodeSubmit.click();
-            }
-        });
-
-        // Tabs
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => switchTab(tab.dataset.tab));
-        });
-
-        // Symptom chips
         symptomChips.forEach(chip => {
-            chip.addEventListener('click', () => {
-                searchBySymptom(chip.dataset.symptom);
-            });
+            chip.addEventListener('click', () => searchBySymptom(chip.dataset.symptom));
         });
 
-        // Clear results
-        clearResults.addEventListener('click', clearAllResults);
-
-        // Make searchByBarcode global for onclick
-        window.searchByBarcode = searchByBarcode;
+        clearResults.addEventListener('click', () => {
+            resultsSection.classList.remove('show');
+            searchInput.value = '';
+        });
     </script>
 </body>
 </html>
