@@ -67,10 +67,18 @@
         .logo-img {
             height: 50px;
             object-fit: contain;
-            /* خلفية بيضاء خفيفة لضمان وضوح الشعار إذا كان شفافاً */
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 2px;
+            background-color: rgba(255, 255, 255, 0.9); /* خلفية بيضاء لضمان وضوح الشعار */
+            padding: 4px;
             border-radius: 8px;
+            display: block;
+        }
+
+        /* تنسيق للنص البديل في حال لم تكن الصورة موجودة */
+        .logo-text-fallback {
+            color: white;
+            font-weight: 900;
+            font-size: 1.5rem;
+            display: none; /* مخفي افتراضياً */
         }
 
         .header-badge {
@@ -335,12 +343,14 @@
     <header class="header">
         <div class="header-content">
             <div class="logo">
-                <img src="" 
+                <img src="logo.png" 
                      alt="الرازي" 
                      class="logo-img"
                      id="pharmacyLogo"
-                     style="display: none;"> <span id="logoText" style="color: white; font-weight: 900; font-size: 1.5rem;">ALRAZI</span>
-            </div>
+                     onerror="this.style.display='none'; document.getElementById('logoText').style.display='block';">
+                
+                <span id="logoText" class="logo-text-fallback">ALRAZI</span>
+                </div>
             <div class="header-badge">دليل 2026</div>
         </div>
     </header>
@@ -359,7 +369,7 @@
                         type="text" 
                         class="search-input" 
                         id="searchInput"
-                        placeholder="ابحث باسم الدواء أو العرض (مثال: صداع)..."
+                        placeholder="ابحث باسم الدواء، الباركود، أو العرض (مثال: صداع)..."
                         autocomplete="off"
                     >
                 </div>
@@ -430,23 +440,7 @@
     </main>
 
     <script>
-        // ==================== إعدادات الشعار ====================
-        // هام: استبدل الرابط أدناه برابط صورتك الخام من Github
-        // مثال: https://raw.githubusercontent.com/username/repo/main/logo.png
-        const LOGO_URL = "https://raw.githubusercontent.com/ضع-رابط-الصورة-هنا/logo.png"; 
-
-        // تفعيل الشعار
-        const logoImg = document.getElementById('pharmacyLogo');
-        const logoText = document.getElementById('logoText');
-
-        // إذا قمت بتعديل الرابط أعلاه، ستظهر الصورة تلقائياً
-        if (LOGO_URL && !LOGO_URL.includes('ضع-رابط-الصورة-هنا')) {
-            logoImg.src = LOGO_URL;
-            logoImg.style.display = 'block';
-            logoText.style.display = 'none';
-        }
-
-        // ==================== البيانات ====================
+        // ==================== DATA ====================
         const products = [
             // A TO Z VITAMINS
             {barcode: "5060748880192", name: "GUMAZING ESSENTIAL PACK 2 COMBO PACK", category: "A TO Z VITAMINS", class: "Multivitamins Gummies", priority: "Diamond"},
