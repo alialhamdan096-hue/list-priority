@@ -32,7 +32,8 @@
         .search-icon { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); font-size: 1.2rem; color: var(--gray-500); }
         .search-input { width: 100%; padding: 1rem 1rem 1rem 3rem; padding-right: 45px; border: 2px solid var(--gray-100); border-radius: 12px; font-family: 'Tajawal'; font-size: 1rem; transition: all 0.3s ease; background: var(--gray-100); }
         .search-input:focus { border-color: var(--maroon); outline: none; background: white; box-shadow: 0 0 0 4px rgba(107, 45, 91, 0.1); }
-        
+        .search-input::placeholder { color: var(--gray-500); }
+
         .suggestions { position: absolute; top: calc(100% + 5px); left: 0; right: 0; background: white; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.15); z-index: 50; max-height: 350px; overflow-y: auto; display: none; border: 1px solid var(--gray-200); }
         .suggestions.show { display: block; }
         .suggestion-item { padding: 12px 15px; border-bottom: 1px solid var(--gray-100); cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: background 0.2s; }
@@ -182,7 +183,8 @@
             <span class="cats-title">📂 تصفح حسب القسم</span>
             <span class="cats-count" id="totalCount">...</span>
         </div>
-        <div class="main-categories" id="mainCategories"></div>
+        <div class="main-categories" id="mainCategories">
+            </div>
         <div class="sub-categories-wrapper" id="subCategoriesWrapper">
             <div class="sub-categories" id="subCategories"></div>
         </div>
@@ -210,7 +212,8 @@
 <script>
 // ================= DATA SOURCE =================
 const sheetID = '1CZHMQnkhoXCpHlehZAHuYLWdpgAx-fXgn2PXT9H72-Y';
-const csvURL = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:csv&sheet=Sheet1`;
+// التغيير هنا: الورقة اسمها 2026_list
+const csvURL = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:csv&sheet=2026_list`;
 
 // ================= FIXED CATEGORIES (Hardcoded as requested) =================
 const fixedCategories = [
