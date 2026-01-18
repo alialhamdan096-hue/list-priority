@@ -23,32 +23,7 @@
         .logo-section { display: flex; align-items: center; gap: 10px; }
         .logo-img { height: 45px; background: rgba(255,255,255,0.95); padding: 4px; border-radius: 8px; }
         .logo-text { color: white; font-weight: 900; font-size: 1.3rem; }
-        
-        .header-buttons { display: flex; gap: 10px; align-items: center; }
         .header-badge { background: #8DC63F; color: #fff; padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; }
-        
-        /* ⭐ زر الإدارة */
-        .admin-btn {
-            background: rgba(255,255,255,0.15);
-            border: 2px solid rgba(255,255,255,0.3);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 10px;
-            font-family: 'Tajawal', sans-serif;
-            font-size: 0.8rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            text-decoration: none;
-        }
-        .admin-btn:hover {
-            background: rgba(255,255,255,0.25);
-            border-color: rgba(255,255,255,0.5);
-            transform: translateY(-2px);
-        }
 
         .main-container { max-width: 900px; margin: 0 auto; padding: 1.5rem 1rem; }
 
@@ -57,8 +32,7 @@
         .search-icon { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); font-size: 1.2rem; color: var(--gray-500); }
         .search-input { width: 100%; padding: 1rem 1rem 1rem 3rem; padding-right: 45px; border: 2px solid var(--gray-100); border-radius: 12px; font-family: 'Tajawal'; font-size: 1rem; transition: all 0.3s ease; background: var(--gray-100); }
         .search-input:focus { border-color: var(--maroon); outline: none; background: white; box-shadow: 0 0 0 4px rgba(107, 45, 91, 0.1); }
-        .search-input::placeholder { color: var(--gray-500); }
-
+        
         .suggestions { position: absolute; top: calc(100% + 5px); left: 0; right: 0; background: white; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.15); z-index: 50; max-height: 350px; overflow-y: auto; display: none; border: 1px solid var(--gray-200); }
         .suggestions.show { display: block; }
         .suggestion-item { padding: 12px 15px; border-bottom: 1px solid var(--gray-100); cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: background 0.2s; }
@@ -177,10 +151,7 @@
             <img src="logo.png" alt="ALRAZI" class="logo-img" onerror="this.style.display='none'">
             <span class="logo-text">ALRAZI</span>
         </div>
-        <div class="header-buttons">
-            <a href="admin-panel.html" class="admin-btn">⚙️ لوحة التحكم</a>
-            <div class="header-badge">دليل 2026</div>
-        </div>
+        <div class="header-badge">دليل 2026</div>
     </div>
 </header>
 
@@ -237,14 +208,11 @@
 <button class="scroll-top" id="scrollTop" onclick="scrollToTop()">↑</button>
 
 <script>
-// ================= DATA SOURCES =================
+// ================= DATA SOURCE =================
 const sheetID = '1CZHMQnkhoXCpHlehZAHuYLWdpgAx-fXgn2PXT9H72-Y';
 const csvURL = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:csv&sheet=Sheet1`;
 
-// رابط شيت التعديلات
-const EDITS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzgRYJVCvZ73v2p5SX7EcZjdZZio1d-dptlockJG9177i-3soHC1Ry6gzeov77_XmPOJw/exec';
-
-// ================= FIXED CATEGORIES =================
+// ================= FIXED CATEGORIES (Hardcoded as requested) =================
 const fixedCategories = [
     { id: 'vitamins', icon: '💊', en: 'Vitamins', ar: 'فيتامينات ومكملات', keywords: ['vit', 'supp', 'mineral', 'omega', 'iron', 'calc', 'magn', 'zinc', 'multi'] },
     { id: 'pain', icon: '🩹', en: 'Pain & Fever', ar: 'مسكنات وحرارة', keywords: ['pain', 'analgesic', 'adol', 'panadol', 'headache', 'fever', 'nsaid', 'paracetamol', 'ibuprofen', 'diclofenac'] },
@@ -254,67 +222,90 @@ const fixedCategories = [
     { id: 'mom_baby', icon: '👶', en: 'Mom & Baby', ar: 'الأم والطفل', keywords: ['baby', 'mom', 'milk', 'diaper', 'feed', 'child', 'infant'] },
     { id: 'men_women', icon: '👫', en: 'Men & Women', ar: 'صحة الرجل والمرأة', keywords: ['men', 'women', 'sex', 'erect', 'lady', 'preg', 'fertil'] },
     { id: 'chronic', icon: '🩺', en: 'Chronic Diseases', ar: 'الأمراض المزمنة', keywords: ['diabet', 'pressure', 'hyper', 'cholest', 'heart', 'sugar', 'insul'] },
+    { id: 'mental', icon: '🧠', en: 'Mental Health', ar: 'الصحة النفسية', keywords: ['depress', 'anxi', 'psych', 'mood', 'sleep', 'insom', 'cipralex', 'seroxat', 'prozac', 'remeron'] },
     { id: 'first_aid', icon: '🩹', en: 'First Aid', ar: 'إسعافات أولية', keywords: ['aid', 'band', 'wound', 'burn', 'antiseptic'] },
     { id: 'others', icon: '📦', en: 'Others', ar: 'أقسام أخرى', keywords: [] }
 ];
 
+// ================= ARABIC KEYWORDS DICTIONARY =================
 const arabicKeywords = {
     "فيتامين": ["VITAMIN", "MULTIVITAMIN", "VITA"],
-    "فيتامين د": ["VITAMIN D", "D3", "D 50", "D 10"],
-    "مسكن": ["PAIN", "PARACETAMOL", "IBUPROFEN", "DICLOFENAC"],
+    "فيتامين د": ["VITAMIN D", "D3", "D 50", "D 10", "D 5", "D 2", "D 1"],
+    "فيتامين سي": ["VITAMIN C", "VIT C", "ACEROLA"],
+    "فيتامينات": ["MULTIVITAMIN", "A TO Z", "GUMMIES"],
+    "مكملات": ["SUPPLEMENT", "VITAMIN", "OMEGA"],
+    "مسكن": ["PAIN", "PARACETAMOL", "IBUPROFEN", "DICLOFENAC", "ANALGESIC"],
     "الم": ["PAIN", "ANALGESIC"],
     "صداع": ["PARACETAMOL", "ADOL", "FEVADOL", "PANADOL"],
     "حرارة": ["PARACETAMOL", "FEVADOL", "ADOL"],
-    "معدة": ["STOMACH", "ANTACID", "OMEPRAZOLE", "NEXIUM"],
-    "قولون": ["COLON", "DUSPATALIN", "MEBEVERINE"],
-    "حساسية": ["ALLERGY", "ANTIHISTAMINE", "CETIRIZINE", "LORATADINE"],
+    "روماتيزم": ["DICLOFENAC", "VOLTAREN", "RUMAFEN"],
+    "مفاصل": ["JOINT", "GLUCOSAMINE", "COLLAGEN", "FLEXALL"],
+    "عظام": ["BONE", "CALCIUM", "VITAMIN D", "COLLAGEN"],
+    "معدة": ["STOMACH", "ANTACID", "OMEPRAZOLE", "NEXIUM", "PROTON"],
+    "حموضة": ["ACIDITY", "OMEPRAZOLE", "ESOMEPRAZOLE", "NEXIUM", "RISEK"],
+    "قرحة": ["ULCER", "OMEPRAZOLE", "PANTOPRAZOLE"],
+    "هضم": ["DIGESTIVE", "PROBIOTIC", "CHARCOAL"],
+    "امساك": ["LAXATIVE", "DUPHALAC", "MOVICOL", "GLYCERIN"],
+    "اسهال": ["CHARCOAL", "PROBIOTIC"],
+    "غثيان": ["NAUSEA", "ANTIEMETIC", "ONDANSETRON", "VOMINORE"],
+    "قولون": ["COLON", "DUSPATALIN", "MEBEVERINE", "BUSCOPAN"],
+    "حساسية": ["ALLERGY", "ANTIHISTAMINE", "CETIRIZINE", "LORATADINE", "FEXOFENADINE"],
+    "رشح": ["COLD", "RHINITIS", "CLARINASE"],
+    "زكام": ["COLD", "FLU", "CLARINASE"],
+    "انفلونزا": ["FLU", "COLD"],
     "جلد": ["SKIN", "DERMA", "CREAM", "OINTMENT"],
-    "شعر": ["HAIR", "BIOTIN", "CYSTINE", "MINOXIDIL"],
-    "اكتئاب": ["DEPRESSION", "ANTIDEPRESSANT", "ESCITALOPRAM"],
+    "حروق": ["BURN", "MEBO", "AVOMEB"],
+    "تفتيح": ["BLEACHING", "HYDROQUINONE", "AVOQUIN"],
+    "كريم": ["CREAM", "OINTMENT", "GEL"],
+    "شعر": ["HAIR", "BIOTIN", "CYSTINE", "MINOXIDIL", "FORCAPIL"],
+    "تساقط": ["HAIR LOSS", "MINOXIDIL", "REGAINE"],
+    "بيوتين": ["BIOTIN"],
+    "اكتئاب": ["DEPRESSION", "ANTIDEPRESSANT", "ESCITALOPRAM", "CIPRALEX", "PROZAC", "SEROXAT"],
+    "قلق": ["ANXIETY", "ESCITALOPRAM", "PAROXETINE"],
+    "نوم": ["SLEEP", "MELATONIN", "VALERIAN"],
+    "ارق": ["INSOMNIA", "MELATONIN", "SLEEP"],
+    "توتر": ["STRESS", "ASHWAGANDHA", "ANXIETY"],
     "انتصاب": ["ERECTILE", "TADALAFIL", "SILDENAFIL", "ED"],
+    "ضعف جنسي": ["ED", "ERECTILE", "TADALAFIL", "SILDENAFIL"],
+    "سرعة قذف": ["PREMATURE", "DAPOXETINE", "LEJAM"],
     "حمل": ["PREGNANCY", "PRENATAL", "FOLIC"],
-    "مضاد حيوي": ["ANTIBIOTIC", "AMOXICILLIN", "AZITHROMYCIN"],
+    "خصوبة": ["FERTILITY", "FERTIL"],
+    "نسائي": ["VAGINAL", "LADY", "GYNO"],
+    "فطريات": ["FUNGAL", "CANESTEN", "MICONAZOLE"],
+    "مضاد حيوي": ["ANTIBIOTIC", "AMOXICILLIN", "AZITHROMYCIN", "AUGMENTIN"],
     "التهاب": ["INFECTION", "INFLAMMATION", "ANTIBIOTIC"],
-    "سكر": ["DIABETES", "METFORMIN"],
-    "ضغط": ["BLOOD PRESSURE", "HYPERTENSION"]
+    "مناعة": ["IMMUNITY", "VITAMIN C", "ZINC", "PROPOLIS"],
+    "زنك": ["ZINC"],
+    "اوميغا": ["OMEGA"],
+    "كولاجين": ["COLLAGEN"],
+    "بروبيوتيك": ["PROBIOTIC"],
+    "طاقة": ["ENERGY", "GINSENG", "ROYAL JELLY"],
+    "عين": ["EYE", "TEARS", "OPHTHALMIC"],
+    "انف": ["NASAL", "NOSE", "SALINE"],
+    "فم": ["ORAL", "MOUTH", "DENTAL"],
+    "حلق": ["THROAT", "SORE"],
+    "كحة": ["COUGH", "EXPECTORANT", "PROSPAN"],
+    "بلغم": ["MUCUS", "MUCOLYTIC", "BROMHEXINE"],
+    "سكر": ["DIABETES", "METFORMIN", "GLUCOPHAGE"],
+    "ضغط": ["BLOOD PRESSURE", "HYPERTENSION"],
+    "كوليسترول": ["CHOLESTEROL"],
+    "قلب": ["HEART", "CARDIAC", "OMEGA"],
+    "بواسير": ["HEMORRHOID", "HEALAR", "PROCTO"],
+    "عضلات": ["MUSCLE", "RELAXANT", "RELAXON"]
 };
 
 const priorityOrder = { 'Diamond': 1, 'Platinum': 2, 'Gold': 3, 'Silver': 4, 'R1': 5, 'R2': 6, 'Unknown': 7 };
 
 let allProducts = [];
-let editsMap = {};
 let currentPriorityFilter = 'all';
-let activeFixedCategory = null;
+let activeMainCategory = null;
 
 document.addEventListener('DOMContentLoaded', () => {
-    loadEditsAndData();
+    fetchDataCSV(); 
     setupScrollToTop();
 });
 
-// جلب التعديلات ثم البيانات
-async function loadEditsAndData() {
-    // محاولة جلب التعديلات
-    try {
-        const response = await fetch(EDITS_SCRIPT_URL);
-        const data = await response.json();
-        
-        if (data.length > 1) {
-            for (let i = 1; i < data.length; i++) {
-                const row = data[i];
-                if (row[0] && row[3]) {
-                    editsMap[row[0]] = row[3];
-                }
-            }
-        }
-        console.log(`تم تحميل ${Object.keys(editsMap).length} تعديل`);
-    } catch (error) {
-        console.log('لا توجد تعديلات بعد');
-    }
-    
-    // جلب البيانات الرئيسية
-    fetchDataCSV();
-}
-
+// Fetch Data via CSV - READ ALL & ASSIGN
 function fetchDataCSV() {
     const listContainer = document.getElementById('productsList');
     listContainer.innerHTML = '<div class="loading-state">جاري سحب البيانات... ⏳</div>';
@@ -325,17 +316,14 @@ function fetchDataCSV() {
         header: false,
         complete: function(results) {
             const rows = results.data;
-            console.log('Raw rows:', rows.length);
             
             const filteredRows = rows.filter(row => {
-                const nameCell = (row[1] || '').trim();
-                return nameCell.length > 1 
-                    && !nameCell.toLowerCase().includes('juleb name') 
-                    && !nameCell.includes('الاسم')
-                    && !nameCell.toLowerCase().includes('name');
+                 const nameCell = (row[1] || '').trim(); // Column B
+                 return nameCell.length > 1 
+                        && !nameCell.includes('Juleb name') 
+                        && !nameCell.includes('الاسم')
+                        && !nameCell.includes('Juleb Name');
             });
-
-            console.log('Filtered rows:', filteredRows.length);
 
             allProducts = filteredRows.map(row => {
                 let prio = (row[5] || '').trim();
@@ -348,32 +336,26 @@ function fetchDataCSV() {
                 else if (pLower.includes('r2')) prio = 'R2';
                 else prio = 'Unknown';
 
-                const barcode = (row[0] || '').trim();
-                const searchText = `${row[3] || ''} ${row[2] || ''} ${row[1] || ''}`.toLowerCase();
-                const autoCategory = assignToFixedCategory(searchText);
-                const finalCategory = editsMap[barcode] || autoCategory;
-
                 return {
-                    barcode: barcode,
-                    name: (row[1] || '').trim(),
-                    sheetCategory: (row[2] || '').trim(),
-                    sheetSubCategory: (row[3] || row[2] || 'عام').trim(),
-                    class: (row[4] || '').trim(),
+                    barcode: row[0] || '',
+                    name: row[1] || '',
+                    rawCategory: (row[3] || row[2] || '').trim(), // This is the SUB category from sheet
+                    class: row[4] || '', 
                     priority: prio,
-                    fixedCatID: finalCategory
+                    // Smart Assignment to Fixed Category
+                    fixedCatID: assignToFixedCategory((row[3] || '') + ' ' + (row[2] || '') + ' ' + (row[1] || ''))
                 };
             });
 
-            console.log('Products loaded:', allProducts.length);
-            
             updateStats();
             renderFixedCategories();
             listContainer.innerHTML = '';
             document.getElementById('resultsArea').classList.remove('show');
+            console.log(`تم تحميل ${allProducts.length} منتج`);
         },
         error: function(err) {
             console.error('Error:', err);
-            listContainer.innerHTML = '<div class="empty-state" style="color:red"><div class="empty-state-icon">❌</div>فشل التحميل. تأكد من إعدادات الشيت</div>';
+            listContainer.innerHTML = '<div class="empty-state" style="color:red">فشل التحميل. تأكد من إعدادات الشيت</div>';
         }
     });
 }
@@ -391,35 +373,37 @@ function assignToFixedCategory(text) {
 
 function renderFixedCategories() {
     const container = document.getElementById('mainCategories');
-    container.innerHTML = fixedCategories.map(cat => {
-        const count = allProducts.filter(p => p.fixedCatID === cat.id).length;
-        return `
-            <div class="main-cat-btn" onclick="selectFixedCategory('${cat.id}', this)">
-                <span class="main-cat-icon">${cat.icon}</span>
-                <span class="cat-name-en">${cat.en}</span>
-                <span class="cat-name-ar">${cat.ar} (${count})</span>
-            </div>
-        `;
-    }).join('');
+    container.innerHTML = fixedCategories.map(cat => `
+        <div class="main-cat-btn" onclick="selectFixedCategory('${cat.id}', this)">
+            <span class="main-cat-icon">${cat.icon}</span>
+            <span class="cat-name-en">${cat.en}</span>
+            <span class="cat-name-ar">${cat.ar}</span>
+        </div>
+    `).join('');
 }
 
 function selectFixedCategory(catId, btn) {
     document.querySelectorAll('.main-cat-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('subCategoriesWrapper').classList.remove('show');
     
-    if (activeFixedCategory === catId) {
-        activeFixedCategory = null;
-        document.getElementById('resultsArea').classList.remove('show');
+    if (activeMainCategory === catId) {
+        activeMainCategory = null;
+        document.getElementById('subCategoriesWrapper').classList.remove('show');
         return;
     }
     
     btn.classList.add('active');
-    activeFixedCategory = catId;
+    activeMainCategory = catId;
     
+    // 1. Get products in this fixed category
     let groupProducts = allProducts.filter(p => p.fixedCatID === catId);
-    const uniqueSubs = [...new Set(groupProducts.map(p => p.sheetSubCategory))].sort();
+    
+    // 2. Get unique sub-categories from sheet data for these products
+    const uniqueSubs = [...new Set(groupProducts.map(p => p.rawCategory))].sort();
+    
+    // 3. Show chips
     renderDynamicSubCategories(uniqueSubs);
     
+    // 4. Show results
     if (currentPriorityFilter !== 'all') {
         groupProducts = groupProducts.filter(p => p.priority === currentPriorityFilter);
     }
@@ -430,6 +414,11 @@ function renderDynamicSubCategories(subs) {
     const container = document.getElementById('subCategories');
     const wrapper = document.getElementById('subCategoriesWrapper');
     
+    if(subs.length === 0) {
+        wrapper.classList.remove('show');
+        return;
+    }
+
     container.innerHTML = subs.map(sub => `
         <div class="sub-cat-chip" onclick="filterBySubCategory('${sub}', this)">${sub}</div>
     `).join('');
@@ -441,7 +430,9 @@ function filterBySubCategory(subName, btn) {
     document.querySelectorAll('.sub-cat-chip').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     
-    let filtered = allProducts.filter(p => p.fixedCatID === activeFixedCategory && p.sheetSubCategory === subName);
+    document.getElementById('searchInput').value = subName;
+    
+    let filtered = allProducts.filter(p => p.fixedCatID === activeMainCategory && p.rawCategory === subName);
     
     if (currentPriorityFilter !== 'all') {
         filtered = filtered.filter(p => p.priority === currentPriorityFilter);
@@ -464,19 +455,17 @@ function filterByPriority(priority, btn) {
         list = performSearchLogic(searchVal);
     } 
     else if (activeSubBtn) {
-        list = allProducts.filter(p => p.fixedCatID === activeFixedCategory && p.sheetSubCategory === activeSubBtn.innerText);
+        list = allProducts.filter(p => p.fixedCatID === activeMainCategory && p.rawCategory === activeSubBtn.innerText);
     }
-    else if (activeFixedCategory) {
-        list = allProducts.filter(p => p.fixedCatID === activeFixedCategory);
+    else if (activeMainCategory) {
+        list = allProducts.filter(p => p.fixedCatID === activeMainCategory);
     }
 
     if (priority !== 'all') {
         list = list.filter(p => p.priority === priority);
     }
     
-    if (activeFixedCategory || searchVal) {
-        renderResults(list);
-    }
+    renderResults(list);
 }
 
 function performSearchLogic(val) {
@@ -490,7 +479,7 @@ function performSearchLogic(val) {
     });
     
     let filtered = allProducts.filter(p => {
-        const searchable = `${p.name} ${p.sheetCategory} ${p.sheetSubCategory} ${p.class} ${p.barcode}`.toLowerCase();
+        const searchable = `${p.name} ${p.rawCategory} ${p.class} ${p.barcode}`.toLowerCase();
         return searchTerms.some(term => searchable.includes(term));
     });
     
@@ -514,7 +503,7 @@ searchInput.addEventListener('input', (e) => {
             <div class="suggestion-item" onclick="showProduct('${p.barcode}')">
                 <div class="sugg-info">
                     <div class="sugg-name">${p.name}</div>
-                    <div class="sugg-cat">💊 ${p.class || '-'} | 📂 ${p.sheetSubCategory}</div>
+                    <div class="sugg-cat">💊 ${p.class}</div>
                 </div>
                 <span class="sugg-priority bg-${p.priority}">${p.priority}</span>
             </div>
@@ -537,7 +526,7 @@ searchInput.addEventListener('keypress', (e) => {
 function showProduct(barcode) {
     const target = allProducts.find(p => p.barcode === barcode);
     if (target) {
-        let siblings = allProducts.filter(p => p.sheetSubCategory === target.sheetSubCategory && p.barcode !== barcode);
+        let siblings = allProducts.filter(p => p.rawCategory === target.rawCategory && p.barcode !== barcode);
         siblings.sort((a, b) => (priorityOrder[a.priority] || 99) - (priorityOrder[b.priority] || 99));
         
         if (currentPriorityFilter !== 'all') {
@@ -588,12 +577,12 @@ function renderResults(list, isSpecificSearch = false) {
                 <div class="card-header">
                     <div class="p-info">
                         <div class="p-name">${p.name}</div>
-                        <div class="p-active-ingredient">💊 ${p.class || '-'}</div>
+                        <div class="p-active-ingredient">💊 ${p.class}</div>
                     </div>
                     <span class="p-badge bg-${p.priority}">${p.priority}</span>
                 </div>
                 <div class="p-meta">
-                    <span>📂 ${p.sheetSubCategory}</span>
+                    <span>📂 ${p.rawCategory}</span>
                     <span>🔢 ${p.barcode}</span>
                 </div>
             </div>
@@ -608,7 +597,7 @@ function clearSearch() {
     document.querySelectorAll('.main-cat-btn').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.sub-cat-chip').forEach(b => b.classList.remove('active'));
     document.getElementById('subCategoriesWrapper').classList.remove('show');
-    activeFixedCategory = null;
+    activeMainCategory = null;
 }
 
 function updateStats() {
