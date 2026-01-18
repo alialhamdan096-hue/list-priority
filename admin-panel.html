@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الرازي - لوحة تحكم الأقسام</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <style>
+        :root {
+            --maroon: #6B2D5B;
+            --maroon-light: #8B4D7B;
+            --maroon-dark: #4a1f3d;
+            --cream: #FAF8F5;
+            --white: #FFFFFF;
+            --gray-50: #FAFAF9;
+            --gray-100: #F5F3F0;
+            --gray-200: #E8E5E0;
+            --gray-300: #D4D0C8;
+            --gray-500: #8B8580;
+            --gray-700: #4A4744;
+            --gray-900: #1C1917;
+            --success: #059669;
+            --success-light: #D1FAE5;
+            --warning: #D97706;
+            --warning-light: #FEF3C7;
+            --error: #DC2626;
+            --error-light: #FEE2E2;
+            --diamond: #1E3A5F;
+            --platinum: #2D5B4D;
+            --gold: #8B6914;
+            --silver: #5A5A5A;
+            --r1: #2C3E50;
+            --r2: #C0392B;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: var(--cream);
+            color: var(--gray-700);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-dark) 100%);
+            padding: 1rem 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(107, 45, 91, 0.3);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: rgba(255,255,255,0.95);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .logo-text {
+            color: white;
+        }
+
+        .logo-text h1 {
+            font-size: 1.4rem;
+            font-weight: 900;
+            letter-spacing: 1px;
+        }
+
+        .logo-text span {
+            font-size: 0.75rem;
+            opacity: 0.85;
+            font-weight: 500;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-box {
+            text-align: center;
+            color: white;
+        }
+
+        .stat-box .number {
+            font-size: 1.5rem;
+            font-weight: 900;
+        }
+
+        .stat-box .label {
+            font-size: 0.7rem;
+            opacity: 0.8;
+        }
+
+        /* Main Container */
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: 1rem 1.25rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .alert-success {
+            background: var(--success-light);
+            color: var(--success);
+            border: 1px solid #A7F3D0;
+        }
+
+        .alert-error {
+            background: var(--error-light);
+            color: var(--error);
+            border: 1px solid #FECACA;
+        }
+
+        .alert-warning {
+            background: var(--warning-light);
+            color: var(--warning);
+            border: 1px solid #FDE68A;
+        }
+
+        /* Search Section */
+        .search-section {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.06);
+        }
+
+        .search-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--gray-700);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .search-wrapper {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            padding-right: 50px;
+            border: 2px solid var(--gray-200);
+            border-radius: 14px;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: var(--gray-50);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--maroon);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(107, 45, 91, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+            color: var(--gray-500);
+        }
+
+        /* Layout Grid */
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 1024px) {
+            .layout-grid {
+                grid-template-columns: 1fr 380px;
+            }
+        }
+
+        /* Products Section */
+        .products-section {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.06);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--gray-100);
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--gray-700);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .results-count {
+            background: var(--maroon);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        /* Product Card */
+        .product-card {
+            background: var(--gray-50);
+            border: 2px solid var(--gray-200);
+            border-radius: 16px;
+            padding: 1rem;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .product-card:hover {
+            border-color: var(--maroon-light);
+            box-shadow: 0 4px 15px rgba(107, 45, 91, 0.1);
+        }
+
+        .product-card.editing {
+            border-color: var(--maroon);
+            background: linear-gradient(135deg, #FDF8FC 0%, #F9F5F8 100%);
+            box-shadow: 0 0 0 4px rgba(107, 45, 91, 0.1);
+        }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .product-info {
+            flex: 1;
+        }
+
+        .product-name {
+            font-weight: 800;
+            font-size: 0.95rem;
+            color: var(--gray-900);
+            margin-bottom: 4px;
+            line-height: 1.4;
+        }
+
+        .product-class {
+            font-size: 0.8rem;
+            color: var(--maroon);
+            font-weight: 600;
+        }
+
+        .priority-badge {
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: white;
+            white-space: nowrap;
+        }
+
+        .bg-Diamond { background: var(--diamond); }
+        .bg-Platinum { background: var(--platinum); }
+        .bg-Gold { background: var(--gold); }
+        .bg-Silver { background: var(--silver); }
+        .bg-R1 { background: var(--r1); }
+        .bg-R2 { background: var(--r2); }
+        .bg-Unknown { background: var(--gray-500); }
+
+        .card-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .category-tag {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .current-cat {
+            background: var(--gray-200);
+            color: var(--gray-700);
+        }
+
+        .new-cat {
+            background: var(--success-light);
+            color: var(--success);
+            border: 1px solid #A7F3D0;
+        }
+
+        .arrow-icon {
+            color: var(--maroon);
+            font-weight: 900;
+        }
+
+        /* Category Selector */
+        .category-selector {
+            display: none;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 2px dashed var(--gray-200);
+        }
+
+        .category-selector.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .selector-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--gray-700);
+            margin-bottom: 10px;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        @media (min-width: 600px) {
+            .category-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .cat-option {
+            padding: 10px;
+            border: 2px solid var(--gray-200);
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .cat-option:hover {
+            border-color: var(--maroon-light);
+            background: var(--gray-50);
+        }
+
+        .cat-option.selected {
+            border-color: var(--maroon);
+            background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-light) 100%);
+            color: white;
+        }
+
+        .cat-option .icon {
+            font-size: 1.3rem;
+            margin-bottom: 4px;
+        }
+
+        .cat-option .name {
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        /* Card Actions */
+        .card-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-light) 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 4px 15px rgba(107, 45, 91, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: var(--gray-100);
+            color: var(--gray-700);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-200);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
+        }
+
+        .btn-cancel {
+            background: var(--gray-200);
+            color: var(--gray-700);
+        }
+
+        /* Edits History Section */
+        .edits-section {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.06);
+            height: fit-content;
+        }
+
+        .edit-item {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+
+        .edit-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .edit-product-name {
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--gray-900);
+            flex: 1;
+        }
+
+        .edit-date {
+            font-size: 0.65rem;
+            color: var(--gray-500);
+            background: var(--gray-200);
+            padding: 3px 8px;
+            border-radius: 6px;
+        }
+
+        .edit-change {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+        }
+
+        .edit-old {
+            color: var(--gray-500);
+            text-decoration: line-through;
+        }
+
+        .edit-arrow {
+            color: var(--success);
+            font-weight: 900;
+        }
+
+        .edit-new {
+            color: var(--success);
+            font-weight: 700;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--gray-500);
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .empty-text {
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--gray-200);
+            border-top-color: var(--maroon);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Scrollbar */
+        .products-list {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .products-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .products-list::-webkit-scrollbar-track {
+            background: var(--gray-100);
+            border-radius: 10px;
+        }
+
+        .products-list::-webkit-scrollbar-thumb {
+            background: var(--gray-300);
+            border-radius: 10px;
+        }
+
+        .products-list::-webkit-scrollbar-thumb:hover {
+            background: var(--gray-500);
+        }
+
+        .edits-list {
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--gray-900);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 14px;
+            font-weight: 700;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.4s ease;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            background: var(--success);
+        }
+
+        .toast.error {
+            background: var(--error);
+        }
+
+        /* Filter Tabs */
+        .filter-tabs {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .filter-tab {
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+        }
+
+        .filter-tab.all {
+            background: var(--gray-100);
+            color: var(--gray-700);
+        }
+
+        .filter-tab.active, .filter-tab:hover {
+            background: var(--maroon);
+            color: white;
+        }
+
+        .modified-badge {
+            background: var(--warning-light);
+            color: var(--warning);
+            border: 1px solid #FDE68A;
+        }
+
+        .filter-tab.modified.active {
+            background: var(--warning);
+            color: white;
+        }
+
+        /* Barcode display */
+        .barcode {
+            font-size: 0.7rem;
+            color: var(--gray-500);
+            font-family: monospace;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+    <div class="header-content">
+        <div class="logo-section">
+            <div class="logo-icon">🏪</div>
+            <div class="logo-text">
+                <h1>ALRAZI</h1>
+                <span>لوحة تحكم الأقسام</span>
+            </div>
+        </div>
+        <div class="header-stats">
+            <div class="stat-box">
+                <div class="number" id="totalProducts">0</div>
+                <div class="label">إجمالي المنتجات</div>
+            </div>
+            <div class="stat-box">
+                <div class="number" id="totalEdits">0</div>
+                <div class="label">التعديلات</div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Main Container -->
+<main class="main-container">
+    
+    <!-- Alert Container -->
+    <div id="alertContainer"></div>
+
+    <!-- Search Section -->
+    <section class="search-section">
+        <div class="search-title">🔍 ابحث عن المنتج</div>
+        <div class="search-wrapper">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="searchInput" class="search-input" placeholder="اكتب اسم المنتج أو الباركود...">
+        </div>
+        <div class="filter-tabs">
+            <div class="filter-tab all active" onclick="filterProducts('all', this)">📦 الكل</div>
+            <div class="filter-tab modified" onclick="filterProducts('modified', this)">✏️ المعدّلة</div>
+            <div class="filter-tab" onclick="filterProducts('vitamins', this)">💊 فيتامينات</div>
+            <div class="filter-tab" onclick="filterProducts('pain', this)">🩹 مسكنات</div>
+            <div class="filter-tab" onclick="filterProducts('cold', this)">🤧 برد</div>
+            <div class="filter-tab" onclick="filterProducts('stomach', this)">🫃 معدة</div>
+            <div class="filter-tab" onclick="filterProducts('skin', this)">🧴 جلدية</div>
+            <div class="filter-tab" onclick="filterProducts('others', this)">📦 أخرى</div>
+        </div>
+    </section>
+
+    <!-- Layout Grid -->
+    <div class="layout-grid">
+        
+        <!-- Products Section -->
+        <section class="products-section">
+            <div class="section-header">
+                <div class="section-title">📋 المنتجات</div>
+                <div class="results-count" id="resultsCount">0 نتيجة</div>
+            </div>
+            <div class="products-list" id="productsList">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <div>جاري تحميل البيانات...</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Edits History -->
+        <section class="edits-section">
+            <div class="section-header">
+                <div class="section-title">📝 سجل التعديلات</div>
+            </div>
+            <div class="edits-list" id="editsList">
+                <div class="empty-state">
+                    <div class="empty-icon">📝</div>
+                    <div class="empty-text">لا توجد تعديلات بعد</div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+</main>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ================= CONFIGURATION =================
+const MAIN_SHEET_ID = '1CZHMQnkhoXCpHlehZAHuYLWdpgAx-fXgn2PXT9H72-Y';
+const MAIN_CSV_URL = `https://docs.google.com/spreadsheets/d/${MAIN_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Sheet1`;
+
+const EDITS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzgRYJVCvZ73v2p5SX7EcZjdZZio1d-dptlockJG9177i-3soHC1Ry6gzeov77_XmPOJw/exec';
+
+// Fixed Categories
+const fixedCategories = [
+    { id: 'vitamins', icon: '💊', en: 'Vitamins', ar: 'فيتامينات', keywords: ['vit', 'supp', 'mineral', 'omega', 'iron', 'calc', 'magn', 'zinc', 'multi'] },
+    { id: 'pain', icon: '🩹', en: 'Pain', ar: 'مسكنات', keywords: ['pain', 'analgesic', 'adol', 'panadol', 'headache', 'fever', 'nsaid', 'paracetamol', 'ibuprofen', 'diclofenac'] },
+    { id: 'cold', icon: '🤧', en: 'Cold', ar: 'برد وحساسية', keywords: ['cold', 'flu', 'allergy', 'cough', 'nose', 'throat', 'histamine', 'loratadine', 'sinus'] },
+    { id: 'stomach', icon: '🫃', en: 'Stomach', ar: 'معدة وقولون', keywords: ['gastro', 'stomach', 'acid', 'gerd', 'digest', 'laxative', 'colon', 'omeprazole', 'spasm'] },
+    { id: 'skin', icon: '🧴', en: 'Skin', ar: 'عناية بالبشرة', keywords: ['skin', 'derma', 'acne', 'sun', 'cream', 'lotion', 'oint', 'moist'] },
+    { id: 'mom_baby', icon: '👶', en: 'Mom & Baby', ar: 'أم وطفل', keywords: ['baby', 'mom', 'milk', 'diaper', 'feed', 'child', 'infant'] },
+    { id: 'men_women', icon: '👫', en: 'Health', ar: 'صحة', keywords: ['men', 'women', 'sex', 'erect', 'lady', 'preg', 'fertil'] },
+    { id: 'chronic', icon: '🩺', en: 'Chronic', ar: 'أمراض مزمنة', keywords: ['diabet', 'pressure', 'hyper', 'cholest', 'heart', 'sugar', 'insul'] },
+    { id: 'first_aid', icon: '🩹', en: 'First Aid', ar: 'إسعافات', keywords: ['aid', 'band', 'wound', 'burn', 'antiseptic'] },
+    { id: 'others', icon: '📦', en: 'Others', ar: 'أخرى', keywords: [] }
+];
+
+// State
+let allProducts = [];
+let editsMap = {};  // barcode -> newCategory
+let editsList = []; // for display
+let currentFilter = 'all';
+let editingBarcode = null;
+
+// ================= INITIALIZATION =================
+document.addEventListener('DOMContentLoaded', () => {
+    loadEdits().then(() => {
+        loadMainData();
+    });
+    setupSearch();
+});
+
+// ================= DATA LOADING =================
+async function loadEdits() {
+    try {
+        const response = await fetch(EDITS_SCRIPT_URL);
+        const data = await response.json();
+        
+        // Skip header row
+        if (data.length > 1) {
+            for (let i = 1; i < data.length; i++) {
+                const row = data[i];
+                if (row[0]) {
+                    editsMap[row[0]] = row[3]; // barcode -> newCategory
+                    editsList.push({
+                        barcode: row[0],
+                        name: row[1],
+                        oldCategory: row[2],
+                        newCategory: row[3],
+                        date: row[4]
+                    });
+                }
+            }
+        }
+        
+        renderEdits();
+        updateStats();
+    } catch (error) {
+        console.log('No edits yet or error loading:', error);
+    }
+}
+
+function loadMainData() {
+    Papa.parse(MAIN_CSV_URL, {
+        download: true,
+        header: false,
+        complete: function(results) {
+            const rows = results.data;
+            
+            const filteredRows = rows.filter(row => {
+                const nameCell = (row[1] || '').trim();
+                return nameCell.length > 1 
+                    && !nameCell.includes('Juleb name') 
+                    && !nameCell.includes('الاسم')
+                    && !nameCell.includes('Juleb Name');
+            });
+
+            allProducts = filteredRows.map(row => {
+                let prio = (row[5] || '').trim();
+                const pLower = prio.toLowerCase();
+                if (pLower.includes('diamond')) prio = 'Diamond';
+                else if (pLower.includes('platinum')) prio = 'Platinum';
+                else if (pLower.includes('gold')) prio = 'Gold';
+                else if (pLower.includes('silver')) prio = 'Silver';
+                else if (pLower.includes('r1')) prio = 'R1';
+                else if (pLower.includes('r2')) prio = 'R2';
+                else prio = 'Unknown';
+
+                const barcode = row[0] || '';
+                const autoCategory = assignToFixedCategory((row[3] || row[2] || '') + ' ' + (row[1] || ''));
+                
+                return {
+                    barcode: barcode,
+                    name: row[1] || '',
+                    sheetCategory: (row[2] || '').trim(),
+                    sheetSubCategory: (row[3] || row[2] || 'عام').trim(),
+                    class: row[4] || '',
+                    priority: prio,
+                    originalCategory: autoCategory,
+                    currentCategory: editsMap[barcode] || autoCategory,
+                    isModified: !!editsMap[barcode]
+                };
+            });
+
+            updateStats();
+            renderProducts(allProducts);
+        },
+        error: function(err) {
+            console.error('Error loading data:', err);
+            document.getElementById('productsList').innerHTML = `
+                <div class="empty-state" style="color: var(--error)">
+                    <div class="empty-icon">❌</div>
+                    <div class="empty-text">فشل تحميل البيانات</div>
+                </div>
+            `;
+        }
+    });
+}
+
+function assignToFixedCategory(text) {
+    const lowerText = text.toLowerCase();
+    for (const cat of fixedCategories) {
+        if (cat.id === 'others') continue;
+        if (cat.keywords.some(k => lowerText.includes(k))) {
+            return cat.id;
+        }
+    }
+    return 'others';
+}
+
+// ================= RENDERING =================
+function renderProducts(products) {
+    const container = document.getElementById('productsList');
+    const countEl = document.getElementById('resultsCount');
+    
+    countEl.textContent = products.length + ' نتيجة';
+    
+    if (products.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-icon">🔍</div>
+                <div class="empty-text">لا توجد نتائج</div>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = products.map(p => {
+        const currentCatData = fixedCategories.find(c => c.id === p.currentCategory) || fixedCategories[fixedCategories.length - 1];
+        const originalCatData = fixedCategories.find(c => c.id === p.originalCategory) || fixedCategories[fixedCategories.length - 1];
+        const isEditing = editingBarcode === p.barcode;
+        
+        return `
+            <div class="product-card ${isEditing ? 'editing' : ''}" id="card-${p.barcode}">
+                <div class="card-top">
+                    <div class="product-info">
+                        <div class="product-name">${p.name}</div>
+                        <div class="product-class">💊 ${p.class || p.sheetSubCategory}</div>
+                        <div class="barcode">🔢 ${p.barcode}</div>
+                    </div>
+                    <span class="priority-badge bg-${p.priority}">${p.priority}</span>
+                </div>
+                
+                <div class="card-categories">
+                    ${p.isModified ? `
+                        <span class="category-tag current-cat">${originalCatData.icon} ${originalCatData.ar}</span>
+                        <span class="arrow-icon">←</span>
+                        <span class="category-tag new-cat">${currentCatData.icon} ${currentCatData.ar}</span>
+                    ` : `
+                        <span class="category-tag current-cat">${currentCatData.icon} ${currentCatData.ar}</span>
+                    `}
+                </div>
+                
+                <div class="category-selector ${isEditing ? 'show' : ''}" id="selector-${p.barcode}">
+                    <div class="selector-label">اختر القسم الجديد:</div>
+                    <div class="category-grid">
+                        ${fixedCategories.map(cat => `
+                            <div class="cat-option ${p.currentCategory === cat.id ? 'selected' : ''}" 
+                                 onclick="selectCategory('${p.barcode}', '${cat.id}', this)">
+                                <div class="icon">${cat.icon}</div>
+                                <div class="name">${cat.ar}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn btn-success" onclick="saveEdit('${p.barcode}')">💾 حفظ</button>
+                        <button class="btn btn-cancel" onclick="cancelEdit('${p.barcode}')">✕ إلغاء</button>
+                    </div>
+                </div>
+                
+                ${!isEditing ? `
+                    <div class="card-actions">
+                        <button class="btn btn-primary" onclick="startEdit('${p.barcode}')">✏️ تغيير القسم</button>
+                    </div>
+                ` : ''}
+            </div>
+        `;
+    }).join('');
+}
+
+function renderEdits() {
+    const container = document.getElementById('editsList');
+    
+    if (editsList.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-icon">📝</div>
+                <div class="empty-text">لا توجد تعديلات بعد</div>
+            </div>
+        `;
+        return;
+    }
+    
+    // Show most recent first
+    const reversed = [...editsList].reverse();
+    
+    container.innerHTML = reversed.map(edit => {
+        const oldCat = fixedCategories.find(c => c.id === edit.oldCategory) || { ar: edit.oldCategory, icon: '📦' };
+        const newCat = fixedCategories.find(c => c.id === edit.newCategory) || { ar: edit.newCategory, icon: '📦' };
+        
+        return `
+            <div class="edit-item">
+                <div class="edit-item-header">
+                    <div class="edit-product-name">${edit.name}</div>
+                    <div class="edit-date">${edit.date || 'الآن'}</div>
+                </div>
+                <div class="edit-change">
+                    <span class="edit-old">${oldCat.icon} ${oldCat.ar}</span>
+                    <span class="edit-arrow">←</span>
+                    <span class="edit-new">${newCat.icon} ${newCat.ar}</span>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// ================= EDITING =================
+let selectedNewCategory = null;
+
+function startEdit(barcode) {
+    editingBarcode = barcode;
+    const product = allProducts.find(p => p.barcode === barcode);
+    selectedNewCategory = product.currentCategory;
+    renderFilteredProducts();
+}
+
+function cancelEdit(barcode) {
+    editingBarcode = null;
+    selectedNewCategory = null;
+    renderFilteredProducts();
+}
+
+function selectCategory(barcode, categoryId, element) {
+    selectedNewCategory = categoryId;
+    
+    // Update UI
+    const container = document.getElementById(`selector-${barcode}`);
+    container.querySelectorAll('.cat-option').forEach(opt => opt.classList.remove('selected'));
+    element.classList.add('selected');
+}
+
+async function saveEdit(barcode) {
+    const product = allProducts.find(p => p.barcode === barcode);
+    
+    if (!selectedNewCategory || selectedNewCategory === product.originalCategory) {
+        showToast('اختر قسم مختلف', 'error');
+        return;
+    }
+    
+    // Prepare data
+    const editData = {
+        barcode: barcode,
+        name: product.name,
+        oldCategory: product.originalCategory,
+        newCategory: selectedNewCategory
+    };
+    
+    // Show loading
+    showToast('جاري الحفظ...', '');
+    
+    try {
+        const response = await fetch(EDITS_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(editData)
+        });
+        
+        // Update local state
+        editsMap[barcode] = selectedNewCategory;
+        product.currentCategory = selectedNewCategory;
+        product.isModified = true;
+        
+        // Add to edits list
+        editsList.push({
+            ...editData,
+            date: new Date().toLocaleString('ar-SA')
+        });
+        
+        // Reset editing state
+        editingBarcode = null;
+        selectedNewCategory = null;
+        
+        // Update UI
+        updateStats();
+        renderEdits();
+        renderFilteredProducts();
+        
+        showToast('✅ تم الحفظ بنجاح!', 'success');
+        
+    } catch (error) {
+        console.error('Error saving:', error);
+        showToast('❌ فشل الحفظ، حاول مرة أخرى', 'error');
+    }
+}
+
+// ================= FILTERING =================
+function setupSearch() {
+    const input = document.getElementById('searchInput');
+    let timeout;
+    
+    input.addEventListener('input', () => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            renderFilteredProducts();
+        }, 300);
+    });
+}
+
+function filterProducts(filter, element) {
+    currentFilter = filter;
+    
+    // Update tabs UI
+    document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
+    element.classList.add('active');
+    
+    renderFilteredProducts();
+}
+
+function renderFilteredProducts() {
+    const searchVal = document.getElementById('searchInput').value.toLowerCase().trim();
+    
+    let filtered = allProducts;
+    
+    // Apply category filter
+    if (currentFilter === 'modified') {
+        filtered = filtered.filter(p => p.isModified);
+    } else if (currentFilter !== 'all') {
+        filtered = filtered.filter(p => p.currentCategory === currentFilter);
+    }
+    
+    // Apply search
+    if (searchVal) {
+        filtered = filtered.filter(p => 
+            p.name.toLowerCase().includes(searchVal) ||
+            p.barcode.includes(searchVal) ||
+            (p.class && p.class.toLowerCase().includes(searchVal))
+        );
+    }
+    
+    renderProducts(filtered);
+}
+
+// ================= UTILITIES =================
+function updateStats() {
+    document.getElementById('totalProducts').textContent = allProducts.length;
+    document.getElementById('totalEdits').textContent = editsList.length;
+}
+
+function showToast(message, type = '') {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.className = 'toast show ' + type;
+    
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 3000);
+}
+
+function showAlert(message, type = 'success') {
+    const container = document.getElementById('alertContainer');
+    const alert = document.createElement('div');
+    alert.className = `alert alert-${type}`;
+    alert.innerHTML = message;
+    container.appendChild(alert);
+    
+    setTimeout(() => {
+        alert.remove();
+    }, 5000);
+}
+</script>
+
+</body>
+</html>
