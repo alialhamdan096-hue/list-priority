@@ -23,7 +23,32 @@
         .logo-section { display: flex; align-items: center; gap: 10px; }
         .logo-img { height: 45px; background: rgba(255,255,255,0.95); padding: 4px; border-radius: 8px; }
         .logo-text { color: white; font-weight: 900; font-size: 1.3rem; }
+        
+        .header-buttons { display: flex; gap: 10px; align-items: center; }
         .header-badge { background: #8DC63F; color: #fff; padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; }
+        
+        /* ⭐ زر الإدارة */
+        .admin-btn {
+            background: rgba(255,255,255,0.15);
+            border: 2px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+        }
+        .admin-btn:hover {
+            background: rgba(255,255,255,0.25);
+            border-color: rgba(255,255,255,0.5);
+            transform: translateY(-2px);
+        }
 
         .main-container { max-width: 900px; margin: 0 auto; padding: 1.5rem 1rem; }
 
@@ -152,7 +177,10 @@
             <img src="logo.png" alt="ALRAZI" class="logo-img" onerror="this.style.display='none'">
             <span class="logo-text">ALRAZI</span>
         </div>
-        <div class="header-badge">دليل 2026</div>
+        <div class="header-buttons">
+            <a href="admin-panel.html" class="admin-btn">⚙️ لوحة التحكم</a>
+            <div class="header-badge">دليل 2026</div>
+        </div>
     </div>
 </header>
 
@@ -183,8 +211,7 @@
             <span class="cats-title">📂 تصفح حسب القسم</span>
             <span class="cats-count" id="totalCount">...</span>
         </div>
-        <div class="main-categories" id="mainCategories">
-            </div>
+        <div class="main-categories" id="mainCategories"></div>
         <div class="sub-categories-wrapper" id="subCategoriesWrapper">
             <div class="sub-categories" id="subCategories"></div>
         </div>
@@ -214,7 +241,7 @@
 const sheetID = '1CZHMQnkhoXCpHlehZAHuYLWdpgAx-fXgn2PXT9H72-Y';
 const csvURL = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:csv&sheet=Sheet1`;
 
-// ⭐ رابط شيت التعديلات (Apps Script)
+// رابط شيت التعديلات
 const EDITS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzgRYJVCvZ73v2p5SX7EcZjdZZio1d-dptlockJG9177i-3soHC1Ry6gzeov77_XmPOJw/exec';
 
 // ================= FIXED CATEGORIES =================
@@ -231,7 +258,6 @@ const fixedCategories = [
     { id: 'others', icon: '📦', en: 'Others', ar: 'أقسام أخرى', keywords: [] }
 ];
 
-// ================= ARABIC KEYWORDS DICTIONARY =================
 const arabicKeywords = {
     "فيتامين": ["VITAMIN", "MULTIVITAMIN", "VITA"],
     "فيتامين د": ["VITAMIN D", "D3", "D 50", "D 10"],
@@ -256,40 +282,39 @@ const arabicKeywords = {
 const priorityOrder = { 'Diamond': 1, 'Platinum': 2, 'Gold': 3, 'Silver': 4, 'R1': 5, 'R2': 6, 'Unknown': 7 };
 
 let allProducts = [];
-let editsMap = {}; // ⭐ خريطة التعديلات: barcode -> newCategory
+let editsMap = {};
 let currentPriorityFilter = 'all';
 let activeFixedCategory = null;
 
 document.addEventListener('DOMContentLoaded', () => {
-    // ⭐ أولاً: جلب التعديلات، ثم جلب البيانات الرئيسية
-    loadEdits().then(() => {
-        fetchDataCSV();
-    });
+    loadEditsAndData();
     setupScrollToTop();
 });
 
-// ⭐ جلب التعديلات من شيت التعديلات
-async function loadEdits() {
+// جلب التعديلات ثم البيانات
+async function loadEditsAndData() {
+    // محاولة جلب التعديلات
     try {
         const response = await fetch(EDITS_SCRIPT_URL);
         const data = await response.json();
         
-        // تخطي صف العناوين
         if (data.length > 1) {
             for (let i = 1; i < data.length; i++) {
                 const row = data[i];
                 if (row[0] && row[3]) {
-                    editsMap[row[0]] = row[3]; // barcode -> newCategory
+                    editsMap[row[0]] = row[3];
                 }
             }
         }
         console.log(`تم تحميل ${Object.keys(editsMap).length} تعديل`);
     } catch (error) {
-        console.log('لا توجد تعديلات أو خطأ في التحميل:', error);
+        console.log('لا توجد تعديلات بعد');
     }
+    
+    // جلب البيانات الرئيسية
+    fetchDataCSV();
 }
 
-// Fetch Data via CSV
 function fetchDataCSV() {
     const listContainer = document.getElementById('productsList');
     listContainer.innerHTML = '<div class="loading-state">جاري سحب البيانات... ⏳</div>';
@@ -300,14 +325,17 @@ function fetchDataCSV() {
         header: false,
         complete: function(results) {
             const rows = results.data;
+            console.log('Raw rows:', rows.length);
             
             const filteredRows = rows.filter(row => {
-                 const nameCell = (row[1] || '').trim(); 
-                 return nameCell.length > 1 
-                        && !nameCell.includes('Juleb name') 
-                        && !nameCell.includes('الاسم')
-                        && !nameCell.includes('Juleb Name');
+                const nameCell = (row[1] || '').trim();
+                return nameCell.length > 1 
+                    && !nameCell.toLowerCase().includes('juleb name') 
+                    && !nameCell.includes('الاسم')
+                    && !nameCell.toLowerCase().includes('name');
             });
+
+            console.log('Filtered rows:', filteredRows.length);
 
             allProducts = filteredRows.map(row => {
                 let prio = (row[5] || '').trim();
@@ -320,37 +348,36 @@ function fetchDataCSV() {
                 else if (pLower.includes('r2')) prio = 'R2';
                 else prio = 'Unknown';
 
-                const barcode = row[0] || '';
-                const autoCategory = assignToFixedCategory((row[3] || row[2] || '') + ' ' + (row[1] || ''));
-                
-                // ⭐ التحقق من وجود تعديل لهذا المنتج
+                const barcode = (row[0] || '').trim();
+                const searchText = `${row[3] || ''} ${row[2] || ''} ${row[1] || ''}`.toLowerCase();
+                const autoCategory = assignToFixedCategory(searchText);
                 const finalCategory = editsMap[barcode] || autoCategory;
 
                 return {
                     barcode: barcode,
-                    name: row[1] || '',
+                    name: (row[1] || '').trim(),
                     sheetCategory: (row[2] || '').trim(),
                     sheetSubCategory: (row[3] || row[2] || 'عام').trim(),
-                    class: row[4] || '', 
+                    class: (row[4] || '').trim(),
                     priority: prio,
-                    fixedCatID: finalCategory // ⭐ استخدام القسم المعدل إذا وجد
+                    fixedCatID: finalCategory
                 };
             });
 
+            console.log('Products loaded:', allProducts.length);
+            
             updateStats();
             renderFixedCategories();
             listContainer.innerHTML = '';
             document.getElementById('resultsArea').classList.remove('show');
-            console.log(`تم تحميل ${allProducts.length} منتج`);
         },
         error: function(err) {
             console.error('Error:', err);
-            listContainer.innerHTML = '<div class="empty-state" style="color:red">فشل التحميل. تأكد من إعدادات الشيت</div>';
+            listContainer.innerHTML = '<div class="empty-state" style="color:red"><div class="empty-state-icon">❌</div>فشل التحميل. تأكد من إعدادات الشيت</div>';
         }
     });
 }
 
-// Map product to one of the fixed categories
 function assignToFixedCategory(text) {
     const lowerText = text.toLowerCase();
     for (const cat of fixedCategories) {
@@ -362,41 +389,37 @@ function assignToFixedCategory(text) {
     return 'others';
 }
 
-// Render the big fixed buttons
 function renderFixedCategories() {
     const container = document.getElementById('mainCategories');
-    container.innerHTML = fixedCategories.map(cat => `
-        <div class="main-cat-btn" onclick="selectFixedCategory('${cat.id}', this)">
-            <span class="main-cat-icon">${cat.icon}</span>
-            <span class="cat-name-en">${cat.en}</span>
-            <span class="cat-name-ar">${cat.ar}</span>
-        </div>
-    `).join('');
+    container.innerHTML = fixedCategories.map(cat => {
+        const count = allProducts.filter(p => p.fixedCatID === cat.id).length;
+        return `
+            <div class="main-cat-btn" onclick="selectFixedCategory('${cat.id}', this)">
+                <span class="main-cat-icon">${cat.icon}</span>
+                <span class="cat-name-en">${cat.en}</span>
+                <span class="cat-name-ar">${cat.ar} (${count})</span>
+            </div>
+        `;
+    }).join('');
 }
 
-// When a fixed button is clicked
 function selectFixedCategory(catId, btn) {
     document.querySelectorAll('.main-cat-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('subCategoriesWrapper').classList.remove('show');
     
     if (activeFixedCategory === catId) {
         activeFixedCategory = null;
+        document.getElementById('resultsArea').classList.remove('show');
         return;
     }
     
     btn.classList.add('active');
     activeFixedCategory = catId;
     
-    // 1. Filter products belonging to this fixed category
     let groupProducts = allProducts.filter(p => p.fixedCatID === catId);
-    
-    // 2. Extract unique "sheetSubCategory" names from these products
     const uniqueSubs = [...new Set(groupProducts.map(p => p.sheetSubCategory))].sort();
-    
-    // 3. Render these real sub-categories as chips
     renderDynamicSubCategories(uniqueSubs);
     
-    // 4. Show products (filtered by priority if needed)
     if (currentPriorityFilter !== 'all') {
         groupProducts = groupProducts.filter(p => p.priority === currentPriorityFilter);
     }
@@ -417,8 +440,6 @@ function renderDynamicSubCategories(subs) {
 function filterBySubCategory(subName, btn) {
     document.querySelectorAll('.sub-cat-chip').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    
-    document.getElementById('searchInput').value = subName;
     
     let filtered = allProducts.filter(p => p.fixedCatID === activeFixedCategory && p.sheetSubCategory === subName);
     
@@ -453,12 +474,9 @@ function filterByPriority(priority, btn) {
         list = list.filter(p => p.priority === priority);
     }
     
-    renderResults(list);
-}
-
-function performSearch(val) {
-    const list = performSearchLogic(val);
-    renderResults(list);
+    if (activeFixedCategory || searchVal) {
+        renderResults(list);
+    }
 }
 
 function performSearchLogic(val) {
@@ -496,7 +514,7 @@ searchInput.addEventListener('input', (e) => {
             <div class="suggestion-item" onclick="showProduct('${p.barcode}')">
                 <div class="sugg-info">
                     <div class="sugg-name">${p.name}</div>
-                    <div class="sugg-cat">💊 ${p.class} | 📂 ${p.sheetSubCategory}</div>
+                    <div class="sugg-cat">💊 ${p.class || '-'} | 📂 ${p.sheetSubCategory}</div>
                 </div>
                 <span class="sugg-priority bg-${p.priority}">${p.priority}</span>
             </div>
@@ -510,7 +528,8 @@ searchInput.addEventListener('input', (e) => {
 
 searchInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
-        performSearch(searchInput.value);
+        const list = performSearchLogic(searchInput.value);
+        renderResults(list);
         suggestionsBox.classList.remove('show');
     }
 });
@@ -569,7 +588,7 @@ function renderResults(list, isSpecificSearch = false) {
                 <div class="card-header">
                     <div class="p-info">
                         <div class="p-name">${p.name}</div>
-                        <div class="p-active-ingredient">💊 ${p.class}</div>
+                        <div class="p-active-ingredient">💊 ${p.class || '-'}</div>
                     </div>
                     <span class="p-badge bg-${p.priority}">${p.priority}</span>
                 </div>
@@ -587,6 +606,8 @@ function clearSearch() {
     document.getElementById('resultsArea').classList.remove('show');
     suggestionsBox.classList.remove('show');
     document.querySelectorAll('.main-cat-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.sub-cat-chip').forEach(b => b.classList.remove('active'));
+    document.getElementById('subCategoriesWrapper').classList.remove('show');
     activeFixedCategory = null;
 }
 
